@@ -1,7 +1,10 @@
 package graphtools
 
+//Graph is a matrix representation of a directional graph
+type Graph [][]int
+
 //TransitiveClosure returns the reachability matrix of the given graph
-func TransitiveClosure(graph [][]int) [][]int {
+func (graph Graph) TransitiveClosure() Graph {
 	V := len(graph)
 	/* reach[][] will be the output matrix that will finally
 	   have the shortest  distances between every pair of
@@ -49,10 +52,38 @@ func TransitiveClosure(graph [][]int) [][]int {
 }
 
 //InitGraph Inits an NxN 2d slice
-func InitGraph(N int) [][]int {
+func InitGraph(N int) Graph {
 	grid := make([][]int, N)
 	for i := 0; i < N; i++ {
 		grid[i] = make([]int, N)
 	}
 	return grid
+}
+
+//Equals returns true iff graph and other are identical
+func (graph Graph) Equals(other Graph) bool {
+	if len(graph) != len(other) {
+		return false
+	}
+	for i := 0; i < len(graph); i++ {
+		if len(graph[i]) != len(other[i]) {
+			return false
+		}
+		for j := 0; j < len(graph[i]); j++ {
+			if graph[i][j] != other[i][j] {
+				return false
+			}
+		}
+	}
+	return true
+}
+
+//Clone returns a copy of the graph
+func (graph Graph) Clone() Graph {
+	duplicate := InitGraph(len(graph))
+	for i := range graph {
+		duplicate[i] = make([]int, len(graph[i]))
+		copy(duplicate[i], graph[i])
+	}
+	return duplicate
 }

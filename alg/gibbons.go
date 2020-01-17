@@ -2,6 +2,7 @@ package alg
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/ori-saporta83/linearizability-testing/graphtools"
 	"github.com/pkg/errors"
@@ -54,6 +55,20 @@ func (r *Relation) merge(other *Relation) {
 type pair struct {
 	enqIdx int
 	deqIdx int
+}
+
+func (r *Relation) String() string {
+	sb := strings.Builder{}
+	sb.WriteString("[")
+	for i := 0; i < len(r.graph); i++ {
+		for j := 0; j < len(r.graph); j++ {
+			if r.graph[i][j] > 0 {
+				sb.WriteString(fmt.Sprintf("<%d,%d>", i, j))
+			}
+		}
+	}
+	sb.WriteString("]")
+	return sb.String()
 }
 
 func (r *Relation) enlargePairs(pairs []pair) {
@@ -110,6 +125,10 @@ func (r Relation) isCyclic() bool {
 	return false
 }
 
+func (r Relation) contains(other Relation) bool {
+	return r.graph.Contains(other.graph)
+}
+
 func findMatches(ops []Op) (*Relation, []pair, []int, error) {
 	result := InitRelation(len(ops))
 
@@ -141,11 +160,11 @@ func findMatches(ops []Op) (*Relation, []pair, []int, error) {
 }
 
 //CheckTrace return true if the given trace represents a valid queue trace according to Gibbons D algorithm
-func CheckTrace(ops []Op, order *Relation) bool {
+func CheckTrace(ops []Op, o *Relation) bool {
 	//if there's pop(nil) it should be first or last
+	order := o.getCopy()
 	matches, pairs, bottoms, err := findMatches(ops)
 	if err != nil {
-		fmt.Println(err)
 		return false
 	}
 
@@ -158,7 +177,7 @@ func CheckTrace(ops []Op, order *Relation) bool {
 		order.enlargeBottoms(bottoms, pairs)
 		order.addTransitiveRelation()
 
-		if before.equals(order) {
+		if before.equals(&order) {
 			break
 		} else {
 			before = order.getCopy()

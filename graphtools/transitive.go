@@ -78,6 +78,24 @@ func (graph Graph) Equals(other Graph) bool {
 	return true
 }
 
+//Contains returns true if all 1 values in other are contained in graph
+func (graph Graph) Contains(other Graph) bool {
+	if len(graph) != len(other) {
+		return false
+	}
+	for i := 0; i < len(graph); i++ {
+		if len(graph[i]) != len(other[i]) {
+			return false
+		}
+		for j := 0; j < len(graph[i]); j++ {
+			if other[i][j] == 1 && graph[i][j] != other[i][j] {
+				return false
+			}
+		}
+	}
+	return true
+}
+
 //Clone returns a copy of the graph
 func (graph Graph) Clone() Graph {
 	duplicate := InitGraph(len(graph))

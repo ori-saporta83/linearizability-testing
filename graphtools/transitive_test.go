@@ -103,3 +103,30 @@ func TestGraph_Clone(t *testing.T) {
 		})
 	}
 }
+
+func TestGraph_SwitchLine(t *testing.T) {
+	type args struct {
+		i int
+		j int
+	}
+	tests := []struct {
+		name  string
+		graph graphtools.Graph
+		args  args
+		want  graphtools.Graph
+	}{
+		{"t1", graphtools.InitGraph(2), args{0, 1}, graphtools.InitGraph(2)},
+		{"t2", graphtools.InitGraph(2), args{0, 2}, graphtools.InitGraph(2)},
+		{"t3", graphtools.Graph{{1, 0}, {0, 1}}, args{0, 2}, graphtools.Graph{{1, 0}, {0, 1}}},
+		{"t4", graphtools.Graph{{1, 0}, {0, 1}}, args{1, 0}, graphtools.Graph{{0, 1}, {1, 0}}},
+		{"t5", graphtools.Graph{{1, 0, 0}, {0, 0, 0}, {0, 0, 0}}, args{0, 2}, graphtools.Graph{{0, 0, 0}, {0, 0, 0}, {1, 0, 0}}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.graph.SwitchLine(tt.args.i, tt.args.j)
+			if got := tt.graph; !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Graph.SwitchLine() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

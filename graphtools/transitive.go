@@ -78,6 +78,16 @@ func (graph Graph) Equals(other Graph) bool {
 	return true
 }
 
+//SwitchLine switches between two lines in the graph
+func (graph Graph) SwitchLine(i, j int) {
+	if i > len(graph)-1 || j > len(graph)-1 || i == j {
+		return
+	}
+	sub := graph[i]
+	graph[i] = graph[j]
+	graph[j] = sub
+}
+
 //Contains returns true if all 1 values in other are contained in graph
 func (graph Graph) Contains(other Graph) bool {
 	if len(graph) != len(other) {

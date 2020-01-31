@@ -171,7 +171,6 @@ func findMatches(ops []Op) (*Relation, []pair, []int, error) {
 
 //CheckTrace return true if the given trace represents a valid queue trace according to Gibbons D algorithm
 func CheckTrace(ops []Op, o *Relation) bool {
-	//if there's pop(nil) it should be first or last
 	order := o.getCopy()
 	matches, pairs, bottoms, err := findMatches(ops)
 	if err != nil {

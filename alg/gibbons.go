@@ -41,6 +41,16 @@ func (r *Relation) Append(a, b int) {
 	r.graph[a][b] = 1
 }
 
+//Remove the given pair from the relation
+func (r *Relation) Remove(a, b int) {
+	r.graph[a][b] = 0
+}
+
+//Contains return if the given pair is in the relation
+func (r *Relation) Contains(a, b int) bool {
+	return r.graph[a][b] == 1
+}
+
 //merge append all other pairs into the relation
 func (r *Relation) merge(other *Relation) {
 	for i := 0; i < len(other.graph); i++ {
@@ -57,7 +67,7 @@ type pair struct {
 	deqIdx int
 }
 
-func (r *Relation) String() string {
+func (r Relation) String() string {
 	sb := strings.Builder{}
 	sb.WriteString("[")
 	for i := 0; i < len(r.graph); i++ {

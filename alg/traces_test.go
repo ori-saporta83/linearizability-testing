@@ -127,14 +127,14 @@ func TestCheckAllTraces2(t *testing.T) {
 		{"t6", args{ops: ops6}},
 		{"t7", args{ops: ops7}},
 	}
-	for i, tt := range tests {
+	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			fmt.Printf("======= %d started at %s\n", i, time.Now().String())
+			fmt.Printf("======= %s started at %s\n", tt.name, time.Now().String())
 			got := CheckAllTraces2(tt.args.ops)
 			for _, r := range got {
 				fmt.Println(r)
 			}
-			fmt.Printf("======= %d finished at %s\n", i, time.Now().String())
+			fmt.Printf("======= %s finished at %s\n", tt.name, time.Now().String())
 		})
 	}
 }

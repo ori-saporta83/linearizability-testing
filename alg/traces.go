@@ -1,12 +1,19 @@
 package alg
 
 import (
+	"fmt"
+
 	gl "github.com/ahmetb/go-linq"
 	"github.com/ori-saporta83/linearizability-testing/graphtools"
 )
 
 //CheckAllTraces return all possible minimal failed traces
-func CheckAllTraces(ops []Op) []*Relation {
+func CheckAllTraces(opList []Op) []*Relation {
+	err := Init(opList)
+	if err != nil {
+		return nil
+	}
+
 	l := len(ops)
 	queue := []*Relation{}
 	for i := 0; i < l; i++ {
@@ -23,7 +30,7 @@ func CheckAllTraces(ops []Op) []*Relation {
 	successfulTraces := map[string]*Relation{}
 	for {
 		for _, r := range queue {
-			rc := r.getCopy()
+			rc := r.GetCopy()
 			rc.addTransitiveRelation()
 			if rc.isCyclic() {
 				continue
@@ -50,7 +57,7 @@ func CheckAllTraces(ops []Op) []*Relation {
 			gl.From(successfulTraces).SelectT(func(x gl.KeyValue) *Relation { return x.Value.(*Relation) }).ToSlice(&sft)
 			for i := 0; i < len(sft); i++ {
 				for j := i + 1; j < len(sft); j++ {
-					r := sft[i].getCopy()
+					r := sft[i].GetCopy()
 					r.merge(sft[j])
 					queue = append(queue, &r)
 				}
@@ -65,11 +72,24 @@ func CheckAllTraces(ops []Op) []*Relation {
 
 var badTraces = []Relation{}
 
+//Init data sets
+func Init(opList []Op) error {
+	var err error
+	ops = opList
+	matches, pairs, bottoms, err = findMatches(ops)
+	return err
+}
+
 //CheckAllTraces2 oops
-func CheckAllTraces2(ops []Op) []Relation {
+func CheckAllTraces2(opList []Op) []Relation {
+	err := Init(opList)
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
 	badTraces = []Relation{}
 	l := len(ops)
-	CheckTracesWithBase(ops, *InitRelation(l), 1)
+	CheckTracesWithBase(*InitRelation(l), 1)
 	filteredBadTraces := []Relation{}
 	for i, trace := range badTraces {
 		contains := false
@@ -88,7 +108,7 @@ func CheckAllTraces2(ops []Op) []Relation {
 }
 
 //CheckTracesWithBase return all possible minimal failed traces
-func CheckTracesWithBase(ops []Op, base Relation, level int) {
+func CheckTracesWithBase(base Relation, level int) {
 	l := len(ops)
 	level++
 	if level == l {
@@ -97,15 +117,16 @@ func CheckTracesWithBase(ops []Op, base Relation, level int) {
 	result := graphtools.InitGraph(l)
 	for i := 0; i < l; i++ {
 		for j := 0; j < l; j++ {
-			currTrace := base.getCopy()
+			currTrace := base.GetCopy()
 			if i == j || currTrace.Contains(i, j) || currTrace.Contains(j, i) {
 				result[i][j] = 0
 				continue
 			}
 			contains := false
 			currTrace.Append(i, j)
+			currTrace = *currTrace.Normalize()
 			for _, ft := range badTraces {
-				copy := currTrace.getCopy()
+				copy := currTrace.GetCopy()
 				copy.addTransitiveRelation()
 				if copy.contains(ft) {
 					contains = true
@@ -127,9 +148,9 @@ func CheckTracesWithBase(ops []Op, base Relation, level int) {
 	for i := 0; i < l; i++ {
 		for j := 0; j < l; j++ {
 			if result[i][j] == 1 {
-				baseCopy := base.getCopy()
+				baseCopy := base.GetCopy()
 				baseCopy.Append(i, j)
-				CheckTracesWithBase(ops, baseCopy, level)
+				CheckTracesWithBase(baseCopy, level)
 			}
 		}
 	}

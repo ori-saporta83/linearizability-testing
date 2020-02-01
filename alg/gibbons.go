@@ -81,14 +81,14 @@ func (r Relation) String() string {
 	return sb.String()
 }
 
-func (r *Relation) enlargePairs(pairs []pair) {
-	for i := 0; i < len(pairs); i++ {
-		for j := 0; j < len(pairs); j++ {
-			if i == j {
+func (r *Relation) enlargePairs(pairs map[int]pair) {
+	for k1 := range pairs {
+		for k2 := range pairs {
+			if k1 == k2 {
 				continue
 			}
-			p1 := pairs[i]
-			p2 := pairs[j]
+			p1 := pairs[k1]
+			p2 := pairs[k2]
 			if r.graph[p1.enqIdx][p2.enqIdx] != 0 {
 				r.graph[p1.deqIdx][p2.deqIdx] = 1
 			}
@@ -99,7 +99,7 @@ func (r *Relation) enlargePairs(pairs []pair) {
 	}
 }
 
-func (r *Relation) enlargeBottoms(bottoms []int, pairs []pair) {
+func (r *Relation) enlargeBottoms(bottoms []int, pairs map[int]pair) {
 	for _, bottomIdx := range bottoms {
 		for _, pair := range pairs {
 			if r.graph[bottomIdx][pair.deqIdx] == 1 {
@@ -116,7 +116,8 @@ func (r *Relation) addTransitiveRelation() {
 	r.graph = r.graph.TransitiveClosure()
 }
 
-func (r *Relation) getCopy() Relation {
+//GetCopy of relation
+func (r *Relation) GetCopy() Relation {
 	duplicate := Relation{}
 	duplicate.graph = r.graph.Clone()
 	return duplicate
@@ -139,10 +140,10 @@ func (r Relation) contains(other Relation) bool {
 	return r.graph.Contains(other.graph)
 }
 
-func findMatches(ops []Op) (*Relation, []pair, []int, error) {
+func findMatches(ops []Op) (*Relation, map[int]pair, []int, error) {
 	result := InitRelation(len(ops))
 
-	pairs := []pair{}
+	pairs := map[int]pair{}
 	bottoms := []int{}
 	pushes := map[int]int{}
 	pops := map[int]int{}
@@ -164,22 +165,23 @@ func findMatches(ops []Op) (*Relation, []pair, []int, error) {
 			return nil, nil, nil, errors.Errorf("Can't find pair for %d", val)
 		}
 		result.Append(enq, deq)
-		pairs = append(pairs, pair{enqIdx: enq, deqIdx: deq})
+		pairs[val] = pair{enqIdx: enq, deqIdx: deq}
 	}
 	return result, pairs, bottoms, nil
 }
 
+var matches *Relation
+var pairs map[int]pair
+var bottoms []int
+var ops []Op
+
 //CheckTrace return true if the given trace represents a valid queue trace according to Gibbons D algorithm
 func CheckTrace(ops []Op, o *Relation) bool {
-	order := o.getCopy()
-	matches, pairs, bottoms, err := findMatches(ops)
-	if err != nil {
-		return false
-	}
+	order := o.GetCopy()
 
 	order.merge(matches)
 
-	before := order.getCopy()
+	before := order.GetCopy()
 
 	for {
 		order.enlargePairs(pairs)
@@ -189,9 +191,50 @@ func CheckTrace(ops []Op, o *Relation) bool {
 		if before.equals(&order) {
 			break
 		} else {
-			before = order.getCopy()
+			before = order.GetCopy()
 		}
 	}
 
 	return !order.isCyclic()
+}
+
+//Normalize set r to normal form
+func (r *Relation) Normalize() *Relation {
+	nr := InitRelation(len(ops))
+	vmap := map[int]int{}
+	bottomMap := map[int]int{}
+	valCount := 0
+	bottomCount := 0
+
+	for i := range r.graph {
+		for j := range r.graph[i] {
+			if r.graph[i][j] == 1 {
+				nr.Append(getNormalIndex(i, vmap, bottomMap, &valCount, &bottomCount),
+					getNormalIndex(j, vmap, bottomMap, &valCount, &bottomCount))
+			}
+		}
+	}
+	return nr
+}
+
+func getNormalIndex(baseIndex int, vmap, bottomMap map[int]int, valCount, bottomCount *int) (index int) {
+	v := ops[baseIndex].Val
+	if v == BOTTOM {
+		if _, ok := bottomMap[baseIndex]; !ok {
+			*bottomCount++
+			bottomMap[baseIndex] = *bottomCount
+		}
+		index = bottoms[bottomMap[baseIndex]-1]
+	} else {
+		if _, ok := vmap[v]; !ok {
+			*valCount++
+			vmap[v] = *valCount
+		}
+		if ops[baseIndex].OpType == ENQ {
+			index = pairs[vmap[v]].enqIdx
+		} else {
+			index = pairs[vmap[v]].deqIdx
+		}
+	}
+	return
 }

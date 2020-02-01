@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	. "github.com/ori-saporta83/linearizability-testing/alg"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestCheckTrace(t *testing.T) {
@@ -82,6 +83,84 @@ func TestCheckTrace(t *testing.T) {
 			if got := CheckTrace(tt.args.ops, tt.args.order); got != tt.want {
 				t.Errorf("CheckTrace() = %v, want %v", got, tt.want)
 			}
+		})
+	}
+}
+
+func TestRelation_Normalize(t *testing.T) {
+	ops1 := []Op{
+		Op{OpType: ENQ, Val: 1},
+		Op{OpType: DEQ, Val: 1},
+		Op{OpType: DEQ, Val: BOTTOM},
+	}
+	r1 := InitRelation(len(ops1))
+	r1.Append(0, 1)
+	r1.Append(2, 0)
+
+	ops2 := []Op{
+		Op{OpType: ENQ, Val: 1},
+		Op{OpType: DEQ, Val: 1},
+		Op{OpType: ENQ, Val: 2},
+		Op{OpType: DEQ, Val: 2},
+		Op{OpType: DEQ, Val: BOTTOM},
+	}
+	r2 := InitRelation(len(ops2))
+	r2.Append(2, 3)
+	r2.Append(3, 4)
+
+	r2Want := InitRelation(len(ops2))
+	r2Want.Append(0, 1)
+	r2Want.Append(1, 4)
+
+	ops3 := append(ops2, Op{OpType: DEQ, Val: BOTTOM})
+	r3 := InitRelation(len(ops3))
+	r3.Append(1, 2)
+	r3.Append(0, 5)
+
+	r3Want := InitRelation(len(ops3))
+	r3Want.Append(1, 2)
+	r3Want.Append(0, 4)
+
+	ops4 := []Op{
+		Op{OpType: ENQ, Val: 1},
+		Op{OpType: DEQ, Val: 1},
+		Op{OpType: ENQ, Val: 2},
+		Op{OpType: DEQ, Val: 2},
+		Op{OpType: ENQ, Val: 3},
+		Op{OpType: DEQ, Val: 3},
+		Op{OpType: DEQ, Val: BOTTOM},
+		Op{OpType: DEQ, Val: BOTTOM},
+		Op{OpType: DEQ, Val: BOTTOM},
+	}
+
+	r4 := InitRelation(len(ops4))
+	r4.Append(0, 1)
+	r4.Append(4, 5)
+	r4.Append(4, 6)
+	r4.Append(4, 8)
+
+	r4Want := InitRelation(len(ops4))
+	r4Want.Append(0, 1)
+	r4Want.Append(2, 3)
+	r4Want.Append(2, 6)
+	r4Want.Append(2, 7)
+
+	tests := []struct {
+		name   string
+		opList []Op
+		r      *Relation
+		want   *Relation
+	}{
+		{"t1", ops1, r1, r1},
+		{"t2", ops2, r2, r2Want},
+		{"t3", ops3, r3, r3Want},
+		{"t4", ops4, r4, r4Want},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			Init(tt.opList)
+			r := tt.r.Normalize()
+			assert.Equal(t, tt.want, r)
 		})
 	}
 }

@@ -164,3 +164,74 @@ func TestRelation_Normalize(t *testing.T) {
 		})
 	}
 }
+
+func TestRelation_IsNormal(t *testing.T) {
+	ops1 := []Op{
+		Op{OpType: ENQ, Val: 1},
+		Op{OpType: DEQ, Val: 1},
+		Op{OpType: DEQ, Val: BOTTOM},
+	}
+	r1 := InitRelation(len(ops1))
+	r1.Append(0, 1)
+	r1.Append(2, 0)
+
+	ops2 := []Op{
+		Op{OpType: ENQ, Val: 1},
+		Op{OpType: DEQ, Val: 1},
+		Op{OpType: ENQ, Val: 2},
+		Op{OpType: DEQ, Val: 2},
+		Op{OpType: DEQ, Val: BOTTOM},
+	}
+	r2 := InitRelation(len(ops2))
+	r2.Append(2, 3)
+	r2.Append(3, 4)
+
+	ops3 := append(ops2, Op{OpType: DEQ, Val: BOTTOM})
+	r3 := InitRelation(len(ops3))
+	r3.Append(1, 2)
+	r3.Append(0, 5)
+
+	ops4 := []Op{
+		Op{OpType: ENQ, Val: 1},
+		Op{OpType: DEQ, Val: 1},
+		Op{OpType: ENQ, Val: 2},
+		Op{OpType: DEQ, Val: 2},
+		Op{OpType: ENQ, Val: 3},
+		Op{OpType: DEQ, Val: 3},
+		Op{OpType: DEQ, Val: BOTTOM},
+		Op{OpType: DEQ, Val: BOTTOM},
+		Op{OpType: DEQ, Val: BOTTOM},
+	}
+
+	r4 := InitRelation(len(ops4))
+	r4.Append(0, 1)
+	r4.Append(4, 5)
+	r4.Append(4, 6)
+	r4.Append(4, 8)
+
+	ops5 := ops4
+	r5 := InitRelation(len(ops5))
+	r5.Append(0, 1)
+	r5.Append(2, 3)
+	r5.Append(2, 6)
+	r5.Append(2, 7)
+
+	tests := []struct {
+		name   string
+		opList []Op
+		r      *Relation
+		want   bool
+	}{
+		{"t1", ops1, r1, true},
+		{"t2", ops2, r2, false},
+		{"t3", ops3, r3, false},
+		{"t4", ops4, r4, false},
+		{"t5", ops5, r5, true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			Init(tt.opList)
+			assert.Equal(t, tt.r.IsNormal(), tt.want)
+		})
+	}
+}

@@ -124,7 +124,10 @@ func CheckTracesWithBase(base Relation, level int) {
 			}
 			contains := false
 			currTrace.Append(i, j)
-			currTrace = *currTrace.Normalize()
+			if !currTrace.IsNormal() {
+				result[i][j] = 0
+				continue
+			}
 			for _, ft := range badTraces {
 				copy := currTrace.GetCopy()
 				copy.addTransitiveRelation()

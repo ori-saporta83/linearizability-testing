@@ -198,6 +198,27 @@ func CheckTrace(ops []Op, o *Relation) bool {
 	return !order.isCyclic()
 }
 
+//IsNormal returns true if r is in normal form
+func (r *Relation) IsNormal() bool {
+	vmap := map[int]int{}
+	bottomMap := map[int]int{}
+	valCount := 0
+	bottomCount := 0
+
+	for i := range r.graph {
+		for j := range r.graph[i] {
+			if r.graph[i][j] == 1 {
+				a := getNormalIndex(i, vmap, bottomMap, &valCount, &bottomCount)
+				b := getNormalIndex(j, vmap, bottomMap, &valCount, &bottomCount)
+				if a != i || b != j {
+					return false
+				}
+			}
+		}
+	}
+	return true
+}
+
 //Normalize set r to normal form
 func (r *Relation) Normalize() *Relation {
 	nr := InitRelation(len(ops))

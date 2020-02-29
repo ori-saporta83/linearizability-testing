@@ -123,6 +123,13 @@ func (r *Relation) GetCopy() Relation {
 	return duplicate
 }
 
+//GetReversed copy of relation
+func (r *Relation) GetReversed() Relation {
+	duplicate := Relation{}
+	duplicate.graph = r.graph.Reverse()
+	return duplicate
+}
+
 func (r *Relation) equals(other *Relation) bool {
 	return r.graph.Equals(other.graph)
 }
@@ -236,6 +243,11 @@ func (r *Relation) Normalize() *Relation {
 		}
 	}
 	return nr
+}
+
+//Connected returns true if underlying graph is connected
+func (r *Relation) Connected() bool {
+	return r.graph.Connected()
 }
 
 func getNormalIndex(baseIndex int, vmap, bottomMap map[int]int, valCount, bottomCount *int) (index int) {

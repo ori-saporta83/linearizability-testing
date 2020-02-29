@@ -7,6 +7,8 @@ import (
 	"github.com/ori-saporta83/linearizability-testing/graphtools"
 )
 
+const maxLevels = 10
+
 //CheckAllTraces return all possible minimal failed traces
 func CheckAllTraces(opList []Op) []*Relation {
 	err := Init(opList)
@@ -89,7 +91,7 @@ func CheckAllTraces2(opList []Op) []Relation {
 	}
 	badTraces = []Relation{}
 	l := len(ops)
-	CheckTracesWithBase(*InitRelation(l), 1)
+	CheckTracesWithBase(*InitRelation(l), 0)
 	filteredBadTraces := []Relation{}
 	for i, trace := range badTraces {
 		contains := false
@@ -102,7 +104,9 @@ func CheckAllTraces2(opList []Op) []Relation {
 		if contains {
 			continue
 		}
-		filteredBadTraces = append(filteredBadTraces, trace)
+		if trace.IsNormal() {
+			filteredBadTraces = append(filteredBadTraces, trace)
+		}
 	}
 	return filteredBadTraces
 }
@@ -111,7 +115,8 @@ func CheckAllTraces2(opList []Op) []Relation {
 func CheckTracesWithBase(base Relation, level int) {
 	l := len(ops)
 	level++
-	if level == l {
+	//TODO: what is the maximum # of edges in a disconnected DAG???
+	if level == maxLevels {
 		return
 	}
 	result := graphtools.InitGraph(l)
@@ -124,10 +129,6 @@ func CheckTracesWithBase(base Relation, level int) {
 			}
 			contains := false
 			currTrace.Append(i, j)
-			if !currTrace.IsNormal() {
-				result[i][j] = 0
-				continue
-			}
 			for _, ft := range badTraces {
 				copy := currTrace.GetCopy()
 				copy.addTransitiveRelation()
@@ -136,7 +137,7 @@ func CheckTracesWithBase(base Relation, level int) {
 					break
 				}
 			}
-			if contains {
+			if contains || currTrace.Connected() {
 				result[i][j] = 0
 				continue
 			}

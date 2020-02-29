@@ -145,6 +145,18 @@ func TestRelation_Normalize(t *testing.T) {
 	r4Want.Append(2, 6)
 	r4Want.Append(2, 7)
 
+	ops5 := []Op{
+		Op{OpType: ENQ, Val: 1},
+		Op{OpType: DEQ, Val: 1},
+		Op{OpType: ENQ, Val: 2},
+		Op{OpType: DEQ, Val: 2},
+	}
+	r5 := InitRelation(len(ops5))
+	r5.Append(1, 2)
+
+	r5Want := InitRelation(len(ops5))
+	r5Want.Append(3, 0)
+
 	tests := []struct {
 		name   string
 		opList []Op
@@ -155,6 +167,7 @@ func TestRelation_Normalize(t *testing.T) {
 		{"t2", ops2, r2, r2Want},
 		{"t3", ops3, r3, r3Want},
 		{"t4", ops4, r4, r4Want},
+		{"t5", ops5, r5, r5Want},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

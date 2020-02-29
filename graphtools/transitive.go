@@ -1,11 +1,15 @@
 package graphtools
 
+import (
+	"github.com/yourbasic/graph"
+)
+
 //Graph is a matrix representation of a directional graph
 type Graph [][]int
 
 //TransitiveClosure returns the reachability matrix of the given graph
-func (graph Graph) TransitiveClosure() Graph {
-	V := len(graph)
+func (g Graph) TransitiveClosure() Graph {
+	V := len(g)
 	/* reach[][] will be the output matrix that will finally
 	   have the shortest  distances between every pair of
 	   vertices */
@@ -18,7 +22,7 @@ func (graph Graph) TransitiveClosure() Graph {
 	   no intermediate vertex. */
 	for i = 0; i < V; i++ {
 		for j = 0; j < V; j++ {
-			reach[i][j] = graph[i][j]
+			reach[i][j] = g[i][j]
 		}
 	}
 
@@ -61,16 +65,16 @@ func InitGraph(N int) Graph {
 }
 
 //Equals returns true iff graph and other are identical
-func (graph Graph) Equals(other Graph) bool {
-	if len(graph) != len(other) {
+func (g Graph) Equals(other Graph) bool {
+	if len(g) != len(other) {
 		return false
 	}
-	for i := 0; i < len(graph); i++ {
-		if len(graph[i]) != len(other[i]) {
+	for i := 0; i < len(g); i++ {
+		if len(g[i]) != len(other[i]) {
 			return false
 		}
-		for j := 0; j < len(graph[i]); j++ {
-			if graph[i][j] != other[i][j] {
+		for j := 0; j < len(g[i]); j++ {
+			if g[i][j] != other[i][j] {
 				return false
 			}
 		}
@@ -79,26 +83,26 @@ func (graph Graph) Equals(other Graph) bool {
 }
 
 //SwitchLine switches between two lines in the graph
-func (graph Graph) SwitchLine(i, j int) {
-	if i > len(graph)-1 || j > len(graph)-1 || i == j {
+func (g Graph) SwitchLine(i, j int) {
+	if i > len(g)-1 || j > len(g)-1 || i == j {
 		return
 	}
-	sub := graph[i]
-	graph[i] = graph[j]
-	graph[j] = sub
+	sub := g[i]
+	g[i] = g[j]
+	g[j] = sub
 }
 
 //Contains returns true if all 1 values in other are contained in graph
-func (graph Graph) Contains(other Graph) bool {
-	if len(graph) != len(other) {
+func (g Graph) Contains(other Graph) bool {
+	if len(g) != len(other) {
 		return false
 	}
-	for i := 0; i < len(graph); i++ {
-		if len(graph[i]) != len(other[i]) {
+	for i := 0; i < len(g); i++ {
+		if len(g[i]) != len(other[i]) {
 			return false
 		}
-		for j := 0; j < len(graph[i]); j++ {
-			if other[i][j] == 1 && graph[i][j] != other[i][j] {
+		for j := 0; j < len(g[i]); j++ {
+			if other[i][j] == 1 && g[i][j] != other[i][j] {
 				return false
 			}
 		}
@@ -107,11 +111,46 @@ func (graph Graph) Contains(other Graph) bool {
 }
 
 //Clone returns a copy of the graph
-func (graph Graph) Clone() Graph {
-	duplicate := InitGraph(len(graph))
-	for i := range graph {
-		duplicate[i] = make([]int, len(graph[i]))
-		copy(duplicate[i], graph[i])
+func (g Graph) Clone() Graph {
+	duplicate := InitGraph(len(g))
+	for i := range g {
+		duplicate[i] = make([]int, len(g[i]))
+		copy(duplicate[i], g[i])
 	}
 	return duplicate
+}
+
+//Reverse returns the reversed copy of the graph
+func (g Graph) Reverse() Graph {
+	reversed := InitGraph(len(g))
+	for i := 0; i < len(g); i++ {
+		for j := 0; j < len(g); j++ {
+			if g[i][j] == 1 {
+				reversed[j][i] = 1
+			}
+		}
+	}
+	return reversed
+}
+
+//Order returns the # vertices
+func (g Graph) Order() int {
+	return len(g)
+}
+
+//Visit calls do for all neighbors of v and aborts with true if do returns skip == true
+func (g Graph) Visit(v int, do func(w int, c int64) (skip bool)) (aborted bool) {
+	for i := 0; i < len(g); i++ {
+		if g[v][i] == 1 {
+			if do(i, 0) {
+				return true
+			}
+		}		
+	}
+	return false
+}
+
+//Connected returnes true if the graph is connected
+func (g Graph) Connected() bool {
+	return graph.Connected(g)
 }

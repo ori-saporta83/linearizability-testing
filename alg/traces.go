@@ -116,9 +116,9 @@ func CheckTracesWithBase(base Relation, level int) {
 	l := len(ops)
 	level++
 	//TODO: what is the maximum # of edges in a disconnected DAG???
-	if level == maxLevels {
-		return
-	}
+	// if level == maxLevels {
+	// 	return
+	// }
 	result := graphtools.InitGraph(l)
 	for i := 0; i < l; i++ {
 		for j := 0; j < l; j++ {
@@ -137,7 +137,7 @@ func CheckTracesWithBase(base Relation, level int) {
 					break
 				}
 			}
-			if contains || currTrace.Connected() {
+			if contains || currTrace.Ordered() || currTrace.isCyclic() {
 				result[i][j] = 0
 				continue
 			}

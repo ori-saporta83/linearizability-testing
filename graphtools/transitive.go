@@ -145,12 +145,28 @@ func (g Graph) Visit(v int, do func(w int, c int64) (skip bool)) (aborted bool) 
 			if do(i, 0) {
 				return true
 			}
-		}		
+		}
 	}
 	return false
 }
 
-//Connected returnes true if the graph is connected
-func (g Graph) Connected() bool {
-	return graph.Connected(g)
+//Ordered returns true if the graph is ordered
+func (g Graph) Ordered() bool {
+	if g.Cyclic() {
+		return false
+	}
+	transitive := g.TransitiveClosure()
+	for i := 0; i < g.Order(); i++ {
+		for j := i + 1; j < g.Order(); j++ {
+			if transitive[i][j] == 0 && transitive[j][i] == 0 {
+				return false
+			}
+		}
+	}
+	return true
+}
+
+//Cyclic returns true if the graph is cyclic
+func (g Graph) Cyclic() bool {
+	return !graph.Acyclic(g)
 }

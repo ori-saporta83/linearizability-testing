@@ -80,6 +80,10 @@ func TestCheckTrace(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			err := Init(tt.args.ops)
+			if err != nil && !tt.want {
+				return
+			}
 			if got := CheckTrace(tt.args.ops, tt.args.order); got != tt.want {
 				t.Errorf("CheckTrace() = %v, want %v", got, tt.want)
 			}

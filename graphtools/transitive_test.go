@@ -149,22 +149,21 @@ func TestGraph_SwitchLine(t *testing.T) {
 	}
 }
 
-func TestGraph_Connected(t *testing.T) {
+func TestGraph_Ordered(t *testing.T) {
 	tests := []struct {
 		name  string
 		graph graphtools.Graph
 		want  bool
 	}{
 		{"t1", graphtools.InitGraph(2), false},
-		{"t2", graphtools.Graph{{1, 0}, {0, 0}}, false},
-		{"t3", graphtools.Graph{{0, 1}, {0, 0}}, true},
-		{"t4", graphtools.Graph{{0, 0}, {1, 0}}, true},
-		{"t5", graphtools.Graph{{0, 1}, {1, 0}}, true},
+		{"t2", graphtools.Graph{{0, 1}, {1, 0}}, false},
+		{"t3", graphtools.Graph{{0, 1, 1}, {0, 0, 0}, {0, 0, 0}}, false},
+		{"t3", graphtools.Graph{{0, 1, 0}, {0, 0, 1}, {0, 0, 0}}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.graph.Connected(); got != tt.want {
-				t.Errorf("Graph.SwitchLine() = %v, want %v", got, tt.want)
+			if got := tt.graph.Ordered(); got != tt.want {
+				t.Errorf("Graph.Ordered() = %v, want %v", got, tt.want)
 			}
 		})
 	}

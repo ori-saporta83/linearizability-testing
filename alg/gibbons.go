@@ -135,12 +135,7 @@ func (r *Relation) equals(other *Relation) bool {
 }
 
 func (r Relation) isCyclic() bool {
-	for i := 0; i < len(r.graph); i++ {
-		if r.graph[i][i] != 0 {
-			return true
-		}
-	}
-	return false
+	return r.graph.Cyclic()
 }
 
 func (r Relation) contains(other Relation) bool {
@@ -207,29 +202,13 @@ func CheckTrace(ops []Op, o *Relation) bool {
 
 //IsNormal returns true if r is in normal form
 func (r *Relation) IsNormal() bool {
-	vmap := map[int]int{}
-	bottomMap := map[int]int{}
-	valCount := 0
-	bottomCount := 0
-
-	for i := range r.graph {
-		for j := range r.graph[i] {
-			if r.graph[i][j] == 1 {
-				a := getNormalIndex(i, vmap, bottomMap, &valCount, &bottomCount)
-				b := getNormalIndex(j, vmap, bottomMap, &valCount, &bottomCount)
-				if a != i || b != j {
-					return false
-				}
-			}
-		}
-	}
-	return true
+	return r.equals(r.Normalize())
 }
 
 //Normalize set r to normal form
 func (r *Relation) Normalize() *Relation {
 	nr := InitRelation(len(ops))
-	vmap := map[int]int{}
+	vmap := r.orderValues()
 	bottomMap := map[int]int{}
 	valCount := 0
 	bottomCount := 0
@@ -245,9 +224,51 @@ func (r *Relation) Normalize() *Relation {
 	return nr
 }
 
-//Connected returns true if underlying graph is connected
-func (r *Relation) Connected() bool {
-	return r.graph.Connected()
+//Ordered returns true if relation is total order
+func (r *Relation) Ordered() bool {
+	return r.graph.Ordered()
+}
+
+func (r *Relation) orderValues() map[int]int {
+	vmap := map[int]int{}
+	found := 1
+	for i := 0; i < r.graph.Order(); i++ {
+		for j := 0; j < r.graph.Order(); j++ {
+			if r.Contains(i, j) {
+				if _, ok := vmap[ops[i].Val]; !ok {
+					if ops[i].OpType == ENQ {
+						vmap[ops[i].Val] = found
+						found++
+					}
+				}
+				if _, ok := vmap[ops[j].Val]; !ok {
+					if ops[j].OpType == ENQ {
+						vmap[ops[j].Val] = found
+						found++
+					}
+				}
+			}
+		}
+	}
+	for i := 0; i < r.graph.Order(); i++ {
+		for j := 0; j < r.graph.Order(); j++ {
+			if r.Contains(i, j) {
+				if _, ok := vmap[ops[i].Val]; !ok {
+					if ops[i].OpType == DEQ && ops[i].Val != BOTTOM {
+						vmap[ops[i].Val] = found
+						found++
+					}
+				}
+				if _, ok := vmap[ops[j].Val]; !ok {
+					if ops[j].OpType == DEQ && ops[j].Val != BOTTOM {
+						vmap[ops[j].Val] = found
+						found++
+					}
+				}
+			}
+		}
+	}
+	return vmap
 }
 
 func getNormalIndex(baseIndex int, vmap, bottomMap map[int]int, valCount, bottomCount *int) (index int) {
@@ -259,10 +280,6 @@ func getNormalIndex(baseIndex int, vmap, bottomMap map[int]int, valCount, bottom
 		}
 		index = bottoms[bottomMap[baseIndex]-1]
 	} else {
-		if _, ok := vmap[v]; !ok {
-			*valCount++
-			vmap[v] = *valCount
-		}
 		if ops[baseIndex].OpType == ENQ {
 			index = pairs[vmap[v]].enqIdx
 		} else {

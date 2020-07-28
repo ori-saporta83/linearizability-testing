@@ -1,0 +1,38 @@
+1. generate queue per input ops
+1. change labels from index based to operation based (e.g. eq(a)_deq(b))
+1. isomorphism on the solver
+
+https://demo.firepad.io/#pjQyC2Ou2J
+x_00 x_01 ... x_nn
+
+ea->da ... ez->dz
+
+exactly one j for every i
+
+(i,j) \in E1
+s_ik
+s_jm
+===========
+(k,m) \in E2
+
+
+s_ij : vertex i x   corresponds to    vertex j in y
+
+iso(s,x1,x2) := s is an isomorphism from x1 to x2
+
+
+solver.add_assertion(Or([Not(m) for m in model_pos] + model_neg))
+
+[x_31]
+
+forall s, ~iso(s,x,m)
+
+~x_31 \/ x_00 \/ x_01 ... \/ x_33
+
+[x_20]
+
+~x_20 \/ x_00 \/ x_01 ... \/ x_33
+
+[x_21, x_30]
+[x_01, x_32]
+[x_10, x_23]

@@ -132,15 +132,16 @@ def opType(i):
 def main():
     # number of operations
     global n
-    n = 4
+    n = 7
 
     # number of deq(bottom) operations, must maintain:
     # k < n
     # (n - k) % 2 = 0
     global k
-    k = 0
+    k = 1
 
     print("start", datetime.now())
+    print("n:", n, "k:", k)
 
     # create a solver
     solver = Solver("z3")
@@ -158,9 +159,6 @@ def main():
 
     # check satisfiability
     res = solver.check_sat()
-
-    # print result
-    print(res)
 
     # get all possible models
     while (res):

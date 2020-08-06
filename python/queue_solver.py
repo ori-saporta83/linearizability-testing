@@ -68,7 +68,6 @@ def gen_conditions(y, n, k):
         for j in range(n-k, n):
             conditions.append(Iff(y[(2*i, j)], y[(2*i+1, j)]))
             conditions.append(Iff(y[(j, 2*i)], y[(j, 2*i+1)]))
-    print("conditions:", conditions)
     return conditions
 
 
@@ -112,7 +111,7 @@ def gi_t2(x):
 
 
 def gi_t3(x, e1, rel):
-    return And([Implies(Iff(e1[i, j], Not(rel[k, l])), Or(Not(x[i, k]), Not(x[j, l]))) for i, j, k, l in product(range(n), range(n), range(n), range(n)) if l != k and i < j])
+    return And([Implies(Iff(e1[i, j], Not(rel[k, l])), Or(Not(x[i, k]), Not(x[j, l]))) for i, j, k, l in product(range(n), range(n), range(n), range(n)) if l != k and i != j])
 
 
 def gi_t4(x):
@@ -121,8 +120,7 @@ def gi_t4(x):
     or they are both deq(bot) so they are both >= n-k
     x_ij --> ((i >= n-k) --> (j >= n-k)) || ((i < n-k) && (i%2 == j%2))
     """
-    # return And([Implies(x[i, j], Or(Implies(GE(i, n-k), GE(j, n-k)), And(LT(i, n-k), Equals(i % 2, j % 2)))) for i, j in product(range(n), range(n))])
-    return And([Implies(x[i, j], Equals(opType(i), opType(j))) for i, j in product(range(n), range(n))])
+    return And([Not(x[i, j]) for i, j in product(range(n), range(n)) if opType(i) != opType(j)])
 
 
 def opType(i):
@@ -151,7 +149,7 @@ def main():
     rel = {(i, j): Symbol(label(i)+"_"+label(j))
            for i, j in product(range(n), range(n))}
 
-    x = {(i, j): Symbol("x_"+str(i)+str(j))
+    x = {(i, j): Symbol("x_"+label(i)+"_"+label(j))
          for i, j in product(range(n), range(n))}
 
     # assert
@@ -172,16 +170,22 @@ def main():
         # variables that are false in the model
         model_neg = [rel[(i, j)] for i, j in product(
             range(n), range(n)) if solver.get_value(rel[(i, j)]).is_false()]
-
+            
         model = {(i, j): solver.get_value(rel[(i, j)])
                  for i, j in product(range(n), range(n))}
+        
+        # for i in range(0, n-k, 2):
+        #   model[(i, i+1)] = Bool(True)
+
         print(model_pos)
         # negate the variables that are true in the model
         # assert positively the variables that are false in the model
         # put everything in one disjunction
-        solver.add_assertion(Not(Exists(x.values(), And(
-            gi(x, model, rel), Not(And([x[i, i] for i in range(0, n)]))))))
+        
         # solver.add_assertion(Or([Not(m) for m in model_pos] + model_neg))
+
+        solver.add_assertion(Not(Exists(x.values(), gi(x, model, rel))))
+        
         res = solver.check_sat()
 
     print("end", datetime.now())

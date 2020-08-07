@@ -99,7 +99,12 @@ def minimal(rel):
 
 
 def gi(x, e1, rel):
-    return And(gi_t1(x), gi_t2(x), gi_t3(x, e1, rel), gi_t4(x))
+    terms = And(gi_t1(x), gi_t2(x), gi_t3(x, e1, rel), gi_t4(x))
+    return terms
+
+
+def gi_strong(x, e1, rel):
+    return And(gi(x, e1, rel), gi_t5(x)) 
 
 
 def gi_t1(x):
@@ -111,6 +116,7 @@ def gi_t2(x):
 
 
 def gi_t3(x, e1, rel):
+    # x[i,k] && x[j,l] --> (e1[i,j] <--> rel[k,l])
     return And([Implies(Iff(e1[i, j], Not(rel[k, l])), Or(Not(x[i, k]), Not(x[j, l]))) for i, j, k, l in product(range(n), range(n), range(n), range(n)) if l != k and i != j])
 
 
@@ -122,23 +128,26 @@ def gi_t4(x):
     """
     return And([Not(x[i, j]) for i, j in product(range(n), range(n)) if opType(i) != opType(j)])
 
+def gi_t5(x):
+    """remap by pairs"""
+    return And([Implies(x[i, j], x[i+1, j+1]) for i, j in product(range(n), range(n)) if opType(i) == 0 and opType(j) == 0])
 
 def opType(i):
   if i >= n-k:
-    return Int(0) # deq(bot)
-  return Int(i % 2) # 0: enq(val), 1: deq(val)
+    return 2 #2: deq(bot)
+  return i % 2 # 0: enq(val), 1: deq(val)
 
 
 def main():
     # number of operations
     global n
-    n = 7
+    n = 6
 
     # number of deq(bottom) operations, must maintain:
     # k < n
     # (n - k) % 2 = 0
     global k
-    k = 1
+    k = 0
 
     print("start", datetime.now())
     print("n:", n, "k:", k)
@@ -150,12 +159,21 @@ def main():
     rel = {(i, j): Symbol(label(i)+"_"+label(j))
            for i, j in product(range(n), range(n))}
 
+    # rel2 = {(i, j): Symbol("A_" + label(i)+"_"+label(j))
+    #        for i, j in product(range(n), range(n))}
+
     x = {(i, j): Symbol("x_"+label(i)+"_"+label(j))
          for i, j in product(range(n), range(n))}
 
     # assert
     solver.add_assertion(testcase(rel))
     solver.add_assertion(minimal(rel))
+
+    # solver.add_assertion(testcase(rel2))
+    # solver.add_assertion(minimal(rel2))
+    
+    # solver.add_assertion(Exists(x.values(), gi(x, rel2, rel)))
+    # solver.add_assertion(Not(Exists(x.values(), gi_strong(x, rel2, rel))))
 
     # check satisfiability
     res = solver.check_sat()
@@ -172,17 +190,24 @@ def main():
         model = {(i, j): solver.get_value(rel[(i, j)])
                  for i, j in product(range(n), range(n))}
         
-        # for i in range(0, n-k, 2):
-        #   model[(i, i+1)] = Bool(True)
+        # variables that are true in the model
+        # model_pos2 = [rel2[(i, j)] for i, j in product(
+        #     range(n), range(n)) if solver.get_value(rel2[(i, j)]).is_true()]
 
-        print(model_pos)
+        model_x = [x[(i, j)] for i, j in product(
+            range(n), range(n)) if solver.get_value(x[(i, j)]).is_true()]
+
+        print("rel:", model_pos)
+        # print("rel2:", model_pos2)
+        # print("X:", model_x)
+        # break
         # negate the variables that are true in the model
         # assert positively the variables that are false in the model
         # put everything in one disjunction
         
         # solver.add_assertion(Or([Not(m) for m in model_pos] + model_neg))
 
-        solver.add_assertion(Not(Exists(x.values(), gi(x, model, rel))))
+        solver.add_assertion(Not(Exists(x.values(), gi_strong(x, model, rel))))
         
         res = solver.check_sat()
 

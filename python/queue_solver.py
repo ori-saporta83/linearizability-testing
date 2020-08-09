@@ -104,7 +104,7 @@ def gi(x, e1, rel):
 
 
 def gi_strong(x, e1, rel):
-    return And(gi(x, e1, rel), gi_t5(x)) 
+    return And(gi(x, e1, rel), gi_t5(x))
 
 
 def gi_t1(x):
@@ -128,14 +128,16 @@ def gi_t4(x):
     """
     return And([Not(x[i, j]) for i, j in product(range(n), range(n)) if opType(i) != opType(j)])
 
+
 def gi_t5(x):
     """remap by pairs"""
     return And([Implies(x[i, j], x[i+1, j+1]) for i, j in product(range(n), range(n)) if opType(i) == 0 and opType(j) == 0])
 
+
 def opType(i):
-  if i >= n-k:
-    return 2 #2: deq(bot)
-  return i % 2 # 0: enq(val), 1: deq(val)
+    if i >= n-k:
+        return 2  # 2: deq(bot)
+    return i % 2  # 0: enq(val), 1: deq(val)
 
 
 def main():
@@ -152,66 +154,68 @@ def main():
     print("start", datetime.now())
     print("n:", n, "k:", k)
 
-    # create a solver
-    solver = Solver("z3")
+    try:
+        # create a solver
+        solver = Solver("z3")
 
-    # create Boolean variables
-    rel = {(i, j): Symbol(label(i)+"_"+label(j))
-           for i, j in product(range(n), range(n))}
+        # create Boolean variables
+        rel = {(i, j): Symbol(label(i)+"_"+label(j))
+               for i, j in product(range(n), range(n))}
 
-    # rel2 = {(i, j): Symbol("A_" + label(i)+"_"+label(j))
-    #        for i, j in product(range(n), range(n))}
+        # rel2 = {(i, j): Symbol("A_" + label(i)+"_"+label(j))
+        #        for i, j in product(range(n), range(n))}
 
-    x = {(i, j): Symbol("x_"+label(i)+"_"+label(j))
-         for i, j in product(range(n), range(n))}
+        x = {(i, j): Symbol("x_"+label(i)+"_"+label(j))
+             for i, j in product(range(n), range(n))}
 
-    # assert
-    solver.add_assertion(testcase(rel))
-    solver.add_assertion(minimal(rel))
+        # assert
+        solver.add_assertion(testcase(rel))
+        solver.add_assertion(minimal(rel))
 
-    # solver.add_assertion(testcase(rel2))
-    # solver.add_assertion(minimal(rel2))
-    
-    # solver.add_assertion(Exists(x.values(), gi(x, rel2, rel)))
-    # solver.add_assertion(Not(Exists(x.values(), gi_strong(x, rel2, rel))))
+        # solver.add_assertion(testcase(rel2))
+        # solver.add_assertion(minimal(rel2))
 
-    # check satisfiability
-    res = solver.check_sat()
+        # solver.add_assertion(Exists(x.values(), gi(x, rel2, rel)))
+        # solver.add_assertion(Not(Exists(x.values(), gi_strong(x, rel2, rel))))
 
-    # get all possible models
-    while (res):
-        # variables that are true in the model
-        model_pos = [rel[(i, j)] for i, j in product(
-            range(n), range(n)) if solver.get_value(rel[(i, j)]).is_true()]
-        # variables that are false in the model
-        model_neg = [rel[(i, j)] for i, j in product(
-            range(n), range(n)) if solver.get_value(rel[(i, j)]).is_false()]
-            
-        model = {(i, j): solver.get_value(rel[(i, j)])
-                 for i, j in product(range(n), range(n))}
-        
-        # variables that are true in the model
-        # model_pos2 = [rel2[(i, j)] for i, j in product(
-        #     range(n), range(n)) if solver.get_value(rel2[(i, j)]).is_true()]
-
-        model_x = [x[(i, j)] for i, j in product(
-            range(n), range(n)) if solver.get_value(x[(i, j)]).is_true()]
-
-        print("rel:", model_pos)
-        # print("rel2:", model_pos2)
-        # print("X:", model_x)
-        # break
-        # negate the variables that are true in the model
-        # assert positively the variables that are false in the model
-        # put everything in one disjunction
-        
-        # solver.add_assertion(Or([Not(m) for m in model_pos] + model_neg))
-
-        solver.add_assertion(Not(Exists(x.values(), gi_strong(x, model, rel))))
-        
+        # check satisfiability
         res = solver.check_sat()
 
-    print("end", datetime.now())
+        # get all possible models
+        while (res):
+            # variables that are true in the model
+            model_pos = [rel[(i, j)] for i, j in product(
+                range(n), range(n)) if solver.get_value(rel[(i, j)]).is_true()]
+            # variables that are false in the model
+            model_neg = [rel[(i, j)] for i, j in product(
+                range(n), range(n)) if solver.get_value(rel[(i, j)]).is_false()]
+
+            model = {(i, j): solver.get_value(rel[(i, j)])
+                     for i, j in product(range(n), range(n))}
+
+            # variables that are true in the model
+            # model_pos2 = [rel2[(i, j)] for i, j in product(
+            #     range(n), range(n)) if solver.get_value(rel2[(i, j)]).is_true()]
+
+            model_x = [x[(i, j)] for i, j in product(
+                range(n), range(n)) if solver.get_value(x[(i, j)]).is_true()]
+
+            print("rel:", model_pos)
+            # print("rel2:", model_pos2)
+            # print("X:", model_x)
+            # break
+            # negate the variables that are true in the model
+            # assert positively the variables that are false in the model
+            # put everything in one disjunction
+
+            # solver.add_assertion(Or([Not(m) for m in model_pos] + model_neg))
+
+            solver.add_assertion(Not(Exists(x.values(), gi(x, model, rel))))
+
+            res = solver.check_sat()
+
+    finally:
+        print("end", datetime.now())
 
 
 if __name__ == "__main__":

@@ -91,11 +91,14 @@ def label(i):
     return "deq(T_" + chr(97 + i - n + k) + ")"
 
 
-def minimal(rel):
-    """minimal(x): forall z, z < x => ~testcase(z)"""
-    z = {(i, j): Symbol("z_" + label(i) + label(j))
+def minimal_one(rel,i0,j0):
+    z = {(i, j): rel[(i, j)]
          for i, j in product(range(n), range(n))}
-    return ForAll([z[(i, j)] for i, j in product(range(n), range(n))], Implies(lt(z, rel), Not(testcase(z))))
+    z[(i0, j0)] = Not(rel[(i0, j0)])
+    return Not(testcase(z))
+
+def minimal_all(rel):
+    return And([Implies(rel[(i,j)], minimal_one(rel,i,j)) for i, j in product(range(n), range(n))])
 
 
 def gi(x, e1, rel):
@@ -143,7 +146,7 @@ def opType(i):
 def main():
     # number of operations
     global n
-    n = 6
+    n = 8
 
     # number of deq(bottom) operations, must maintain:
     # k < n
@@ -170,7 +173,7 @@ def main():
 
         # assert
         solver.add_assertion(testcase(rel))
-        solver.add_assertion(minimal(rel))
+        solver.add_assertion(minimal_all(rel))
 
         # solver.add_assertion(testcase(rel2))
         # solver.add_assertion(minimal(rel2))

@@ -83,7 +83,7 @@ def testcase(x):
     y = {(i, j): Symbol("y_" + label(i) + "_" + label(j))
          for i, j in product(range(n), range(n))}
     return And(po(x), ForAll([y[(i, j)] for i, j in product(range(n), range(n))],
-                             Implies(And(le(x, y), po(y)), Not(queue_O(y, n, k)))))
+                             Implies(And(le(x, y), po(y), tot(y)), Not(queue_O(y, n, k)))))
 
 
 def label(i):

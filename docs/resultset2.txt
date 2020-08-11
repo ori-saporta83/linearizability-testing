@@ -59,3 +59,17 @@ rel: ['enq(A)_enq(C)', 'deq(B)_deq(A)', 'deq(C)_deq(D)', 'enq(D)_enq(B)']
 rel: ['deq(B)_enq(C)', 'deq(C)_enq(B)']
 rel: ['deq(A)_enq(D)', 'deq(B)_enq(C)', 'deq(C)_enq(A)', 'deq(D)_enq(B)']
 end 2020-08-07 12:18:35.565499
+
+OriL:
+start 2020-08-09 10:21:05.047174
+n: 8 k: 0
+rel: ['deq(D)_enq(D)']
+rel: ['deq(A)_enq(B)', 'deq(B)_enq(D)', 'deq(C)_enq(A)', 'deq(D)_enq(C)']
+rel: ['deq(B)_deq(C)', 'enq(C)_enq(B)']
+rel: ['enq(A)_enq(D)', 'deq(B)_enq(C)', 'deq(C)_deq(A)', 'deq(D)_enq(B)']
+rel: ['enq(A)_enq(D)', 'deq(B)_deq(C)', 'enq(C)_deq(A)', 'deq(D)_enq(B)']
+rel: ['deq(A)_deq(D)', 'deq(B)_deq(C)', 'enq(C)_enq(A)', 'enq(D)_enq(B)']
+rel: ['deq(A)_deq(D)', 'deq(C)_enq(A)', 'enq(D)_enq(C)']
+rel: ['deq(A)_enq(C)', 'deq(C)_enq(D)', 'deq(D)_enq(A)']
+rel: ['deq(A)_enq(B)', 'deq(B)_enq(A)']
+end 2020-08-09 10:21:18.283563

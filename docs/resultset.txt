@@ -30,20 +30,14 @@ ops4 := []Op{
 [<0,3><2,1><2,4><4,1>]
 [<1,2><3,0>]
 
-n=5, k=1
-start 2020-07-28 20:04:14.977596
-conditions: ['y_enq(A)_deq(A)', ('y_enq(A)_enq(B)' <-> 'y_deq(A)_deq(B)'), ('y_enq(B)_enq(A)' <-> 'y_deq(B)_deq(A)'), ('y_enq(A)_deq(T_a)' <-> 'y_deq(A)_deq(T_a)'), ('y_deq(T_a)_enq(A)' <-> 'y_deq(T_a)_deq(A)'), 'y_enq(B)_deq(B)', ('y_enq(B)_deq(T_a)' <-> 'y_deq(B)_deq(T_a)'), ('y_deq(T_a)_enq(B)' <-> 'y_deq(T_a)_deq(B)')]
-True
-['enq(A)_enq(B)', 'deq(B)_deq(A)']
-['deq(A)_enq(A)']
-['deq(B)_enq(B)']
-['deq(A)_deq(B)', 'enq(B)_enq(A)']
-['enq(A)_deq(B)', 'enq(B)_deq(A)', 'enq(B)_deq(T_a)', 'deq(T_a)_deq(A)']
-['enq(A)_deq(A)', 'enq(A)_deq(T_a)', 'deq(T_a)_deq(A)']
-['enq(A)_deq(B)', 'enq(A)_deq(T_a)', 'enq(B)_deq(A)', 'deq(T_a)_deq(B)']
-['enq(B)_deq(B)', 'enq(B)_deq(T_a)', 'deq(T_a)_deq(B)']
-['deq(A)_enq(B)', 'deq(B)_enq(A)']
-end 2020-07-28 20:04:15.614517
+start 2020-08-09 17:17:47.447274
+n: 5 k: 1
+rel: ['enq(A)_enq(B)', 'deq(B)_deq(A)']
+rel: ['deq(A)_enq(A)']
+rel: ['deq(A)_enq(B)', 'deq(B)_enq(A)']
+rel: ['enq(A)_deq(A)', 'enq(A)_deq(T_a)', 'deq(T_a)_deq(A)']
+rel: ['enq(A)_deq(B)', 'enq(B)_deq(A)', 'enq(B)_deq(T_a)', 'deq(T_a)_deq(A)']
+end 2020-08-09 17:17:48.375149
 
 n=8, k=0
 start 2020-07-28 20:07:09.972432

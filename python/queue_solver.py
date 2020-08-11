@@ -146,7 +146,7 @@ def opType(i):
 def main():
     # number of operations
     global n
-    n = 8
+    n = 4
 
     # number of deq(bottom) operations, must maintain:
     # k < n
@@ -185,6 +185,7 @@ def main():
         res = solver.check_sat()
 
         # get all possible models
+        i = 1
         while (res):
             # variables that are true in the model
             model_pos = [rel[(i, j)] for i, j in product(
@@ -203,7 +204,8 @@ def main():
             model_x = [x[(i, j)] for i, j in product(
                 range(n), range(n)) if solver.get_value(x[(i, j)]).is_true()]
 
-            print("rel:", model_pos)
+            print(i, ":", model_pos)
+            i += 1
             # print("rel2:", model_pos2)
             # print("X:", model_x)
             # break

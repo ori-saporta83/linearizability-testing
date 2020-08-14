@@ -90,3 +90,20 @@ n: 10 k: 0
 12 : ['deq(B)_enq(C)', 'deq(C)_enq(E)', 'deq(D)_enq(B)', 'deq(E)_enq(D)']
 13 : ['deq(A)_enq(E)', 'deq(B)_enq(C)', 'deq(C)_enq(A)', 'deq(D)_enq(B)', 'deq(E)_enq(D)']
 end 2020-08-11 18:51:34.503419
+
+start 2020-08-12 09:05:05.622923
+n: 10 k: 0
+1 : ['deq(E)_enq(E)']
+2 : ['enq(C)_enq(E)', 'deq(E)_deq(C)']
+3 : ['deq(A)_deq(D)', 'deq(B)_deq(C)', 'enq(C)_enq(E)', 'enq(D)_enq(B)', 'deq(E)_enq(A)']
+4 : ['enq(A)_enq(B)', 'deq(B)_enq(D)', 'deq(D)_deq(E)', 'enq(E)_deq(A)']
+5 : ['deq(A)_enq(E)', 'enq(B)_enq(D)', 'deq(C)_deq(B)', 'deq(D)_enq(A)', 'deq(E)_enq(C)']
+6 : ['deq(A)_deq(D)', 'deq(B)_enq(A)', 'deq(C)_enq(B)', 'enq(D)_enq(C)']
+7 : ['enq(A)_deq(B)', 'enq(B)_enq(E)', 'deq(C)_enq(D)', 'deq(D)_deq(A)', 'deq(E)_enq(C)']
+8 : ['deq(A)_deq(B)', 'enq(B)_enq(D)', 'deq(D)_deq(E)', 'enq(E)_enq(A)']
+9 : ['deq(A)_enq(E)', 'enq(C)_enq(A)', 'deq(E)_deq(C)']
+10 : ['deq(B)_enq(C)', 'deq(C)_enq(B)']
+11 : ['deq(A)_enq(B)', 'deq(B)_enq(E)', 'deq(E)_enq(A)']
+12 : ['deq(A)_enq(E)', 'deq(B)_enq(D)', 'deq(C)_enq(A)', 'deq(D)_enq(C)', 'deq(E)_enq(B)']
+13 : ['deq(A)_enq(D)', 'deq(B)_enq(C)', 'deq(C)_enq(A)', 'deq(D)_enq(B)']
+end 2020-08-12 09:20:29.086423

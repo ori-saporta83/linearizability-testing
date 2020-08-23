@@ -60,7 +60,7 @@ void *thread_3(void *arg)
 {
     set_thread_num(2);
 
-    enqueue(&q, 1);
+    enqueue(&q, 2);
     atomic_store_explicit(&f_3, 1, memory_order_seq_cst);
 
     return NULL;

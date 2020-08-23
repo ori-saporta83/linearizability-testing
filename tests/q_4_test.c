@@ -11,6 +11,18 @@
 // ['deq(A)_deq(B)', 'enq(B)_enq(A)']
 queue_t q;
 
+int __thread tid;
+
+void set_thread_num(int i)
+{
+	tid = i;
+}
+
+int get_thread_num()
+{
+	return tid;
+}
+
 atomic_int f_1;
 atomic_int f_2;
 atomic_int f_3;
@@ -19,11 +31,10 @@ atomic_int f_4;
 // enq(A)
 void *thread_1(void *arg)
 {
+    set_thread_num(0);
     int val = 0;
-    do
-    {
-        val = atomic_load_explicit(&f_3, memory_order_seq_cst);
-    } while (val != 1);
+    val = atomic_load_explicit(&f_3, memory_order_seq_cst);
+    __VERIFIER_assume(val == 1);
 
     enqueue(&q, 1);
     atomic_store_explicit(&f_1, 1, memory_order_seq_cst);
@@ -34,6 +45,8 @@ void *thread_1(void *arg)
 // deq(A)
 void *thread_2(void *arg)
 {
+    set_thread_num(1);
+
     unsigned int res = 0;
     dequeue(&q, &res);
     __VERIFIER_assume(res == 1);
@@ -45,7 +58,9 @@ void *thread_2(void *arg)
 // enq(B)
 void *thread_3(void *arg)
 {
-    enqueue(&q, 2);
+    set_thread_num(2);
+
+    enqueue(&q, 1);
     atomic_store_explicit(&f_3, 1, memory_order_seq_cst);
 
     return NULL;
@@ -54,11 +69,11 @@ void *thread_3(void *arg)
 // deq(B)
 void *thread_4(void *arg)
 {
+    set_thread_num(3);
+
     int val = 0;
-    do
-    {
-        val = atomic_load_explicit(&f_2, memory_order_seq_cst);
-    } while (val != 1);
+    val = atomic_load_explicit(&f_2, memory_order_seq_cst);
+    __VERIFIER_assume(val == 1);
 
     unsigned int res = 0;
     dequeue(&q, &res);
@@ -76,17 +91,12 @@ int main()
     if (pthread_create(&t1, NULL, thread_1, NULL))
         abort();
 
-    if (pthread_create(&t1, NULL, thread_2, NULL))
+    if (pthread_create(&t2, NULL, thread_2, NULL))
         abort();
 
-    if (pthread_create(&t1, NULL, thread_3, NULL))
+    if (pthread_create(&t3, NULL, thread_3, NULL))
         abort();
 
-    if (pthread_create(&t1, NULL, thread_4, NULL))
+    if (pthread_create(&t4, NULL, thread_4, NULL))
         abort();
-}
-
-int get_thread_num()
-{
-	return 4;
 }

@@ -16,3 +16,4 @@ venv
 # vendor/
 .vscode/
 tests/build/
+python/__pycache__/

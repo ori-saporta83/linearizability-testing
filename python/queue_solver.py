@@ -8,11 +8,13 @@
 from pysmt.shortcuts import *
 from datetime import datetime
 from itertools import product
+from queue_testgen import generate_test
 
 ####################
 # helper functions #
 ####################
-
+n = None
+k = None
 
 def le(x, y):
     """x<=y = /\{i,j} x_ij => y_ij"""
@@ -88,7 +90,7 @@ def label(i):
         if i % 2 == 0:
             return "enq(" + chr(65 + int(i/2)) + ")"
         return "deq(" + chr(65 + int(i/2)) + ")"
-    return "deq(T_" + chr(97 + i - n + k) + ")"
+    return "deq(T-" + chr(97 + i - n + k) + ")"
 
 
 def minimal_one(rel,i0,j0):
@@ -146,13 +148,13 @@ def opType(i):
 def main():
     # number of operations
     global n
-    n = 4
+    n = 5
 
     # number of deq(bottom) operations, must maintain:
     # k < n
     # (n - k) % 2 = 0
     global k
-    k = 0
+    k = 1
 
     print("start", datetime.now())
     print("n:", n, "k:", k)
@@ -205,6 +207,10 @@ def main():
                 range(n), range(n)) if solver.get_value(x[(i, j)]).is_true()]
 
             print(i, ":", model_pos)
+            test_data = generate_test(model_pos, n, k)
+            f = open("../tests/t"+str(i)+".c", "w")
+            f.write(test_data)
+            f.close()
             i += 1
             # print("rel2:", model_pos2)
             # print("X:", model_x)

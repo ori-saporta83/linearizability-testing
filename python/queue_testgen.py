@@ -1,32 +1,7 @@
-#%%
-from jinja2 import Template, Environment
-template = Template('Hello {{ name }}!')
-template.render(name='John Doe')
-
-#%%
 import jinja2
 from jinja2 import Template, Environment
-t = '''
-{% for item in l -%}
-{{item}}
-{{loop.index0}}
-{% endfor %}
-{% for i in range(l|length) -%}
-{{(i+65)|chr}}
-{% endfor %}
-'''
-def load_template(name):
-    return t
 
-env = Environment(loader=jinja2.FunctionLoader(load_func=load_template))
-env.filters['chr'] = chr
-template = env.get_template("")
-print(template.render(l=['a', 'b', 'c', 'd']))
-
-#%%
-import jinja2
-from jinja2 import Template, Environment
-template_str = '''#include <stdlib.h>
+queue_template_str = '''#include <stdlib.h>
 #include <stdio.h>
 #include <pthread.h>
 #include <stdbool.h>
@@ -71,8 +46,12 @@ void *thread_{{loop.index0}}(void *arg)
     {% else %}
     unsigned int res = 0;
     bool succ = dequeue(&q, &res);
+    {% if op.val == -1 -%}
+    __VERIFIER_assume(!succ);
+    {% else %}
     __VERIFIER_assume(succ);
     __VERIFIER_assume(res == {{op.val}});
+    {% endif %}
     {% endif %}
     atomic_store_explicit(&f_{{loop.index0}}, 1, memory_order_seq_cst);
 
@@ -93,7 +72,10 @@ int main()
 }
 '''
 def load_template(name):
-    return template_str
+    if (name == "queue"):
+        return queue_template_str
+    
+    return ""
 
 class Op:
     def __init__(self, is_enq, v, wait_for):
@@ -101,11 +83,43 @@ class Op:
         self.val = v
         self.wait_for = wait_for
 
-ops = [Op(True, 1, [2]), Op(False, 1, []), Op(True, 2, []), Op(False, 2, [1])]
-includes = ["../../genmc/tests/correct/data-structures/ms-queue/my_queue.c","../../genmc/include/genmc.h"]
-desc = "['deq(A)_deq(B)', 'enq(B)_enq(A)']"
-queue_type = "queue_t"
 env = Environment(loader=jinja2.FunctionLoader(load_func=load_template))
 env.filters["chr"] = chr
-template = env.get_template("")
-print(template.render(ops=ops, includes=includes, desc=desc, queue_type=queue_type))
+
+def parse_index(event_name, n, k):
+    ret = 0
+    if event_name[4] == "T":
+        ret = n - k + ord(event_name[6]) - 97
+    else:
+        ret = (ord(event_name[4]) - 65) * 2
+        if event_name.startswith("deq"): ret += 1
+    return ret
+
+
+def parse_trace(trace, n, k):
+    ops = generate_ops(n, k)
+    for event in trace:
+        names = str(event)[1:-1].split("_")
+        before_index = parse_index(names[0], n, k)
+        after_index = parse_index(names[1], n, k)
+        ops[after_index].wait_for.append(before_index)
+    return ops
+
+
+def generate_ops(n, k):
+    ops = []
+    for i in range(n):
+        is_enq = i < n-k and i % 2 == 0
+        val = (int(i/2) if i < n-k else -1) + 1
+        op = Op(is_enq, val, [])
+        ops.append(op)
+    return ops
+
+
+def generate_test(trace, n, k):
+    ops = parse_trace(trace, n, k)
+    includes = ["../../genmc/tests/correct/data-structures/ms-queue/my_queue.c","../../genmc/include/genmc.h"]
+    desc = str(trace)
+    queue_type = "queue_t"
+    template = env.get_template("queue")
+    return template.render(ops=ops, includes=includes, desc=desc, queue_type=queue_type)

@@ -48,7 +48,8 @@ void *thread_2(void *arg)
     set_thread_num(1);
 
     unsigned int res = 0;
-    dequeue(&q, &res);
+    bool succ = dequeue(&q, &res);
+    __VERIFIER_assume(succ);
     __VERIFIER_assume(res == 1);
     atomic_store_explicit(&f_2, 1, memory_order_seq_cst);
 
@@ -73,10 +74,11 @@ void *thread_4(void *arg)
 
     int val = 0;
     val = atomic_load_explicit(&f_2, memory_order_seq_cst);
-    __VERIFIER_assume(val == 1);
+    // __VERIFIER_assume(val == 1);
 
     unsigned int res = 0;
-    dequeue(&q, &res);
+    bool succ = dequeue(&q, &res);
+    __VERIFIER_assume(succ);
     __VERIFIER_assume(res == 2);
     atomic_store_explicit(&f_4, 1, memory_order_seq_cst);
 
@@ -88,8 +90,8 @@ int main()
     init_queue(&q, 4);
 
     pthread_t t1, t2, t3, t4;
-    if (pthread_create(&t1, NULL, thread_1, NULL))
-        abort();
+    // if (pthread_create(&t1, NULL, thread_1, NULL))
+    //     abort();
 
     if (pthread_create(&t2, NULL, thread_2, NULL))
         abort();

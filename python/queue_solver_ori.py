@@ -9,11 +9,11 @@ from pysmt.shortcuts import *
 from datetime import datetime
 from itertools import product
 
-
 ####################
 # helper functions #
 ####################
-
+n = None
+k = None
 
 def le(x, y):
     """x<=y = /\{i,j} x_ij => y_ij"""

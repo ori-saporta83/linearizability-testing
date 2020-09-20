@@ -148,13 +148,13 @@ def opType(i):
 def main():
     # number of operations
     global n
-    n = 5
+    n = 4
 
     # number of deq(bottom) operations, must maintain:
     # k < n
     # (n - k) % 2 = 0
     global k
-    k = 1
+    k = 0
 
     print("start", datetime.now())
     print("n:", n, "k:", k)
@@ -208,7 +208,7 @@ def main():
 
             print(i, ":", model_pos)
             test_data = generate_test(model_pos, n, k)
-            f = open("tests/t"+str(i)+".c", "w")
+            f = open("tests/generated/t"+str(i)+".c", "w")
             f.write(test_data)
             f.close()
             i += 1

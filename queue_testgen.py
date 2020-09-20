@@ -37,7 +37,7 @@ void *thread_{{loop.index0}}(void *arg)
     set_thread_num({{loop.index0}});
     {% for v in op.wait_for %}
     int val_{{v}} = 0;
-    val_{{v}} = atomic_load_explicit(&f_{{v}}, memory_order_seq_cst);
+    val_{{v}} = atomic_load_explicit(&f_{{v}}, memory_order_acquire);
     __VERIFIER_assume(val_{{v}} == 1);
     {% endfor -%}
 
@@ -53,7 +53,7 @@ void *thread_{{loop.index0}}(void *arg)
     __VERIFIER_assume(res == {{op.val}});
     {% endif %}
     {% endif %}
-    atomic_store_explicit(&f_{{loop.index0}}, 1, memory_order_seq_cst);
+    atomic_store_explicit(&f_{{loop.index0}}, 1, memory_order_release);
 
     return NULL;
 }

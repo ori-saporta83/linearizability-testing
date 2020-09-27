@@ -115,10 +115,16 @@ def generate_ops(n, k):
         ops.append(op)
     return ops
 
+queue_import_map = {
+    "ms-queue": "../../genmc/tests/correct/data-structures/ms-queue/my_queue.c",
+    "qu": "../../wrappers/qu-wrapper.h", 
+    "mpmc": "../../wrappers/mpmc-queue-wrapper.h"
+}
+    
 
-def generate_test(trace, n, k):
+def generate_test(trace, n, k, q):
     ops = parse_trace(trace, n, k)
-    includes = ["../../genmc/tests/correct/data-structures/ms-queue/my_queue.c","../../genmc/include/genmc.h"]
+    includes = [queue_import_map[q], "../../genmc/include/genmc.h"]
     desc = str(trace)
     queue_type = "queue_t"
     template = env.get_template("queue")

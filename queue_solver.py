@@ -9,12 +9,14 @@ from pysmt.shortcuts import *
 from datetime import datetime
 from itertools import product
 from queue_testgen import generate_test
+import os
 
 ####################
 # helper functions #
 ####################
 n = None
 k = None
+q = None
 
 def le(x, y):
     """x<=y = /\{i,j} x_ij => y_ij"""
@@ -146,18 +148,25 @@ def opType(i):
 
 
 def main():
+    global q
+    q = "qu"
+
     # number of operations
     global n
-    n = 4
+    n = 7
 
     # number of deq(bottom) operations, must maintain:
     # k < n
     # (n - k) % 2 = 0
     global k
-    k = 0
+    k = 1
 
     print("start", datetime.now())
-    print("n:", n, "k:", k)
+    print("n:", n, "k:", k, "q:", q)
+
+    path = os.path.join("tests","generated", q+"_"+str(n)+"_"+str(k))
+    if not os.path.exists(path):
+        os.mkdir(path)
 
     try:
         # create a solver
@@ -207,8 +216,8 @@ def main():
                 range(n), range(n)) if solver.get_value(x[(i, j)]).is_true()]
 
             print(i, ":", model_pos)
-            test_data = generate_test(model_pos, n, k)
-            f = open("tests/generated/t"+str(i)+".c", "w")
+            test_data = generate_test(model_pos, n, k, q)
+            f = open(os.path.join(path, "t"+str(i)+".c"), "w")
             f.write(test_data)
             f.close()
             i += 1

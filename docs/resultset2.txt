@@ -130,3 +130,5 @@ n: 10 k: 2
 18 : ['deq(A)_enq(D)', 'deq(C)_enq(A)', 'deq(D)_enq(C)']
 19 : ['deq(A)_enq(C)', 'deq(B)_enq(D)', 'deq(C)_enq(B)', 'deq(D)_enq(A)']
 end 2020-09-20 16:53:56.007922
+
+for t in ../linearizability-testing/tests/generated/hw-queue_7_1/*.c; do echo $t; ./src/genmc $t; done

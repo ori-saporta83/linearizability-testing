@@ -17,4 +17,4 @@ venv
 .vscode/
 tests/build/
 __pycache__/
-tests/generated/
+tests/generated/build/

@@ -117,8 +117,10 @@ def generate_ops(n, k):
 
 queue_import_map = {
     "ms-queue": "../../genmc/tests/correct/data-structures/ms-queue/my_queue.c",
-    "qu": "../../wrappers/qu-wrapper.h", 
-    "mpmc": "../../wrappers/mpmc-queue-wrapper.h"
+    "qu": "../../../wrappers/qu-wrapper.h", 
+    "mpmc": "../../../wrappers/mpmc-queue-wrapper.h",
+    "chase-lev": "../../../wrappers/chase-lev-wrapper.h",
+    "hw-queue": "../../../wrappers/hwqueue-wrapper.h",
 }
     
 

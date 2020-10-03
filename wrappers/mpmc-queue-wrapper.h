@@ -13,7 +13,7 @@ bool dequeue(queue_t *q, unsigned int *retVal)
 {
     int32_t *bin = read_fetch(q);
     if (bin != NULL) {
-        *retVal = *bin;
+        *retVal = load_32(bin);
     }
 	read_consume(q);
 	return true;

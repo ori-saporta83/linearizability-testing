@@ -23,7 +23,8 @@ bool dequeue(queue_t *q, unsigned int *retVal)
 
 	for (lan = k = 0; lan == 0; ++k) {
 		__VERIFIER_assume(k < lback);
-		lan = atomic_exchange_explicit(&(q->AR[k]), 0, memory_order_acq_rel);
+		// lan = atomic_exchange_explicit(&(q->AR[k]), 0, memory_order_acq_rel);
+		lan = atomic_exchange_explicit(&(q->AR[k]), 0, memory_order_acquire);
 	}
     *retVal = lan;
 	return true;

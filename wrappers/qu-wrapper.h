@@ -30,11 +30,14 @@ void init_queue(queue_t *q, int num_threads)
 unsigned int idx[MAX_THREADS + 1];
 struct queue_node free_lists[MAX_THREADS + 1][MAX_FREELIST];
 unsigned int free_index[MAX_THREADS + 1];
+atomic_uint debug;
 
 struct queue_node *new_node()
 {
 	int t = get_thread_num();
+    unsigned int free_val = free_index[t];
 
-	assert(free_index[t] < MAX_FREELIST);
+    atomic_store_explicit(&debug, free_val, memory_order_relaxed);
+	assert(free_val < MAX_FREELIST);
 	return &free_lists[t][free_index[t]++];
 }

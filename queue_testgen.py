@@ -121,6 +121,7 @@ queue_import_map = {
     "mpmc": "../../../wrappers/mpmc-queue-wrapper.h",
     "chase-lev": "../../../wrappers/chase-lev-wrapper.h",
     "hw-queue": "../../../wrappers/hwqueue-wrapper.h",
+    "lfring": "../../../wrappers/lfring-wrapper.h",
 }
     
 

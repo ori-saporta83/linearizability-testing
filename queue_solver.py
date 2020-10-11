@@ -148,19 +148,19 @@ def opType(i):
 
 
 def main():
-    # queue type we're working with: "ms-queue", "qu", "mpmc", "chase-lev" or "hw-queue"
+    # queue type we're working with: "ms-queue", "qu", "mpmc", "chase-lev", "hw-queue", "lfring"
     global q
-    q = "chase-lev"
+    q = "lfring"
 
     # number of operations
     global n
-    n = 8
+    n = 6
 
     # number of deq(bottom) operations, must maintain:
     # k < n
     # (n - k) % 2 = 0
     global k
-    k = 2
+    k = 0
 
     print("start", datetime.now())
     print("n:", n, "k:", k, "q:", q)

@@ -1,3 +1,4 @@
+#define SCQ
 #include "../../lfqueue/lfring_cas1.h"
 
 #define SCQ_ORDER 15

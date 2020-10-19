@@ -5,12 +5,6 @@
 #include <assert.h>
 #include <stdatomic.h>
 
-// #define WFQUEUE
-// #include "../../fast-wait-free-queue/wfqueue.c"
-// #define CCQUEUE
-// #include "../../fast-wait-free-queue/ccqueue.c"
-// #define MSQUEUE
-// #include "../../fast-wait-free-queue/msqueue.c"
 #define LCRQ
 #include "../../fast-wait-free-queue/lcrq.c"
 

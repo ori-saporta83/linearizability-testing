@@ -57,21 +57,21 @@ def gen_conditions(y, n, k, j):
     group_size = 2 + k + l
     conditions = []
     for i in range(n):
-        group_index = i*(group_size)
+        add_index = i*(group_size)
+        remove_index = add_index + 1
         # add before remove
-        conditions.append(y[(group_index, group_index+1)])
+        conditions.append(y[(add_index, remove_index)])
         for j in range(k):
+            curr_op_index = add_index+2+j
             # in_true after add
-            conditions.append(y[group_index, group_index+2+j])
+            conditions.append(y[(add_index, curr_op_index)])
             # in_true before remove
-            conditions.append(y[group_index+2+j, group_index+1])
+            conditions.append(y[(curr_op_index, remove_index)])
         for j in range(l):
-            # if in_false after add it's after remove
+            curr_op_index = add_index+2+k+j
+            # Either before add or after remove
             conditions.append(
-                Iff(y[(group_index, group_index+2+k+j)], y[(group_index+1, group_index+2+k+j)]))
-            # if in_false before add it's before remove
-            conditions.append(
-                Iff(y[(group_index+2+k+j, group_index)], y[(group_index+2+k+j, group_index+1)]))
+                Or(y[(remove_index, curr_op_index)], y[(curr_op_index, add_index)]))
     return conditions
 
 
@@ -153,8 +153,11 @@ def gi_t4(x):
 def gi_t5(x):
     """remap by values"""
     global ops
-    return And([Implies(x[i, j], x[i+m, j+m]) for i, j in product(range(len(ops)), range(len(ops))) for m in range(1, 2+k+l) if opType(i) == 0 and opType(j) == 0])
+    return And([Not(And(x[i, j], x[i+m, t])) for i, j, t in product(range(len(ops)), range(len(ops)), range(len(ops))) for m in range(1, 2+k+l) if base_val(j) != base_val(t) and opType(i) == 0])
 
+def base_val(i):
+    global k, l
+    return int(i / (2+k+l))
 
 def opType(i):
     s = ops[i]
@@ -179,7 +182,7 @@ def main():
 
     # number of in per value that return true:
     global k
-    k = 1
+    k = 2
 
     # number of in per value that return false:
     global l

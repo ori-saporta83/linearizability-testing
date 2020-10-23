@@ -16,7 +16,6 @@ import os
 n = None
 k = None
 l = None
-q = None
 ops = None
 
 def le(x, y):
@@ -172,13 +171,9 @@ def opType(i):
         return 3
 
 def main():
-    # set type we're working with: ?
-    global q
-    q = "set"
-
     # number of values
     global n
-    n = 2
+    n = 1
 
     # number of in per value that return true:
     global k
@@ -186,17 +181,13 @@ def main():
 
     # number of in per value that return false:
     global l
-    l = 1
+    l = 2
 
     global ops
     ops = gen_ops(n, k, l)
 
     print("start", datetime.now())
     print("n:", n, "k:", k, "l:", l)
-
-    # path = os.path.join("tests","generated", q+"_"+str(n)+"_"+str(k))
-    # if not os.path.exists(path):
-    #     os.mkdir(path)
 
     try:
         # create a solver
@@ -227,15 +218,7 @@ def main():
                      for i, j in product(range(len(ops)), range(len(ops)))}
 
             print(i, ":", model_pos)
-            # test_data = generate_test(model_pos, n, k, q)
-            # f = open(os.path.join(path, "t"+str(i)+".c"), "w")
-            # f.write(test_data)
-            # f.close()
             i += 1
-
-            # negate the variables that are true in the model
-            # assert positively the variables that are false in the model
-            # put everything in one disjunction
 
             solver.add_assertion(Not(Exists(x.values(), gi(x, model, rel))))
 

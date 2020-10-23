@@ -71,6 +71,8 @@ int main()
     {% endfor %}
 }
 '''
+
+
 def load_template(name):
     if (name == "queue"):
         return queue_template_str

@@ -7,7 +7,7 @@
 # import stuff from pysmt
 from pysmt.shortcuts import *
 from datetime import datetime
-from itertools import product
+from itertools import combinations, product
 from queue_testgen import generate_test
 import os
 
@@ -17,6 +17,7 @@ import os
 n = None
 k = None
 q = None
+N = None
 
 def le(x, y):
     """x<=y = /\{i,j} x_ij => y_ij"""
@@ -84,7 +85,20 @@ def testcase(x):
     """testcase(x): po(x) /\ (forall y, x <=y /\ po(y) /\ tot(y) => ~queue(O,y))"""
     y = {(i, j): Symbol("y_" + label(i) + "_" + label(j))
          for i, j in product(range(n), range(n))}
-    return And(po(x), ForAll([y[(i, j)] for i, j in product(range(n), range(n))], Implies(And(le(x, y), po(y), tot(y)), Not(queue_O(y, n, k)))))
+    return And(po(x), maxchain(x), ForAll([y[(i, j)] for i, j in product(range(n), range(n))], Implies(And(le(x, y), po(y), tot(y)), Not(queue_O(y, n, k)))))
+
+
+def maxchain(x):
+    # return And([])
+    global n, N
+    indexes = list(combinations([i for i in range(n)], N+1))
+    conditions = []
+    for index_set in indexes:
+        pairs = list(combinations(index_set, 2))
+        # should I also do the reverse condition
+        conditions.append(Or([x[(pair[0], pair[1])] for pair in pairs]))
+    return And(conditions)
+
 
 
 def label(i):
@@ -162,6 +176,10 @@ def main():
     global k
     k = 0
 
+    # number of "threads"
+    global N
+    N = 4
+
     print("start", datetime.now())
     print("n:", n, "k:", k, "q:", q)
 
@@ -217,10 +235,10 @@ def main():
                 range(n), range(n)) if solver.get_value(x[(i, j)]).is_true()]
 
             print(i, ":", model_pos)
-            test_data = generate_test(model_pos, n, k, q)
-            f = open(os.path.join(path, "t"+str(i)+".c"), "w")
-            f.write(test_data)
-            f.close()
+            # test_data = generate_test(model_pos, n, k, q)
+            # f = open(os.path.join(path, "t"+str(i)+".c"), "w")
+            # f.write(test_data)
+            # f.close()
             i += 1
             # print("rel2:", model_pos2)
             # print("X:", model_x)

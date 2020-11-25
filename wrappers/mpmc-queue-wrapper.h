@@ -23,3 +23,15 @@ bool dequeue(queue_t *q, unsigned int *retVal)
 void init_queue(queue_t *q, int num_threads)
 {
 }
+
+int __thread tid;
+
+void set_thread_num(int i)
+{
+	tid = i;
+}
+
+int get_thread_num()
+{
+	return tid;
+}

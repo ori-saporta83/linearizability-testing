@@ -116,43 +116,43 @@ def minimal_all(rel):
     return And([Implies(rel[(i, j)], minimal_one(rel, i, j)) for i, j in product(range(len(ops)), range(len(ops)))])
 
 
-def gi(x, e1, rel):
-    terms = And(gi_t1(x), gi_t2(x), gi_t3(x, e1, rel), gi_t4(x))
-    return terms
+# def gi(x, e1, rel):
+#     terms = And(gi_t1(x), gi_t2(x), gi_t3(x, e1, rel), gi_t4(x))
+#     return terms
 
 
-def gi_strong(x, e1, rel):
-    return And(gi(x, e1, rel), gi_t5(x))
+# def gi_strong(x, e1, rel):
+#     return And(gi(x, e1, rel), gi_t5(x))
 
 
-def gi_t1(x):
-    global ops
-    return And([Or([x[i, j] for j in range(len(ops))]) for i in range(len(ops))])
+# def gi_t1(x):
+#     global ops
+#     return And([Or([x[i, j] for j in range(len(ops))]) for i in range(len(ops))])
 
 
-def gi_t2(x):
-    global ops
-    return And([Or(Not(x[i, k]), Not(x[j, k])) for i, j, k in product(range(len(ops)), range(len(ops)), range(len(ops))) if i != j])
+# def gi_t2(x):
+#     global ops
+#     return And([Or(Not(x[i, k]), Not(x[j, k])) for i, j, k in product(range(len(ops)), range(len(ops)), range(len(ops))) if i != j])
 
 
-def gi_t3(x, e1, rel):
-    """ x[i,k] && x[j,l] --> (e1[i,j] <--> rel[k,l]) """
-    global ops
-    return And([Implies(Iff(e1[i, j], Not(rel[k, l])), Or(Not(x[i, k]), Not(x[j, l]))) for i, j, k, l in product(range(len(ops)), range(len(ops)), range(len(ops)), range(len(ops))) if l != k and i != j])
+# def gi_t3(x, e1, rel):
+#     """ x[i,k] && x[j,l] --> (e1[i,j] <--> rel[k,l]) """
+#     global ops
+#     return And([Implies(Iff(e1[i, j], Not(rel[k, l])), Or(Not(x[i, k]), Not(x[j, l]))) for i, j, k, l in product(range(len(ops)), range(len(ops)), range(len(ops)), range(len(ops))) if l != k and i != j])
 
 
-def gi_t4(x):
-    """
-    "Color coding": mapped ops should be of the same type (just different value)
-    """
-    global ops
-    return And([Not(x[i, j]) for i, j in product(range(len(ops)), range(len(ops))) if opType(i) != opType(j)])
+# def gi_t4(x):
+#     """
+#     "Color coding": mapped ops should be of the same type (just different value)
+#     """
+#     global ops
+#     return And([Not(x[i, j]) for i, j in product(range(len(ops)), range(len(ops))) if opType(i) != opType(j)])
 
 
-def gi_t5(x):
-    """remap by values"""
-    global ops
-    return And([Not(And(x[i, j], x[i+m, t])) for i, j, t in product(range(len(ops)), range(len(ops)), range(len(ops))) for m in range(1, 2+k+l) if base_val(j) != base_val(t) and opType(i) == 0])
+# def gi_t5(x):
+#     """remap by values"""
+#     global ops
+#     return And([Not(And(x[i, j], x[i+m, t])) for i, j, t in product(range(len(ops)), range(len(ops)), range(len(ops))) for m in range(1, 2+k+l) if base_val(j) != base_val(t) and opType(i) == 0])
 
 def base_val(i):
     global k, l
@@ -173,15 +173,15 @@ def opType(i):
 def main():
     # number of values
     global n
-    n = 1
+    n = 3
 
     # number of in per value that return true:
     global k
-    k = 2
+    k = 1
 
     # number of in per value that return false:
     global l
-    l = 2
+    l = 1
 
     global ops
     ops = gen_ops(n, k, l)
@@ -214,13 +214,15 @@ def main():
             model_pos = [rel[(i, j)] for i, j in product(
                 range(len(ops)), range(len(ops))) if solver.get_value(rel[(i, j)]).is_true()]
 
-            model = {(i, j): solver.get_value(rel[(i, j)])
-                     for i, j in product(range(len(ops)), range(len(ops)))}
-
             print(i, ":", model_pos)
             i += 1
 
-            solver.add_assertion(Not(Exists(x.values(), gi(x, model, rel))))
+            # variables that are false in the model
+            model_neg = [rel[(i, j)] for i, j in product(
+                range(n), range(n)) if solver.get_value(rel[(i, j)]).is_false()]
+
+            # solver.add_assertion(Not(Exists(x.values(), gi(x, model, rel))))
+            solver.add_assertion(Or([Not(m) for m in model_pos] + model_neg))
 
             res = solver.check_sat()
 

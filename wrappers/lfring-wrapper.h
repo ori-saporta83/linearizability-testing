@@ -29,3 +29,15 @@ void init_queue(queue_t *q, int num_threads)
 {
     lfring_init_empty((struct lfring *)q->ring, SCQ_ORDER);
 }
+
+int __thread tid;
+
+void set_thread_num(int i)
+{
+	tid = i;
+}
+
+int get_thread_num()
+{
+	return tid;
+}

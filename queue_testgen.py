@@ -1,5 +1,5 @@
 import jinja2
-from jinja2 import Template, Environment
+from jinja2 import Environment
 
 queue_template_str = '''#include <stdlib.h>
 #include <stdio.h>
@@ -13,18 +13,6 @@ queue_template_str = '''#include <stdlib.h>
 {% endfor %}
 // {{desc}}
 {{queue_type}} q;
-
-int __thread tid;
-
-void set_thread_num(int i)
-{
-	tid = i;
-}
-
-int get_thread_num()
-{
-	return tid;
-}
 
 {% for i in range(ops|length) -%}
 atomic_int f_{{i}};
@@ -124,6 +112,7 @@ queue_import_map = {
     "chase-lev": "../../../wrappers/chase-lev-wrapper.h",
     "hw-queue": "../../../wrappers/hwqueue-wrapper.h",
     "lfring": "../../../wrappers/lfring-wrapper.h",
+    "lcrq": "../../../wrappers/lcrq-wrapper.h",
 }
     
 

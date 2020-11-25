@@ -95,10 +95,8 @@ def maxchain(x):
     conditions = []
     for index_set in indexes:
         pairs = list(combinations(index_set, 2))
-        # should I also do the reverse condition
-        conditions.append(Or([x[(pair[0], pair[1])] for pair in pairs]))
+        conditions.append(Or(Or([x[(pair[0], pair[1])] for pair in pairs]), Or([x[(pair[1], pair[0])] for pair in pairs])))
     return And(conditions)
-
 
 
 def label(i):
@@ -162,13 +160,13 @@ def opType(i):
 
 
 def main():
-    # queue type we're working with: "ms-queue", "qu", "mpmc", "chase-lev", "hw-queue", "lfring"
+    # queue type we're working with: "ms-queue", "qu", "mpmc", "chase-lev", "hw-queue", "lfring", "lcrq"
     global q
-    q = "lfring"
+    q = "mpmc"
 
     # number of operations
     global n
-    n = 6
+    n = 8
 
     # number of deq(bottom) operations, must maintain:
     # k < n
@@ -178,12 +176,12 @@ def main():
 
     # number of "threads"
     global N
-    N = 4
+    N = 5
 
     print("start", datetime.now())
-    print("n:", n, "k:", k, "q:", q)
+    print("n:", n, "k:", k, "q:", q, "N:", N)
 
-    path = os.path.join("tests","generated", q+"_"+str(n)+"_"+str(k))
+    path = os.path.join("tests","generated", q+"_"+str(n)+"_"+str(k)+"_"+str(N))
     if not os.path.exists(path):
         os.mkdir(path)
 
@@ -235,21 +233,15 @@ def main():
                 range(n), range(n)) if solver.get_value(x[(i, j)]).is_true()]
 
             print(i, ":", model_pos)
-            # test_data = generate_test(model_pos, n, k, q)
-            # f = open(os.path.join(path, "t"+str(i)+".c"), "w")
-            # f.write(test_data)
-            # f.close()
+            test_data = generate_test(model_pos, n, k, q)
+            f = open(os.path.join(path, "t"+str(i)+".c"), "w")
+            f.write(test_data)
+            f.close()
             i += 1
-            # print("rel2:", model_pos2)
-            # print("X:", model_x)
-            # break
-            # negate the variables that are true in the model
-            # assert positively the variables that are false in the model
-            # put everything in one disjunction
 
             # solver.add_assertion(Or([Not(m) for m in model_pos] + model_neg))
 
-            solver.add_assertion(Not(Exists(x.values(), gi(x, model, rel))))
+            solver.add_assertion(Not(Exists(x.values(), gi_strong(x, model, rel))))
 
             res = solver.check_sat()
 

@@ -4,19 +4,19 @@
 
 typedef struct queue queue_t;
 
-void enqueue(queue_t *q, unsigned int val) 
+void q_enqueue(queue_t *q, unsigned int val) 
 {
     int ret = queue_try_enq(q, val);
     assert(ret == 0);
 }
 
-bool dequeue(queue_t *q, unsigned int *retVal)
+bool q_dequeue(queue_t *q, unsigned int *retVal)
 {
     int ret = queue_try_deq(q, (int *)retVal);
     return ret == 0;
 }
 
-void init_queue(queue_t *q, int num_threads)
+void q_init_queue(queue_t *q, int num_threads)
 {
     queue_init(q);
 }
@@ -40,4 +40,16 @@ struct queue_node *new_node()
     atomic_store_explicit(&debug, free_val, memory_order_relaxed);
 	assert(free_val < MAX_FREELIST);
 	return &free_lists[t][free_index[t]++];
+}
+
+int __thread tid;
+
+void set_thread_num(int i)
+{
+	tid = i;
+}
+
+int get_thread_num()
+{
+	return tid;
 }

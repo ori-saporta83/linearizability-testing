@@ -160,13 +160,12 @@ def opType(i):
 
 
 def main():
-    # queue type we're working with: "ms-queue", "qu", "mpmc", "chase-lev", "hw-queue", "lfring", "lcrq"
     global q
-    q = "mpmc"
+    q = "generic"
 
     # number of operations
     global n
-    n = 8
+    n = 10
 
     # number of deq(bottom) operations, must maintain:
     # k < n
@@ -176,7 +175,7 @@ def main():
 
     # number of "threads"
     global N
-    N = 5
+    N = n
 
     print("start", datetime.now())
     print("n:", n, "k:", k, "q:", q, "N:", N)
@@ -233,7 +232,7 @@ def main():
                 range(n), range(n)) if solver.get_value(x[(i, j)]).is_true()]
 
             print(i, ":", model_pos)
-            test_data = generate_test(model_pos, n, k, q)
+            test_data = generate_test(model_pos, n, k)
             f = open(os.path.join(path, "t"+str(i)+".c"), "w")
             f.write(test_data)
             f.close()

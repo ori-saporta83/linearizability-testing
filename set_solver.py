@@ -214,7 +214,7 @@ def main():
             model_pos = [rel[(i, j)] for i, j in product(
                 range(len(ops)), range(len(ops))) if solver.get_value(rel[(i, j)]).is_true()]
 
-            print(i, ":", model_pos)
+            print(i, ":", model_pos, flush=True)
             i += 1
 
             # variables that are false in the model

@@ -10,13 +10,13 @@ typedef struct queue_t {
     atomic_int back;
 } queue_t;
 
-void enqueue(queue_t *q, unsigned int val) 
+void q_enqueue(queue_t *q, unsigned int val) 
 {
 	int k = atomic_fetch_add_explicit(&(q->back), 1, memory_order_acq_rel);
 	atomic_store_explicit(&(q->AR[k]), val, memory_order_release);
 }
 
-bool dequeue(queue_t *q, unsigned int *retVal)
+bool q_dequeue(queue_t *q, unsigned int *retVal)
 {
 	int lback = atomic_load_explicit(&(q->back), memory_order_acquire);
 	int lan, k;
@@ -30,6 +30,18 @@ bool dequeue(queue_t *q, unsigned int *retVal)
 	return true;
 }
 
-void init_queue(queue_t *q, int num_threads)
+void q_init_queue(queue_t *q, int num_threads)
 {
+}
+
+int __thread tid;
+
+void set_thread_num(int i)
+{
+	tid = i;
+}
+
+int get_thread_num()
+{
+	return tid;
 }

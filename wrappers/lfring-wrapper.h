@@ -13,19 +13,19 @@ typedef struct _queue_t
     char ring[LFRING_SIZE(SCQ_ORDER)];
 } queue_t DOUBLE_CACHE_ALIGNED;
 
-void enqueue(queue_t *q, unsigned int val)
+void q_enqueue(queue_t *q, unsigned int val)
 {
     size_t eidx = (size_t)val;
     lfring_enqueue((struct lfring *)q->ring, SCQ_ORDER, eidx, false);
 }
 
-bool dequeue(queue_t *q, unsigned int *retVal)
+bool q_dequeue(queue_t *q, unsigned int *retVal)
 {
     *retVal = lfring_dequeue((struct lfring *) q->ring, SCQ_ORDER, false);
     return true;
 }
 
-void init_queue(queue_t *q, int num_threads)
+void q_init_queue(queue_t *q, int num_threads)
 {
     lfring_init_empty((struct lfring *)q->ring, SCQ_ORDER);
 }

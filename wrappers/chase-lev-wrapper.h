@@ -4,13 +4,13 @@
 typedef struct Deque queue_t;
 int N = 10;
 
-void enqueue(queue_t *q, unsigned int val) 
+void q_enqueue(queue_t *q, unsigned int val) 
 {
 	int res = try_push(q, N, val);
     assert(res == 0);
 }
 
-bool dequeue(queue_t *q, unsigned int *retVal)
+bool q_dequeue(queue_t *q, unsigned int *retVal)
 {
     int64_t val = 0;
     int res = try_steal(q, N, &val);
@@ -18,6 +18,18 @@ bool dequeue(queue_t *q, unsigned int *retVal)
     return res == 0;
 }
 
-void init_queue(queue_t *q, int num_threads)
+void q_init_queue(queue_t *q, int num_threads)
 {
+}
+
+int __thread tid;
+
+void set_thread_num(int i)
+{
+	tid = i;
+}
+
+int get_thread_num()
+{
+	return tid;
 }

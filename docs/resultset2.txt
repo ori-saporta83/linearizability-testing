@@ -1103,3 +1103,16 @@ In file included from ../linearizability-testing/tests/generated/mpmc_8_0_5/t110
     atomic_int_fast32_t *bin = read_fetch(q);
                          ^     ~~~~~~~~~~~~~
 2 warnings generated.
+
+ori@LAPTOP-OG7IR3UB:~/workspace/genmc$ ./src/genmc ../linearizability-testing/tests/t1_mpmc_merged.c
+In file included from ../linearizability-testing/tests/t1_mpmc_merged.c:8:
+../linearizability-testing/tests/../wrappers/mpmc-queue-wrapper.h:7:23: warning: incompatible pointer types initializing 'atomic_int_fast32_t *' (aka '_Atomic(int_fast32_t) *') with an expression of type 't_element *' (aka 'int *') [-Wincompatible-pointer-types]
+        atomic_int_fast32_t *bin = write_prepare(q);
+                             ^     ~~~~~~~~~~~~~~~~
+../linearizability-testing/tests/../wrappers/mpmc-queue-wrapper.h:14:26: warning: incompatible pointer types initializing 'atomic_int_fast32_t *' (aka '_Atomic(int_fast32_t) *') with an expression of type 't_element *' (aka 'int *') [-Wincompatible-pointer-types]
+    atomic_int_fast32_t *bin = read_fetch(q);
+                         ^     ~~~~~~~~~~~~~
+2 warnings generated.
+Number of complete executions explored: 0
+Number of blocked executions seen: 13776480
+Total wall-clock time: 1163.11s

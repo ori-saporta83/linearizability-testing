@@ -30,10 +30,10 @@ void *thread_{{loop.index0}}(void *arg)
     {% endfor -%}
 
     {% if op.enq %}
-    enqueue(&q, {{op.val}});
+    q_enqueue(&q, {{op.val}});
     {% else %}
     unsigned int res = 0;
-    bool succ = dequeue(&q, &res);
+    bool succ = q_dequeue(&q, &res);
     {% if op.val == -1 -%}
     __VERIFIER_assume(!succ);
     {% else %}
@@ -49,7 +49,7 @@ void *thread_{{loop.index0}}(void *arg)
 
 int main()
 {
-    init_queue(&q, {{ops|length}});
+    q_init_queue(&q, {{ops|length}});
 
     {% for i in range(ops|length) -%}
     pthread_t t_{{i}};
@@ -104,21 +104,11 @@ def generate_ops(n, k):
         op = Op(is_enq, val, [])
         ops.append(op)
     return ops
+   
 
-queue_import_map = {
-    "ms-queue": "../../genmc/tests/correct/data-structures/ms-queue/my_queue.c",
-    "qu": "../../../wrappers/qu-wrapper.h", 
-    "mpmc": "../../../wrappers/mpmc-queue-wrapper.h",
-    "chase-lev": "../../../wrappers/chase-lev-wrapper.h",
-    "hw-queue": "../../../wrappers/hwqueue-wrapper.h",
-    "lfring": "../../../wrappers/lfring-wrapper.h",
-    "lcrq": "../../../wrappers/lcrq-wrapper.h",
-}
-    
-
-def generate_test(trace, n, k, q):
+def generate_test(trace, n, k):
     ops = parse_trace(trace, n, k)
-    includes = [queue_import_map[q], "../../genmc/include/genmc.h"]
+    includes = ["../../../wrappers/queue-wrappers.h"]
     desc = str(trace)
     queue_type = "queue_t"
     template = env.get_template("queue")

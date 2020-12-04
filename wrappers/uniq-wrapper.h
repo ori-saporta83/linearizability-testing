@@ -15,7 +15,6 @@ typedef struct queue_t
     int mask;
     atomic_int in, out;
     atomic_bool isUsed[MAX_SIZE];
-    int stop;
 
 } queue_t;
 
@@ -25,7 +24,6 @@ void q_init_queue(queue_t *q, int num_threads)
     q->mask--;
 
     q->out = q->in = 0;
-    q->stop = 0;
 }
 
 void q_enqueue(queue_t *q, unsigned int val)
@@ -34,15 +32,11 @@ void q_enqueue(queue_t *q, unsigned int val)
     // do
     // {
     //     i = q->in;
-    //     if (q->stop)
-    //         return;
-    //     if (i - q->out > q->mask && !q->stop)
+    //     if (i - q->out > q->mask)
     //         return;
     // } while (q->isUsed[i & q->mask] || !atomic_compare_exchange_weak(&(q->in), &i, i + 1));
     i = q->in;
-    if (q->stop)
-        return;
-    if (i - q->out > q->mask && !q->stop)
+    if (i - q->out > q->mask)
         return;
     __VERIFIER_assume(!q->isUsed[i & q->mask]);
     __VERIFIER_assume(atomic_compare_exchange_weak(&(q->in), &i, i + 1));
@@ -57,16 +51,12 @@ bool q_dequeue(queue_t *q, unsigned int *retVal)
     int o;
     // do
     // {
-    //     if (q->stop)
-    //         return -1;
     //     o = q->out;
-    //     if (o == q->in && !q->stop)
+    //     if (o == q->in)
     //         return -1;
     // } while (!q->isUsed[o & q->mask] || !atomic_compare_exchange_weak(&(q->out), &o, o + 1));
-    if (q->stop)
-        return -1;
     o = q->out;
-    if (o == q->in && !q->stop)
+    if (o == q->in)
         return -1;
     __VERIFIER_assume(q->isUsed[o & q->mask]);
     __VERIFIER_assume(atomic_compare_exchange_weak(&(q->out), &o, o + 1));

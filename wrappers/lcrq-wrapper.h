@@ -18,12 +18,12 @@ int get_thread_num()
 
 void q_enqueue(queue_t *q, unsigned int val)
 {    
-    enqueue_t(val, get_thread_num());
+    enqueue(val, get_thread_num());
 }
 
 bool q_dequeue(queue_t *q, unsigned int *retVal)
 {
-    *retVal = dequeue_t(get_thread_num());
+    *retVal = dequeue(get_thread_num());
     return *retVal != -1;
 }
 

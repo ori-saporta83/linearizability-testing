@@ -165,13 +165,13 @@ def main():
 
     # number of operations
     global n
-    n = 10
+    n = 9
 
     # number of deq(bottom) operations, must maintain:
     # k < n
     # (n - k) % 2 = 0
     global k
-    k = 0
+    k = 1
 
     # number of "threads"
     global N

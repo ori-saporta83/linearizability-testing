@@ -24,7 +24,8 @@ void q_enqueue(queue_t *q, unsigned int val)
 bool q_dequeue(queue_t *q, unsigned int *retVal)
 {
     unsigned int* pdata = (unsigned int *) lfqueue_deq(q);
-    *retVal = *pdata;
+    if (pdata != NULL)
+        *retVal = *pdata;
     return true;
 }
 

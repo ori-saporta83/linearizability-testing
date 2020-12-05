@@ -7,7 +7,7 @@
 
 #include "../../../wrappers/queue-wrappers.h"
 
-// ["'deq(A)_enq(B)'", "'deq(B)_enq(E)'", "'deq(E)_enq(A)'"]
+// ["'enq(A)_enq(B)'", "'enq(A)_deq(T-b)'", "'deq(B)_deq(D)'", "'enq(D)_deq(A)'", "'deq(T-b)_enq(B)'"]
 queue_t q;
 
 atomic_int f_0;
@@ -26,10 +26,6 @@ void *thread_0(void *arg)
 {
     set_thread_num(0);
     
-    int val_9 = 0;
-    val_9 = atomic_load_explicit(&f_9, memory_order_acquire);
-    __VERIFIER_assume(val_9 == 1);
-    
     q_enqueue(&q, 1);
     
     atomic_store_explicit(&f_0, 1, memory_order_release);
@@ -41,6 +37,10 @@ void *thread_0(void *arg)
 void *thread_1(void *arg)
 {
     set_thread_num(1);
+    
+    int val_6 = 0;
+    val_6 = atomic_load_explicit(&f_6, memory_order_acquire);
+    __VERIFIER_assume(val_6 == 1);
     
     unsigned int res = 0;
     bool succ = q_dequeue(&q, &res);
@@ -59,9 +59,13 @@ void *thread_2(void *arg)
 {
     set_thread_num(2);
     
-    int val_1 = 0;
-    val_1 = atomic_load_explicit(&f_1, memory_order_acquire);
-    __VERIFIER_assume(val_1 == 1);
+    int val_0 = 0;
+    val_0 = atomic_load_explicit(&f_0, memory_order_acquire);
+    __VERIFIER_assume(val_0 == 1);
+    
+    int val_9 = 0;
+    val_9 = atomic_load_explicit(&f_9, memory_order_acquire);
+    __VERIFIER_assume(val_9 == 1);
     
     q_enqueue(&q, 2);
     
@@ -133,6 +137,10 @@ void *thread_7(void *arg)
 {
     set_thread_num(7);
     
+    int val_3 = 0;
+    val_3 = atomic_load_explicit(&f_3, memory_order_acquire);
+    __VERIFIER_assume(val_3 == 1);
+    
     unsigned int res = 0;
     bool succ = q_dequeue(&q, &res);
     
@@ -145,32 +153,37 @@ void *thread_7(void *arg)
     return NULL;
 }
 
-// enq(E)
+// deq(@)
 void *thread_8(void *arg)
 {
     set_thread_num(8);
     
-    int val_3 = 0;
-    val_3 = atomic_load_explicit(&f_3, memory_order_acquire);
-    __VERIFIER_assume(val_3 == 1);
+    unsigned int res = 0;
+    bool succ = q_dequeue(&q, &res);
     
-    q_enqueue(&q, 5);
+    __VERIFIER_assume(succ);
+    __VERIFIER_assume(res == 0);
+    
     
     atomic_store_explicit(&f_8, 1, memory_order_release);
 
     return NULL;
 }
 
-// deq(E)
+// deq(@)
 void *thread_9(void *arg)
 {
     set_thread_num(9);
+    
+    int val_0 = 0;
+    val_0 = atomic_load_explicit(&f_0, memory_order_acquire);
+    __VERIFIER_assume(val_0 == 1);
     
     unsigned int res = 0;
     bool succ = q_dequeue(&q, &res);
     
     __VERIFIER_assume(succ);
-    __VERIFIER_assume(res == 5);
+    __VERIFIER_assume(res == 0);
     
     
     atomic_store_explicit(&f_9, 1, memory_order_release);

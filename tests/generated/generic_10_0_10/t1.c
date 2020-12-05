@@ -7,7 +7,7 @@
 
 #include "../../../wrappers/queue-wrappers.h"
 
-// ['deq(E)_enq(E)']
+// ["'deq(E)_enq(E)'"]
 queue_t q;
 
 atomic_int f_0;

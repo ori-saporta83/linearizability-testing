@@ -7,7 +7,7 @@
 
 #include "../../../wrappers/queue-wrappers.h"
 
-// ['enq(B)_enq(C)', 'deq(C)_enq(E)', 'deq(D)_deq(B)', 'deq(E)_enq(D)']
+// ["'enq(A)_deq(B)'", "'enq(B)_enq(E)'", "'deq(C)_enq(D)'", "'deq(D)_deq(A)'", "'deq(E)_enq(C)'"]
 queue_t q;
 
 atomic_int f_0;
@@ -38,6 +38,10 @@ void *thread_1(void *arg)
 {
     set_thread_num(1);
     
+    int val_7 = 0;
+    val_7 = atomic_load_explicit(&f_7, memory_order_acquire);
+    __VERIFIER_assume(val_7 == 1);
+    
     unsigned int res = 0;
     bool succ = q_dequeue(&q, &res);
     
@@ -67,9 +71,9 @@ void *thread_3(void *arg)
 {
     set_thread_num(3);
     
-    int val_7 = 0;
-    val_7 = atomic_load_explicit(&f_7, memory_order_acquire);
-    __VERIFIER_assume(val_7 == 1);
+    int val_0 = 0;
+    val_0 = atomic_load_explicit(&f_0, memory_order_acquire);
+    __VERIFIER_assume(val_0 == 1);
     
     unsigned int res = 0;
     bool succ = q_dequeue(&q, &res);
@@ -88,9 +92,9 @@ void *thread_4(void *arg)
 {
     set_thread_num(4);
     
-    int val_2 = 0;
-    val_2 = atomic_load_explicit(&f_2, memory_order_acquire);
-    __VERIFIER_assume(val_2 == 1);
+    int val_9 = 0;
+    val_9 = atomic_load_explicit(&f_9, memory_order_acquire);
+    __VERIFIER_assume(val_9 == 1);
     
     q_enqueue(&q, 3);
     
@@ -121,9 +125,9 @@ void *thread_6(void *arg)
 {
     set_thread_num(6);
     
-    int val_9 = 0;
-    val_9 = atomic_load_explicit(&f_9, memory_order_acquire);
-    __VERIFIER_assume(val_9 == 1);
+    int val_5 = 0;
+    val_5 = atomic_load_explicit(&f_5, memory_order_acquire);
+    __VERIFIER_assume(val_5 == 1);
     
     q_enqueue(&q, 4);
     
@@ -154,9 +158,9 @@ void *thread_8(void *arg)
 {
     set_thread_num(8);
     
-    int val_5 = 0;
-    val_5 = atomic_load_explicit(&f_5, memory_order_acquire);
-    __VERIFIER_assume(val_5 == 1);
+    int val_2 = 0;
+    val_2 = atomic_load_explicit(&f_2, memory_order_acquire);
+    __VERIFIER_assume(val_2 == 1);
     
     q_enqueue(&q, 5);
     

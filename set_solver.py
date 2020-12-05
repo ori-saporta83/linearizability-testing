@@ -177,7 +177,7 @@ def main():
 
     # number of in per value that return true:
     global k
-    k = 1
+    k = 0
 
     # number of in per value that return false:
     global l

@@ -135,20 +135,15 @@ def parse_trace_line(line):
 
 def generate_test(trace, n, k, l):
     ops = parse_trace(trace, n, k, l)
-    includes = [set_import_map[test_set], "../../genmc/include/genmc.h"]
+    includes = ["../../../wrappers/set-wrappers.h"]
     desc = str(trace)
     set_type = "set_t"
     template = env.get_template("set")
     return template.render(ops=ops, includes=includes, desc=desc, set_type=set_type)
 
 
-set_import_map = {
-    "fine-set": "../../../wrappers/fine-set-wrapper.h",
-    "coarse-set": "../../../wrappers/coarse-set-wrapper.h",
-}
-
-test_set = "coarse-set"
-fname = "./docs/set_resultset.txt"
+test_set = "generic-set"
+fname = "./docs/set-results2.txt"
 outpath = "./tests/generated"
 
 

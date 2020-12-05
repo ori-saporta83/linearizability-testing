@@ -131,8 +131,8 @@ def parse_testset(fname, outpath):
     f = open(fname, "r")
     lines = f.readlines()
     f.close()
-    n, k, l = 0, 0, 0
     path = outpath
+    n, k = 0, 0
     for i, line in enumerate(lines):
         if line.startswith("end"):
             break

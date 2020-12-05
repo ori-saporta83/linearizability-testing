@@ -1,3 +1,4 @@
+import os
 import jinja2
 from jinja2 import Environment
 
@@ -113,3 +114,46 @@ def generate_test(trace, n, k):
     queue_type = "queue_t"
     template = env.get_template("queue")
     return template.render(ops=ops, includes=includes, desc=desc, queue_type=queue_type)
+
+fname = "./docs/resultset2.txt"
+outpath = "./tests/generated"
+
+def parse_params_line(line):
+    parts = line.split(" ")
+    return int(parts[1]), int(parts[3]), parts[5], int(parts[7])
+
+
+def parse_trace_line(line):
+    return line[line.index("[")+1:line.index("]")].split(", ")
+
+
+def parse_testset(fname, outpath):
+    f = open(fname, "r")
+    lines = f.readlines()
+    f.close()
+    n, k, l = 0, 0, 0
+    path = outpath
+    for i, line in enumerate(lines):
+        if line.startswith("end"):
+            break
+        if line.startswith("start"):
+            continue
+        if line.startswith("n:"):
+            n, k, q, N = parse_params_line(line)
+            path = os.path.join(path, q+"_"+str(n)+"_"+str(k)+"_"+str(N))
+            if not os.path.exists(path):
+                os.mkdir(path)
+            continue
+        trace = parse_trace_line(line)
+        test_data = generate_test(trace, n, k)
+        f = open(os.path.join(path, "t"+str(i-1)+".c"), "w")
+        f.write(test_data)
+        f.close()
+
+
+def main():
+    parse_testset(fname, outpath)
+
+
+if __name__ == "__main__":
+    main()

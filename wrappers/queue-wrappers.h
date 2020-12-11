@@ -6,6 +6,6 @@
 // #include "ms-queue-wrapper.h"
 // #include "qu-wrapper.h"
 // #include "uniq-wrapper.h"
-#include "lfqueue-wrapper.h"
-// #include "fastmpmc-wrapper.h"
+// #include "lfqueue-wrapper.h"
+#include "fastmpmc-wrapper.h"
 #include "../../genmc/include/genmc.h"

@@ -1,6 +1,8 @@
+from typing import List, Tuple
 import jinja2
 from jinja2 import Template, Environment
 import os
+import networkx as nx
 
 set_template_str = '''#include <stdlib.h>
 #include <stdio.h>
@@ -52,9 +54,16 @@ int main()
 {
     init_set(&set, {{ops|length}});
 
-    {% for i in range(ops|length) -%}
+    {% for i in participating -%}
     pthread_t t_{{i}};
     if (pthread_create(&t_{{i}}, NULL, thread_{{i}}, NULL))
+        abort();
+        
+    {% endfor %}
+    {% for i in range(noise) -%}
+    {% set j = i+ops|length -%}
+    pthread_t t_{{j}};
+    if (pthread_create(&t_{{j}}, NULL, noise_gen, create_args(&set, {{j}}, 1)))
         abort();
         
     {% endfor %}
@@ -95,14 +104,21 @@ def parse_index(event_name, n, k, l):
     return group_index * (2 + k + l) + offset
 
 
-def parse_trace(trace, n, k, l):
+def parse_trace(trace, n, k, l) -> Tuple[List[Op], int, List[int]]:
     ops = generate_ops(n, k, l)
+    g = nx.DiGraph()
+    g.add_nodes_from(i for i in range(len(ops)))
+    participating = set()
     for event in trace:
         names = str(event)[1:-1].split("_")
         before_index = parse_index(names[0], n, k, l)
         after_index = parse_index(names[1], n, k, l)
         ops[after_index].wait_for.append(before_index)
-    return ops
+        g.add_edge(before_index, after_index)
+        participating.add(before_index)
+        participating.add(after_index)
+    width = len(max(list(nx.antichains(g)), key=len))
+    return ops, width, list(participating)
 
 
 def generate_ops(n, k, l):
@@ -134,17 +150,21 @@ def parse_trace_line(line):
 
 
 def generate_test(trace, n, k, l):
-    ops = parse_trace(trace, n, k, l)
+    ops, width, participating = parse_trace(trace, n, k, l)
     includes = ["../../../wrappers/set-wrappers.h"]
     desc = str(trace)
     set_type = "set_t"
     template = env.get_template("set")
-    return template.render(ops=ops, includes=includes, desc=desc, set_type=set_type)
+    noise_threads = max(0, max_threads-(len(ops)-width)) if noise else 0
+    participating = participating if noise else [i for i in range(len(ops))]
+    return template.render(ops=ops, includes=includes, desc=desc, set_type=set_type, participating=participating, noise=noise_threads)
 
 
 test_set = "generic-set"
 fname = "./docs/set-results2.txt"
 outpath = "./tests/generated"
+max_threads = 4
+noise = True
 
 
 def parse_testset(fname, outpath):
@@ -161,7 +181,7 @@ def parse_testset(fname, outpath):
         if line.startswith("n:"):
             n, k, l = parse_params_line(line)
             path = os.path.join(path, test_set+"_" +
-                                str(n)+"_"+str(k)+"_"+str(l))
+                                str(n)+"_"+str(k)+"_"+str(l)+"_"+str(noise)+"_"+str(max_threads))
             if not os.path.exists(path):
                 os.mkdir(path)
             continue

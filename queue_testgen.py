@@ -130,8 +130,9 @@ def generate_test(trace, n, k):
     desc = str(trace)
     queue_type = "queue_t"
     template = env.get_template("queue")
-    noise = max(0, max_threads-(len(ops)-width))
-    return template.render(ops=ops, includes=includes, desc=desc, queue_type=queue_type, participating=participating, noise=noise)
+    noise_threads = max(0, max_threads-(len(ops)-width)) if noise else 0
+    participating = participating if noise else [i for i in range(len(ops))]
+    return template.render(ops=ops, includes=includes, desc=desc, queue_type=queue_type, participating=participating, noise=noise_threads)
 
 fname = "./docs/resultset2.txt"
 outpath = "./tests/generated"

@@ -1,6 +1,9 @@
 import os
+from typing import Tuple
+from typing import List
 import jinja2
 from jinja2 import Environment
+import networkx as nx
 
 queue_template_str = '''#include <stdlib.h>
 #include <stdio.h>
@@ -52,12 +55,19 @@ int main()
 {
     q_init_queue(&q, {{ops|length}});
 
-    {% for i in range(ops|length) -%}
+    {% for i in participating -%}
     pthread_t t_{{i}};
     if (pthread_create(&t_{{i}}, NULL, thread_{{i}}, NULL))
         abort();
         
     {% endfor %}
+    {% for i in range(noise) -%}
+    {% set j = i+ops|length -%}
+    pthread_t t_{{j}};
+    if (pthread_create(&t_{{j}}, NULL, noise_enq_deq, create_args(&q, {{j}}, 1)))
+        abort();
+        
+    {% endfor -%}
 }
 '''
 
@@ -87,14 +97,21 @@ def parse_index(event_name, n, k):
     return ret
 
 
-def parse_trace(trace, n, k):
+def parse_trace(trace, n, k) -> Tuple[List[Op], int, List[int]]:
     ops = generate_ops(n, k)
+    g = nx.DiGraph()
+    g.add_nodes_from(i for i in range(n))
+    participating = set()
     for event in trace:
         names = str(event)[1:-1].split("_")
         before_index = parse_index(names[0], n, k)
         after_index = parse_index(names[1], n, k)
         ops[after_index].wait_for.append(before_index)
-    return ops
+        g.add_edge(before_index, after_index)
+        participating.add(before_index)
+        participating.add(after_index)
+    width = len(max(list(nx.antichains(g)),key=len))
+    return ops, width, list(participating)
 
 
 def generate_ops(n, k):
@@ -108,15 +125,18 @@ def generate_ops(n, k):
    
 
 def generate_test(trace, n, k):
-    ops = parse_trace(trace, n, k)
+    ops, width, participating = parse_trace(trace, n, k)
     includes = ["../../../wrappers/queue-wrappers.h"]
     desc = str(trace)
     queue_type = "queue_t"
     template = env.get_template("queue")
-    return template.render(ops=ops, includes=includes, desc=desc, queue_type=queue_type)
+    noise = max(0, max_threads-(len(ops)-width))
+    return template.render(ops=ops, includes=includes, desc=desc, queue_type=queue_type, participating=participating, noise=noise)
 
 fname = "./docs/resultset2.txt"
 outpath = "./tests/generated"
+noise = True
+max_threads = 5
 
 def parse_params_line(line):
     parts = line.split(" ")
@@ -140,7 +160,7 @@ def parse_testset(fname, outpath):
             continue
         if line.startswith("n:"):
             n, k, q, N = parse_params_line(line)
-            path = os.path.join(path, q+"_"+str(n)+"_"+str(k)+"_"+str(N))
+            path = os.path.join(path, q+"_"+str(n)+"_"+str(k)+"_"+str(N))+"_"+str(noise)+"_"+str(max_threads)
             if not os.path.exists(path):
                 os.mkdir(path)
             continue

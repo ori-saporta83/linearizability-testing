@@ -37,8 +37,8 @@ void *thread_1(void *arg)
     unsigned int res = 0;
     bool succ = q_dequeue(&q, &res);
     
-    __VERIFIER_assume(succ);
-    __VERIFIER_assume(res == 1);
+    // __VERIFIER_assume(succ);
+    // __VERIFIER_assume(res == 1);
     
     
     atomic_store_explicit(&f_1, 1, memory_order_release);

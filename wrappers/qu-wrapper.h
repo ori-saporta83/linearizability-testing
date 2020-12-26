@@ -7,7 +7,7 @@ typedef struct queue queue_t;
 void q_enqueue(queue_t *q, unsigned int val) 
 {
     int ret = queue_try_enq(q, val);
-    assert(ret == 0);
+    // assert(ret == 0);
 }
 
 bool q_dequeue(queue_t *q, unsigned int *retVal)

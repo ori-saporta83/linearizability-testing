@@ -39,7 +39,7 @@ void q_enqueue(queue_t *q, unsigned int val)
     if (i - q->out > q->mask)
         return;
     __VERIFIER_assume(!q->isUsed[i & q->mask]);
-    __VERIFIER_assume(atomic_compare_exchange_weak(&(q->in), &i, i + 1));
+    __VERIFIER_assume(atomic_compare_exchange_weak_explicit(&(q->in), &i, i + 1, memory_order_release, memory_order_release));
 
     q->buffer[i & q->mask] = val;
     q->isUsed[i & q->mask] = true;
@@ -59,7 +59,7 @@ bool q_dequeue(queue_t *q, unsigned int *retVal)
     if (o == q->in)
         return -1;
     __VERIFIER_assume(q->isUsed[o & q->mask]);
-    __VERIFIER_assume(atomic_compare_exchange_weak(&(q->out), &o, o + 1));
+    __VERIFIER_assume(atomic_compare_exchange_weak_explicit(&(q->out), &o, o + 1, memory_order_acquire, memory_order_acquire));
 
     unsigned int r = q->buffer[o &= q->mask];
     q->isUsed[o] = false;

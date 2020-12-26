@@ -33,11 +33,11 @@ void *thread_{{loop.index0}}(void *arg)
     {% endfor -%}
 
     {% if op.type == 0 %}
-    bool succ = w_add(&set, {{op.val}});
+    bool succ = w_add(&set, {{op.val}} * 10);
     {% elif op.type == 1 %}
-    bool succ = w_remove(&set, {{op.val}});
+    bool succ = w_remove(&set, {{op.val}} * 10);
     {% else %}
-    bool succ = w_in(&set, {{op.val}});
+    bool succ = w_in(&set, {{op.val}} * 10);
     {% endif %}
     {% if op.succ -%}
     __VERIFIER_assume(succ);
@@ -63,7 +63,7 @@ int main()
     {% for i in range(noise) -%}
     {% set j = i+ops|length -%}
     pthread_t t_{{j}};
-    if (pthread_create(&t_{{j}}, NULL, noise_gen, create_args(&set, {{j}}, 1)))
+    if (pthread_create(&t_{{j}}, NULL, noise_gen, create_args(&set, {{j}}, 1, {{ops|length}})))
         abort();
         
     {% endfor %}
@@ -124,19 +124,20 @@ def parse_trace(trace, n, k, l) -> Tuple[List[Op], int, List[int]]:
 def generate_ops(n, k, l):
     ops = []
     for i in range(n):
+        v = i+1
         desc = "add("+chr(i+65)+")"
-        op = Op(0, i, True, desc, [])
+        op = Op(0, v, True, desc, [])
         ops.append(op)
         desc = "remove("+chr(i+65)+")"
-        op = Op(1, i, True, desc, [])
+        op = Op(1, v, True, desc, [])
         ops.append(op)
         for j in range(k):
             desc = "in("+chr(i+65)+")-t-"+str(j)
-            op = Op(2, i, True, desc, [])
+            op = Op(2, v, True, desc, [])
             ops.append(op)
         for j in range(l):
             desc = "in("+chr(i+65)+")-f-"+str(j)
-            op = Op(3, i, False, desc, [])
+            op = Op(3, v, False, desc, [])
             ops.append(op)
     return ops
 

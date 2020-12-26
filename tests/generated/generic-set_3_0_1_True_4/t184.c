@@ -29,7 +29,7 @@ void *thread_0(void *arg)
     val_4 = atomic_load_explicit(&f_4, memory_order_acquire);
     __VERIFIER_assume(val_4 == 1);
     
-    bool succ = w_add(&set, 0);
+    bool succ = w_add(&set, 1 * 10);
     
     __VERIFIER_assume(succ);
     
@@ -43,7 +43,7 @@ void *thread_1(void *arg)
 {
     set_thread_num(1);
     
-    bool succ = w_remove(&set, 0);
+    bool succ = w_remove(&set, 1 * 10);
     
     __VERIFIER_assume(succ);
     
@@ -57,7 +57,7 @@ void *thread_2(void *arg)
 {
     set_thread_num(2);
     
-    bool succ = w_in(&set, 0);
+    bool succ = w_in(&set, 1 * 10);
     
     
     __VERIFIER_assume(!succ);
@@ -80,7 +80,7 @@ void *thread_3(void *arg)
     val_8 = atomic_load_explicit(&f_8, memory_order_acquire);
     __VERIFIER_assume(val_8 == 1);
     
-    bool succ = w_add(&set, 1);
+    bool succ = w_add(&set, 2 * 10);
     
     __VERIFIER_assume(succ);
     
@@ -94,7 +94,7 @@ void *thread_4(void *arg)
 {
     set_thread_num(4);
     
-    bool succ = w_remove(&set, 1);
+    bool succ = w_remove(&set, 2 * 10);
     
     __VERIFIER_assume(succ);
     
@@ -108,7 +108,7 @@ void *thread_5(void *arg)
 {
     set_thread_num(5);
     
-    bool succ = w_in(&set, 1);
+    bool succ = w_in(&set, 2 * 10);
     
     
     __VERIFIER_assume(!succ);
@@ -123,7 +123,7 @@ void *thread_6(void *arg)
 {
     set_thread_num(6);
     
-    bool succ = w_add(&set, 2);
+    bool succ = w_add(&set, 3 * 10);
     
     __VERIFIER_assume(succ);
     
@@ -141,7 +141,7 @@ void *thread_7(void *arg)
     val_1 = atomic_load_explicit(&f_1, memory_order_acquire);
     __VERIFIER_assume(val_1 == 1);
     
-    bool succ = w_remove(&set, 2);
+    bool succ = w_remove(&set, 3 * 10);
     
     __VERIFIER_assume(succ);
     
@@ -159,7 +159,7 @@ void *thread_8(void *arg)
     val_6 = atomic_load_explicit(&f_6, memory_order_acquire);
     __VERIFIER_assume(val_6 == 1);
     
-    bool succ = w_in(&set, 2);
+    bool succ = w_in(&set, 3 * 10);
     
     
     __VERIFIER_assume(!succ);

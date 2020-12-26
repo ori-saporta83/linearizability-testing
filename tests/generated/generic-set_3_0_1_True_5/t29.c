@@ -25,7 +25,7 @@ void *thread_0(void *arg)
 {
     set_thread_num(0);
     
-    bool succ = w_add(&set, 0);
+    bool succ = w_add(&set, 1 * 10);
     
     __VERIFIER_assume(succ);
     
@@ -39,7 +39,7 @@ void *thread_1(void *arg)
 {
     set_thread_num(1);
     
-    bool succ = w_remove(&set, 0);
+    bool succ = w_remove(&set, 1 * 10);
     
     __VERIFIER_assume(succ);
     
@@ -53,7 +53,7 @@ void *thread_2(void *arg)
 {
     set_thread_num(2);
     
-    bool succ = w_in(&set, 0);
+    bool succ = w_in(&set, 1 * 10);
     
     
     __VERIFIER_assume(!succ);
@@ -72,7 +72,7 @@ void *thread_3(void *arg)
     val_7 = atomic_load_explicit(&f_7, memory_order_acquire);
     __VERIFIER_assume(val_7 == 1);
     
-    bool succ = w_add(&set, 1);
+    bool succ = w_add(&set, 2 * 10);
     
     __VERIFIER_assume(succ);
     
@@ -86,7 +86,7 @@ void *thread_4(void *arg)
 {
     set_thread_num(4);
     
-    bool succ = w_remove(&set, 1);
+    bool succ = w_remove(&set, 2 * 10);
     
     __VERIFIER_assume(succ);
     
@@ -100,7 +100,7 @@ void *thread_5(void *arg)
 {
     set_thread_num(5);
     
-    bool succ = w_in(&set, 1);
+    bool succ = w_in(&set, 2 * 10);
     
     
     __VERIFIER_assume(!succ);
@@ -119,7 +119,7 @@ void *thread_6(void *arg)
     val_4 = atomic_load_explicit(&f_4, memory_order_acquire);
     __VERIFIER_assume(val_4 == 1);
     
-    bool succ = w_add(&set, 2);
+    bool succ = w_add(&set, 3 * 10);
     
     __VERIFIER_assume(succ);
     
@@ -133,7 +133,7 @@ void *thread_7(void *arg)
 {
     set_thread_num(7);
     
-    bool succ = w_remove(&set, 2);
+    bool succ = w_remove(&set, 3 * 10);
     
     __VERIFIER_assume(succ);
     
@@ -147,7 +147,7 @@ void *thread_8(void *arg)
 {
     set_thread_num(8);
     
-    bool succ = w_in(&set, 2);
+    bool succ = w_in(&set, 3 * 10);
     
     
     __VERIFIER_assume(!succ);
@@ -180,15 +180,15 @@ int main()
         
     
     pthread_t t_9;
-    if (pthread_create(&t_9, NULL, noise_gen, create_args(&set, 9, 1)))
+    if (pthread_create(&t_9, NULL, noise_gen, create_args(&set, 9, 1, 9)))
         abort();
         
     pthread_t t_10;
-    if (pthread_create(&t_10, NULL, noise_gen, create_args(&set, 10, 1)))
+    if (pthread_create(&t_10, NULL, noise_gen, create_args(&set, 10, 1, 9)))
         abort();
         
     pthread_t t_11;
-    if (pthread_create(&t_11, NULL, noise_gen, create_args(&set, 11, 1)))
+    if (pthread_create(&t_11, NULL, noise_gen, create_args(&set, 11, 1, 9)))
         abort();
         
     

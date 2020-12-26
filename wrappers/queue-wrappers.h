@@ -1,22 +1,24 @@
 // #include "chase-lev-wrapper.h"
-// #include "hwqueue-wrapper.h"
+#include "hwqueue-wrapper.h"
 // #include "lcrq-wrapper.h"
 // #include "lfring-wrapper.h"
 // #include "mpmc-queue-wrapper.h"
 // #include "ms-queue-wrapper.h"
 // #include "qu-wrapper.h"
-#include "uniq-wrapper.h"
+// #include "uniq-wrapper.h"
 // #include "lfqueue-wrapper.h"
 // #include "fastmpmc-wrapper.h"
 #include "../../genmc/include/genmc.h"
 
-typedef struct noise_args {
+typedef struct noise_args
+{
     queue_t *q;
     int tid;
     int count;
 } noise_args;
 
-noise_args * create_args(queue_t *q, int tid, int count) {
+noise_args *create_args(queue_t *q, int tid, int count)
+{
     noise_args *args = malloc(sizeof(noise_args));
     args->q = q;
     args->tid = tid;
@@ -26,10 +28,11 @@ noise_args * create_args(queue_t *q, int tid, int count) {
 
 void *noise_enq(void *arg)
 {
-    noise_args* args = (noise_args*) arg;
+    noise_args *args = (noise_args *)arg;
     set_thread_num(args->tid);
-    
-    for (int i = 0; i < args->count; ++i) {
+
+    for (int i = 0; i < args->count; ++i)
+    {
         q_enqueue(args->q, (args->tid * 100) + i);
     }
 
@@ -40,13 +43,13 @@ void *noise_enq(void *arg)
 
 void *noise_deq(void *arg)
 {
-    noise_args* args = (noise_args*) arg;
+    noise_args *args = (noise_args *)arg;
     set_thread_num(args->tid);
-    
-    for (int i = 0; i < args->count; ++i) {
+
+    for (int i = 0; i < args->count; ++i)
+    {
         unsigned int res = 0;
         bool succ = q_dequeue(args->q, &res);
-        __VERIFIER_assume(succ);
     }
 
     free(args);
@@ -56,21 +59,32 @@ void *noise_deq(void *arg)
 
 void *noise_enq_deq(void *arg)
 {
-    noise_args* args = (noise_args*) arg;
+    noise_args *args = (noise_args *)arg;
     set_thread_num(args->tid);
-    
-    for (int i = 0; i < args->count; ++i) {
-        q_enqueue(args->q, (args->tid * 100) + i);
+
+    if ((args->tid % 2) == 0)
+    {
+        for (int i = 0; i < args->count; ++i)
+        {
+            unsigned int res = 0;
+            bool succ = q_dequeue(args->q, &res);
+        }
+    }
+    else
+    {
+        for (int i = 0; i < args->count; ++i)
+        {
+            q_enqueue(args->q, (args->tid * 100) + i);
+        }
+
+        for (int i = 0; i < args->count; ++i)
+        {
+            unsigned int res = 0;
+            bool succ = q_dequeue(args->q, &res);
+        }
     }
 
-    for (int i = 0; i < args->count; ++i) {
-        unsigned int res = 0;
-        bool succ = q_dequeue(args->q, &res);
-        __VERIFIER_assume(succ);
-    }
-    
     free(args);
-    
+
     return NULL;
 }
-

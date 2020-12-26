@@ -1,6 +1,6 @@
 #include "../../genmc/tests/correct/data-structures/ms-queue/my_queue.c"
 
-typedef  queue_t;
+// typedef  queue_t;
 
 void q_enqueue(queue_t *q, unsigned int val) 
 {

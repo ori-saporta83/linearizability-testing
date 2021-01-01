@@ -221,7 +221,7 @@ int main()
         
     
     pthread_t t_10;
-    if (pthread_create(&t_10, NULL, noise_enq_deq, create_args(&q, 10, 1)))
+    if (pthread_create(&t_10, NULL, noise_enq_deq, create_args(&q, 9, 1)))
         abort();
         
     

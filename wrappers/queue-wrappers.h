@@ -1,13 +1,24 @@
+#ifdef CHASE
 #include "chase-lev-wrapper.h" 
-// #include "hwqueue-wrapper.h" 
-// #include "lcrq-wrapper.h"
-// #include "lfring-wrapper.h"
-// #include "mpmc-queue-wrapper.h" 
-// #include "ms-queue-wrapper.h"
-// #include "qu-wrapper.h"
-// #include "uniq-wrapper.h"
-// #include "lfqueue-wrapper.h"
-// #include "fastmpmc-wrapper.h"
+#elif HW
+#include "hwqueue-wrapper.h" 
+#elif LCRQ
+#include "lcrq-wrapper.h"
+#elif LFRING
+#include "lfring-wrapper.h"
+#elif MPMC
+#include "mpmc-queue-wrapper.h" 
+#elif MS
+#include "ms-queue-wrapper.h" // failed
+#elif QU
+#include "qu-wrapper.h"
+#elif UNIQ
+#include "uniq-wrapper.h"
+#elif LF
+#include "lfqueue-wrapper.h"
+#elif FASTMPMC
+#include "fastmpmc-wrapper.h"
+#endif
 #include "../../genmc/include/genmc.h"
 
 typedef struct noise_args

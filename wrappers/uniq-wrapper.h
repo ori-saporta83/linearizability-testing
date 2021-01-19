@@ -1,6 +1,7 @@
 // uniQ The Lock free Queue.
 // See test.cpp for use case & README.md for details about the solution
 // Released under LGPL 3.0
+// https://github.com/bittnkr/uniq/blob/master/cpp/uniq.h
 
 #pragma once
 #include <assert.h>
@@ -11,7 +12,7 @@
 
 typedef struct queue_t
 {
-    unsigned int buffer[MAX_SIZE];
+    atomic_uint buffer[MAX_SIZE];
     int mask;
     atomic_int in, out;
     atomic_bool isUsed[MAX_SIZE];
@@ -28,41 +29,45 @@ void q_init_queue(queue_t *q, int num_threads)
 
 void q_enqueue(queue_t *q, unsigned int val)
 {
-    int i;
+    int in, out;
     // do
     // {
     //     i = q->in;
     //     if (i - q->out > q->mask)
     //         return;
     // } while (q->isUsed[i & q->mask] || !atomic_compare_exchange_weak(&(q->in), &i, i + 1));
-    i = q->in;
-    if (i - q->out > q->mask)
+    in = atomic_load_explicit(&q->in, memory_order_relaxed);
+    out = atomic_load_explicit(&q->out, memory_order_relaxed);
+    if (in - out > q->mask)
         return;
-    __VERIFIER_assume(!q->isUsed[i & q->mask]);
-    __VERIFIER_assume(atomic_compare_exchange_weak_explicit(&(q->in), &i, i + 1, memory_order_release, memory_order_relaxed));
+    bool used = atomic_load_explicit(&q->isUsed[in & q->mask], memory_order_relaxed);
+    __VERIFIER_assume(!used);
+    __VERIFIER_assume(atomic_compare_exchange_weak_explicit(&(q->in), &in, in + 1, memory_order_relaxed, memory_order_relaxed));
 
-    q->buffer[i & q->mask] = val;
-    q->isUsed[i & q->mask] = true;
+    atomic_store_explicit(&q->buffer[in & q->mask], val, memory_order_relaxed);
+    atomic_store_explicit(&q->isUsed[in & q->mask], true, memory_order_relaxed);
     return;
 }
 
 bool q_dequeue(queue_t *q, unsigned int *retVal)
 {
-    int o;
+    int out, in;
     // do
     // {
     //     o = q->out;
     //     if (o == q->in)
     //         return -1;
     // } while (!q->isUsed[o & q->mask] || !atomic_compare_exchange_weak(&(q->out), &o, o + 1));
-    o = q->out;
-    if (o == q->in)
+    out = atomic_load_explicit(&q->out, memory_order_relaxed);
+    in = atomic_load_explicit(&q->in, memory_order_relaxed);
+    if (out == in)
         return -1;
-    __VERIFIER_assume(q->isUsed[o & q->mask]);
-    __VERIFIER_assume(atomic_compare_exchange_weak_explicit(&(q->out), &o, o + 1, memory_order_acquire, memory_order_acquire));
+    bool used = atomic_load_explicit(&q->isUsed[out & q->mask], memory_order_relaxed);
+    __VERIFIER_assume(used);
+    __VERIFIER_assume(atomic_compare_exchange_weak_explicit(&(q->out), &out, out + 1, memory_order_relaxed, memory_order_relaxed));
 
-    unsigned int r = q->buffer[o &= q->mask];
-    q->isUsed[o] = false;
+    unsigned int r = atomic_load_explicit(&q->buffer[out &= q->mask], memory_order_relaxed);
+    atomic_store_explicit(&q->isUsed[out], false, memory_order_relaxed);
     return r;
 }
 

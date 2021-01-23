@@ -31,7 +31,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <pthread.h>
-#include <omp.h>
+// #include <omp.h>
 #include <string.h>
 #include <stdint.h>
 #include <sched.h>
@@ -125,12 +125,12 @@ int crq_is_closed(uint64_t t) __attribute__ ((pure));
 typedef struct RingQueue {
     atomic_ulong head __attribute__ ((aligned (128)));
     atomic_ulong tail __attribute__ ((aligned (128)));
-    struct RingQueue * next __attribute__ ((aligned (128)));
+    struct RingQueue * _Atomic next __attribute__ ((aligned (128)));
     atomic_ulong array[RING_SIZE];
 } RingQueue __attribute__ ((aligned (128)));
 
-RingQueue * head;
-RingQueue * tail;
+RingQueue * _Atomic head;
+RingQueue * _Atomic tail;
 
 uint64_t combine(int32_t val, int32_t index) {
     uint32_t u1 = (uint32_t) val;
@@ -269,6 +269,8 @@ int close_crq(RingQueue *rq, const uint64_t t, const int tries) {
         return BIT_TEST_AND_SET(&rq->tail, 63);
 }
 
+#define MAX_ITER 2
+
 void enqueue(Object arg, int pid) {
 
     int try_close = 0;
@@ -276,7 +278,7 @@ void enqueue(Object arg, int pid) {
 
     while (1) {
         cnt++;
-        __VERIFIER_assume(cnt < 4);
+        __VERIFIER_assume(cnt < MAX_ITER);
         RingQueue *rq = tail;
 
 #ifdef HAVE_HPTRS
@@ -287,9 +289,8 @@ void enqueue(Object arg, int pid) {
 
         RingQueue *next = rq->next;
  
-        atomic_intptr_t tail_ptr = (uintptr_t) tail;
         if (unlikely(next != NULL)) {
-            atomic_compare_exchange_weak(&tail_ptr, (intptr_t *) &rq, (intptr_t) next);
+            atomic_compare_exchange_weak(&tail, &rq, next);
             continue;
         }
 
@@ -305,29 +306,26 @@ alloc:
             // Solo enqueue
             nrq->tail = 1, nrq->array[0] = combine(arg, 0);
 
-            atomic_intptr_t next_ptr = (intptr_t) rq->next;
-            atomic_intptr_t tail_ptr = (intptr_t) tail;
-
-            intptr_t null_ptr = (intptr_t) NULL;
-            if (atomic_compare_exchange_weak(&next_ptr, &null_ptr, (intptr_t) nrq)) {
-                atomic_compare_exchange_weak(&tail_ptr, (intptr_t *) &rq, (intptr_t) nrq);
+            RingQueue * empty = NULL;
+            if (atomic_compare_exchange_weak(&rq->next, &empty, nrq)) {
+                atomic_compare_exchange_weak(&tail, &rq, nrq);
                 nrq = NULL;
                 return;
             }
             continue;
         }
            
-        atomic_ulong cell = rq->array[t & (RING_SIZE-1)];
+        atomic_ulong * cell = &rq->array[t & (RING_SIZE-1)];
         __builtin_prefetch((void *)cell);
 
-        uint32_t idx = get_index(cell);
-        uint32_t val = get_val(cell);
+        uint32_t idx = get_index(*cell);
+        uint32_t val = get_val(*cell);
 
         if (likely(is_empty(val))) {
             if (likely(node_index(idx) <= t)) {
                 // if ((likely(!node_unsafe(idx)) || rq->head < t) && CAS2((uint64_t*)cell, -1, idx, arg, t)) {
                 uint64_t v = combine(-1, idx);
-                if ((likely(!node_unsafe(idx)) || rq->head < t) && atomic_compare_exchange_weak(&cell, &v, combine(arg, t))) {
+                if ((likely(!node_unsafe(idx)) || rq->head < t) && atomic_compare_exchange_weak(cell, &v, combine(arg, t))) {
                     return;
                 }
             }
@@ -347,7 +345,7 @@ Object dequeue(int pid) {
     int cnt = 0;
     while (1) {
         cnt++;
-        __VERIFIER_assume(cnt < 4);
+        __VERIFIER_assume(cnt < MAX_ITER);
         RingQueue *rq = head;
         RingQueue *next;
 
@@ -360,7 +358,7 @@ Object dequeue(int pid) {
         uint64_t h = atomic_fetch_add(&rq->head, 1);
 
 
-        atomic_ulong cell = rq->array[h & (RING_SIZE-1)];
+        atomic_ulong * cell = &rq->array[h & (RING_SIZE-1)];
         __builtin_prefetch((void *)cell);
 
         uint64_t tt;
@@ -369,10 +367,10 @@ Object dequeue(int pid) {
         int innerCnt = 0;
         while (1) {
             innerCnt++;
-            __VERIFIER_assume(innerCnt < 4);
+            __VERIFIER_assume(innerCnt < MAX_ITER);
 
-            uint32_t cell_idx = get_index(cell);
-            uint32_t val = get_val(cell);
+            uint32_t cell_idx = get_index(*cell);
+            uint32_t val = get_val(*cell);
             uint32_t unsafe = node_unsafe(cell_idx);
             uint64_t idx = node_index(cell_idx);
 
@@ -382,11 +380,11 @@ Object dequeue(int pid) {
                 uint64_t v = combine(val, cell_idx);
                 if (likely(idx == h)) {
                     // if (CAS2((uint64_t*)cell, val, cell_idx, -1, unsafe | h + RING_SIZE))
-                    if (atomic_compare_exchange_weak(&cell, &v, combine(-1, unsafe | h + RING_SIZE)))
+                    if (atomic_compare_exchange_weak(cell, &v, combine(-1, unsafe | h + RING_SIZE)))
                         return val;
                 } else {
                     // if (CAS2((uint64_t*)cell, val, cell_idx, val, set_unsafe(idx))) {
-                    if (atomic_compare_exchange_weak(&cell, &v, combine(val, set_unsafe(idx)))) {
+                    if (atomic_compare_exchange_weak(cell, &v, combine(val, set_unsafe(idx)))) {
                         count_unsafe_node();
                         break;
                     }
@@ -402,12 +400,12 @@ Object dequeue(int pid) {
                 if (unlikely(unsafe)) { // Nothing to do, move along
                     // if (CAS2((uint64_t*)cell, val, cell_idx, val, unsafe | h + RING_SIZE))
                     uint64_t v = combine(val, cell_idx);
-                    if (atomic_compare_exchange_weak(&cell, &v, combine(val, unsafe | h + RING_SIZE)))
+                    if (atomic_compare_exchange_weak(cell, &v, combine(val, unsafe | h + RING_SIZE)))
                         break;
                 } else if (t < h + 1 || r > 200000 || crq_closed) {
                     // if (CAS2((uint64_t*)cell, val, idx, val, h + RING_SIZE)) {
                     uint64_t v = combine(val, idx);
-                    if (atomic_compare_exchange_weak(&cell, &v, combine(val, h + RING_SIZE))) {
+                    if (atomic_compare_exchange_weak(cell, &v, combine(val, h + RING_SIZE))) {
                         if (r > 200000 && tt > RING_SIZE)
                             BIT_TEST_AND_SET(&rq->tail, 63);
                         break;
@@ -424,115 +422,9 @@ Object dequeue(int pid) {
             next = rq->next;
             if (next == NULL)
                 return -1;  // EMPTY
-            if (tail_index(rq->tail) <= h + 1) {
-                atomic_intptr_t head_ptr = (intptr_t) head;
-                atomic_compare_exchange_weak(&head_ptr, (intptr_t *) &rq, (intptr_t) next);
+            if (tail_index(rq->tail) <= h + 1) {                
+                atomic_compare_exchange_weak(&head, &rq, next);
             }
         }
     }
 }
-
-/* pthread_barrier_t barr;
-
-int64_t d1 CACHE_ALIGN, d2;
-
-inline void Execute(void* Arg) {
-    long i, rnum;
-    volatile int j;
-    long id = (long) Arg;
-
-    _thread_pin(id);
-    simSRandom(id + 1);
-    nrq = null;
-
-    if (id == N_THREADS - 1)
-        d1 = getTimeMillis();
-    // Synchronization point
-    int rc = pthread_barrier_wait(&barr);
-    if (rc != 0 && rc != PTHREAD_BARRIER_SERIAL_THREAD) {
-        printf("Could not wait on barrier\n");
-        exit(-1);
-    }
-
-    start_cpu_counters(id);
-    for (i = 0; i < RUNS; i++) {
-        // perform an enqueue operation
-        enqueue(id, id);
-        rnum = simRandomRange(1, MAX_WORK);
-        for (j = 0; j < rnum; j++)
-            ; 
-        // perform a dequeue operation
-        dequeue(id);
-        rnum = simRandomRange(1, MAX_WORK);
-        for (j = 0; j < rnum; j++)
-            ; 
-    }
-    stop_cpu_counters(id);
-
-#ifdef RING_STATS
-    FAA64(&closes, mycloses);
-    FAA64(&unsafes, myunsafes);
-#endif
-}
-
-inline static void* EntryPoint(void* Arg) {
-    Execute(Arg);
-    return NULL;
-}
-
-inline pthread_t StartThread(int arg) {
-    long id = (long) arg;
-    void *Arg = (void*) id;
-    pthread_t thread_p;
-    int thread_id;
-
-    pthread_attr_t my_attr;
-    pthread_attr_init(&my_attr);
-    thread_id = pthread_create(&thread_p, &my_attr, EntryPoint, Arg);
-
-    return thread_p;
-}
-
-int main(int argc, char **argv) {
-    pthread_t threads[N_THREADS];
-    int i;
-
-    init_cpu_counters();
-
-    if (argc < 2) {
-        fprintf(stderr, "Please specify whether to fill queue prior to benchmark!\n");
-        exit(EXIT_SUCCESS);
-    } else {
-        sscanf(argv[1], "%d", &FULL);
-    }
-
-    // Barrier initialization
-    if (pthread_barrier_init(&barr, NULL, N_THREADS)) {
-        printf("Could not create the barrier\n");
-        return -1;
-    }
-
-    int full = FULL;
-
-    SHARED_OBJECT_INIT();
-
-    for (i = 0; i < N_THREADS; i++)
-        threads[i] = StartThread(i);
-
-    for (i = 0; i < N_THREADS; i++)
-        pthread_join(threads[i], NULL);
-    d2 = getTimeMillis();
-
-    printf("time=%d full=%d ", (int) (d2 - d1), full);
-#ifdef RING_STATS
-    printf("closes=%ld unsafes=%ld ", closes, unsafes);
-#endif
-    printStats();
-
-    if (pthread_barrier_destroy(&barr)) {
-        printf("Could not destroy the barrier\n");
-        return -1;
-    }
-    return 0;
-}
-/**/

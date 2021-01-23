@@ -1,5 +1,5 @@
 #define SCQ
-#include "../../lfqueue/lfring_cas1.h"
+#include "../../lfring/lfring_cas1.h"
 
 #define SCQ_ORDER 15
 #define EMPTY (void *)LFRING_EMPTY

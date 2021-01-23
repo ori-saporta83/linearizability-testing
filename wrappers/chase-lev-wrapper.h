@@ -1,20 +1,98 @@
-#include "../../genmc/tests/correct/data-structures/chase-lev/deque.h"
 #include <assert.h>
+#include <stdint.h>
+#include <stdatomic.h>
+
+#ifndef LEN
+# define LEN 10
+#endif
+
+typedef int val_t;
+
+struct Deque {
+	atomic_uint_fast64_t bottom;
+	atomic_uint_fast64_t top;
+	val_t * _Atomic buffer[LEN]; // in fact, it should be marked as atomic
+	//due to the race between push and
+	// steal.
+};
+
+int64_t try_push(struct Deque *deq, int64_t N, val_t * data)
+{
+	uint64_t b = atomic_load_explicit(&deq->bottom, memory_order_acquire);
+	uint64_t t = atomic_load_explicit(&deq->top, memory_order_acquire);
+
+	int64_t len = (int64_t) (b - t);
+	if (len >= N) {
+		return -1; // full
+	}
+
+	deq->buffer[b % N] = data;
+	atomic_store_explicit(&deq->bottom, b + 1, memory_order_release);
+	return 0;
+}
+
+int64_t try_pop(struct Deque *deq, int64_t N, val_t **data)
+{
+	uint64_t b = atomic_load_explicit(&deq->bottom, memory_order_relaxed);
+	atomic_store_explicit(&deq->bottom, b - 1, memory_order_relaxed);
+
+	atomic_thread_fence(memory_order_seq_cst);
+
+	uint64_t t = atomic_load_explicit(&deq->top, memory_order_relaxed);
+	int64_t len = (int64_t) (b - t);
+
+	if (len <= 0) {
+		atomic_store_explicit(&deq->bottom, b, memory_order_relaxed);
+		return -1; // empty
+	}
+
+	*data = deq->buffer[(b - 1) % N];
+
+	if (len > 1) {
+		return 0;
+	}
+
+	// len = 1.
+	bool is_successful = atomic_compare_exchange_strong_explicit(&deq->top, &t, t + 1,
+							    memory_order_acquire,
+							    memory_order_acquire);
+	atomic_store_explicit(&deq->bottom, b, memory_order_relaxed);
+	return (is_successful ? 0 : -2); // success or lost
+}
+
+int64_t try_steal(struct Deque *deq, int64_t N, val_t **data)
+{
+	uint64_t t = atomic_load_explicit(&deq->top, memory_order_acquire);
+
+	atomic_thread_fence(memory_order_seq_cst);
+
+	uint64_t b = atomic_load_explicit(&deq->bottom, memory_order_acquire);
+	int64_t len = (int64_t) (b - t);
+
+	if (len <= 0) {
+		return -1; // empty
+	}
+
+	*data = deq->buffer[t % N];
+
+	bool is_successful = atomic_compare_exchange_strong_explicit(&deq->top, &t, t + 1,
+							    memory_order_acq_rel,
+							    memory_order_acquire);
+	return (is_successful ? 0 : -2); // success or lost
+}
 
 typedef struct Deque queue_t;
 int N = 10;
 
-void q_enqueue(queue_t *q, unsigned int val) 
+void q_enqueue(queue_t *q, val_t *val) 
 {
 	int res = try_push(q, N, val);
     assert(res == 0);
 }
 
-bool q_dequeue(queue_t *q, unsigned int *retVal)
+bool q_dequeue(queue_t *q, val_t **retVal)
 {
-    int64_t val = 0;
-    int res = try_steal(q, N, &val);
-    *retVal = (unsigned int)val;
+    int res = try_steal(q, N, retVal);
     return res == 0;
 }
 

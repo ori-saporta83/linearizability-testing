@@ -44,7 +44,9 @@ void *noise_enq(void *arg)
 
     for (int i = 0; i < args->count; ++i)
     {
-        q_enqueue(args->q, (args->tid * 100) + i);
+        int * val = (int *)malloc(sizeof(int));
+        *val = (args->tid * 100) + i;
+        q_enqueue(args->q, val);
     }
 
     free(args);
@@ -59,8 +61,11 @@ void *noise_deq(void *arg)
 
     for (int i = 0; i < args->count; ++i)
     {
-        unsigned int res = 0;
+        int * res = NULL;
         bool succ = q_dequeue(args->q, &res);
+        if (succ) {
+            assert(*res != -1);
+        }
     }
 
     free(args);
@@ -77,21 +82,29 @@ void *noise_enq_deq(void *arg)
     {
         for (int i = 0; i < args->count; ++i)
         {
-            unsigned int res = 0;
+            int * res = NULL;
             bool succ = q_dequeue(args->q, &res);
+            if (succ) {
+                assert(*res != -1);
+            }
         }
     }
     else
     {
         for (int i = 0; i < args->count; ++i)
         {
-            q_enqueue(args->q, (args->tid * 100) + i);
+            int * val = (int *)malloc(sizeof(int));
+            *val = (args->tid * 100) + i;
+            q_enqueue(args->q, val);
         }
 
         for (int i = 0; i < args->count; ++i)
         {
-            unsigned int res = 0;
+            int * res = NULL;
             bool succ = q_dequeue(args->q, &res);
+            if (succ) {
+                assert(*res != -1);
+            }
         }
     }
 

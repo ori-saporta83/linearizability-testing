@@ -56,10 +56,8 @@ void enqueue(queue_t *q, val_t * val)
     return;
 }
 
-void q_enqueue(queue_t *q, int val) {
-    val_t *v = (val_t*)malloc(sizeof(val_t));
-    *v = val;
-    enqueue(q, v);
+void q_enqueue(queue_t *q, int * val) {
+    enqueue(q, val);
 }
 
 bool dequeue(queue_t *q, val_t **retVal)

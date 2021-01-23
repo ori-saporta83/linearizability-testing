@@ -1,3 +1,4 @@
+//https://github.com/spectre1989/fast_mpmc_queue/blob/master/MPMCQueue.h
 #pragma once
 
 #include <stdatomic.h>
@@ -8,10 +9,12 @@
 
 #define MAX_SIZE 32
 
+typedef int val_t;
+
 typedef struct Item
 {
     atomic_uint_fast64_t version;
-    unsigned int value;
+    val_t * value;
 } Item;
 
 typedef struct queue_t
@@ -20,7 +23,7 @@ typedef struct queue_t
     size_t m_capacity;
 
     // Make sure each index is on a different cache line
-    atomic_int m_head, m_tail;
+    atomic_uint_fast64_t m_head, m_tail;
 } queue_t;
 
 void q_init_queue(queue_t *q, int num_threads)
@@ -34,14 +37,23 @@ void q_init_queue(queue_t *q, int num_threads)
     }
 }
 
-void q_enqueue(queue_t *q, unsigned int val)
+#define MAX_ITER 3
+
+void q_enqueue(queue_t *q, val_t * val)
 {
-    int tail = atomic_load_explicit(&(q->m_tail), memory_order_relaxed);
+    int cnt = 0;
+    uint64_t tail, t;
+    while (true) {
+        __VERIFIER_assume(++cnt < MAX_ITER);
 
-    uint64_t t = atomic_load_explicit(&(q->m_items[tail % q->m_capacity].version), memory_order_acquire);
-    __VERIFIER_assume(t == tail);
+        tail = atomic_load_explicit(&(q->m_tail), memory_order_relaxed);
+        t = atomic_load_explicit(&(q->m_items[tail % q->m_capacity].version), memory_order_acquire);
+        if (t != tail) continue;
 
-    __VERIFIER_assume(atomic_compare_exchange_strong_explicit(&(q->m_tail), (int *)&tail, tail + 1, memory_order_relaxed, memory_order_relaxed));
+        if (!atomic_compare_exchange_weak_explicit(&(q->m_tail), &tail, tail + 1, memory_order_relaxed, memory_order_relaxed)) continue;
+
+        break;
+    }
 
     q->m_items[tail % q->m_capacity].value = val;
 
@@ -50,16 +62,26 @@ void q_enqueue(queue_t *q, unsigned int val)
     atomic_store_explicit(&(q->m_items[tail % q->m_capacity].version), tail + 1, memory_order_release);
 }
 
-bool q_dequeue(queue_t *q, unsigned int *retVal)
+bool q_dequeue(queue_t *q, val_t **retVal)
 {
-    int head = atomic_load_explicit(&(q->m_head), memory_order_relaxed);
+    int cnt = 0;
+    uint64_t head, h;
+    while (true) {
+        __VERIFIER_assume(++cnt < MAX_ITER);
 
-    // Acquire here makes sure read of m_data[head].value is not reordered before this
-    // Also makes sure side effects in try_enqueue are visible here
-    uint64_t h = atomic_load_explicit(&(q->m_items[head % q->m_capacity].version), memory_order_acquire);
-    __VERIFIER_assume(h == head + 1);
+        head = atomic_load_explicit(&(q->m_head), memory_order_relaxed);
+        uint64_t tail = atomic_load_explicit(&(q->m_tail), memory_order_relaxed);
+        if (head == tail) return false;
 
-    __VERIFIER_assume(atomic_compare_exchange_strong_explicit(&(q->m_head), (int *)&head, head + 1, memory_order_relaxed, memory_order_relaxed));
+        // Acquire here makes sure read of m_data[head].value is not reordered before this
+        // Also makes sure side effects in try_enqueue are visible here
+        h = atomic_load_explicit(&(q->m_items[head % q->m_capacity].version), memory_order_acquire);
+        if (h != head + 1) continue;
+
+        if (!atomic_compare_exchange_weak_explicit(&(q->m_head), &head, head + 1, memory_order_relaxed, memory_order_relaxed)) continue;
+
+        break;
+    }
 
     *retVal = q->m_items[head % q->m_capacity].value;
 

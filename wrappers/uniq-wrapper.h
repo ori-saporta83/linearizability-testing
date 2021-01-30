@@ -52,7 +52,8 @@ void enqueue(queue_t *q, val_t * val)
     } while (!atomic_compare_exchange_weak_explicit(&(q->in), &in, in + 1, memory_order_relaxed, memory_order_relaxed));
 
     q->buffer[in & q->mask] = val;
-    atomic_store_explicit(&q->isUsed[in & q->mask], true, memory_order_release);
+    atomic_thread_fence(memory_order_release);
+    atomic_store_explicit(&q->isUsed[in & q->mask], true, memory_order_relaxed);
     return;
 }
 
@@ -79,9 +80,11 @@ bool dequeue(queue_t *q, val_t **retVal)
         if (out == in)
             return false;
 
-        used = atomic_load_explicit(&q->isUsed[out & q->mask], memory_order_acquire);
+        used = atomic_load_explicit(&q->isUsed[out & q->mask], memory_order_relaxed);
+        
     } while (!used || !atomic_compare_exchange_weak_explicit(&(q->out), &out, out + 1, memory_order_relaxed, memory_order_relaxed));
 
+    atomic_thread_fence(memory_order_acquire);
     *retVal = q->buffer[out &= q->mask];
     atomic_store_explicit(&q->isUsed[out], false, memory_order_relaxed);
     return true;

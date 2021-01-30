@@ -49,7 +49,7 @@
 // --------------------
 // The LCRQ's ring size will be 2^{RING_POW}.
 #ifndef RING_POW
-#define RING_POW        (17)
+#define RING_POW        (4)
 #endif
 #define RING_SIZE       (1ull << RING_POW)
 #define Object                     int32_t
@@ -208,31 +208,26 @@ static void SHARED_OBJECT_INIT() {
     }
 }
 
+#define MAX_ITER 3
 
 void fixState(RingQueue *rq) {
 
-    // uint64_t t, h, n;
+    uint64_t t, h, n;
 
-    // while (1) {
-    //     uint64_t t = atomic_load(&rq->tail);
-    //     uint64_t h = atomic_load(&rq->head);
+    int cnt = 0;
+    while (1) {
+        __VERIFIER_assume(++cnt < MAX_ITER);
+        t = atomic_load(&rq->tail);
+        h = atomic_load(&rq->head);
 
-    //     if (unlikely(rq->tail != t))
-    //         continue;
+        if (unlikely(rq->tail != t))
+            continue;
 
-    //     if (h > t) {
-    //         if (atomic_compare_exchange_weak(&rq->tail, &t, h)) break;
-    //         continue;
-    //     }
-    //     break;
-    // }
-    uint64_t t = atomic_load(&rq->tail);
-    uint64_t h = atomic_load(&rq->head);
-
-    __VERIFIER_assume(rq->tail == t);
-
-    if (h > t) {
-        __VERIFIER_assume(atomic_compare_exchange_weak(&rq->tail, &t, h));
+        if (h > t) {
+            if (atomic_compare_exchange_weak(&rq->tail, &t, h)) break;
+            continue;
+        }
+        break;
     }
 }
 
@@ -268,8 +263,6 @@ int close_crq(RingQueue *rq, const uint64_t t, const int tries) {
     else
         return BIT_TEST_AND_SET(&rq->tail, 63);
 }
-
-#define MAX_ITER 2
 
 void enqueue(Object arg, int pid) {
 
@@ -357,7 +350,6 @@ Object dequeue(int pid) {
 
         uint64_t h = atomic_fetch_add(&rq->head, 1);
 
-
         atomic_ulong * cell = &rq->array[h & (RING_SIZE-1)];
         __builtin_prefetch((void *)cell);
 
@@ -366,11 +358,11 @@ Object dequeue(int pid) {
 
         int innerCnt = 0;
         while (1) {
-            innerCnt++;
-            __VERIFIER_assume(innerCnt < MAX_ITER);
+            __VERIFIER_assume(++innerCnt < 2);
 
-            uint32_t cell_idx = get_index(*cell);
-            uint32_t val = get_val(*cell);
+            uint64_t cv = *cell;
+            uint32_t cell_idx = get_index(cv);
+            uint32_t val = get_val(cv);
             uint32_t unsafe = node_unsafe(cell_idx);
             uint64_t idx = node_index(cell_idx);
 
@@ -390,29 +382,34 @@ Object dequeue(int pid) {
                     }
                 }
             } else {
-                if ((r & ((1ull << 10) - 1)) == 0)
-                    tt = rq->tail;
+                // if ((r & ((1ull << 10) - 1)) == 0)
+                //     tt = rq->tail;
+                // tt = rq->tail;
 
                 // Optimization: try to bail quickly if queue is closed.
-                int crq_closed = crq_is_closed(tt);
-                uint64_t t = tail_index(tt);
+                // int crq_closed = crq_is_closed(tt);
+                // uint64_t t = tail_index(tt);
 
-                if (unlikely(unsafe)) { // Nothing to do, move along
-                    // if (CAS2((uint64_t*)cell, val, cell_idx, val, unsafe | h + RING_SIZE))
-                    uint64_t v = combine(val, cell_idx);
-                    if (atomic_compare_exchange_weak(cell, &v, combine(val, unsafe | h + RING_SIZE)))
-                        break;
-                } else if (t < h + 1 || r > 200000 || crq_closed) {
-                    // if (CAS2((uint64_t*)cell, val, idx, val, h + RING_SIZE)) {
-                    uint64_t v = combine(val, idx);
-                    if (atomic_compare_exchange_weak(cell, &v, combine(val, h + RING_SIZE))) {
-                        if (r > 200000 && tt > RING_SIZE)
-                            BIT_TEST_AND_SET(&rq->tail, 63);
-                        break;
-                    }
-                } else {
-                    ++r;
-                }
+                uint64_t v = combine(val, cell_idx);
+                if (atomic_compare_exchange_weak(cell, &v, combine(val, unsafe | h + RING_SIZE)))
+                    break;
+
+                // if (unlikely(unsafe)) { // Nothing to do, move along
+                //     // if (CAS2((uint64_t*)cell, val, cell_idx, val, unsafe | h + RING_SIZE))
+                //     uint64_t v = combine(val, cell_idx);
+                //     if (atomic_compare_exchange_weak(cell, &v, combine(val, unsafe | h + RING_SIZE)))
+                //         break;
+                // } else if (t < h + 1 || r > 200000 || crq_closed) {
+                //     // if (CAS2((uint64_t*)cell, val, idx, val, h + RING_SIZE)) {
+                //     uint64_t v = combine(val, idx);
+                //     if (atomic_compare_exchange_weak(cell, &v, combine(val, h + RING_SIZE))) {
+                //         if (r > 200000 && tt > RING_SIZE)
+                //             BIT_TEST_AND_SET(&rq->tail, 63);
+                //         break;
+                //     }
+                // } else {
+                //     ++r;
+                // }
             }
         }
 

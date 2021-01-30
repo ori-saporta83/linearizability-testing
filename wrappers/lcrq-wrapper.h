@@ -16,15 +16,16 @@ int get_thread_num()
 	return tid;
 }
 
-void q_enqueue(queue_t *q, unsigned int val)
+void q_enqueue(queue_t *q, int * val)
 {    
-    enqueue(val, get_thread_num());
+    enqueue(*val, get_thread_num());
 }
 
-bool q_dequeue(queue_t *q, unsigned int *retVal)
+bool q_dequeue(queue_t *q, int **retVal)
 {
-    *retVal = dequeue(get_thread_num());
-    return *retVal != -1;
+    *retVal = (int *)malloc(sizeof(int));
+    **retVal = dequeue(get_thread_num());
+    return **retVal != -1;
 }
 
 void q_init_queue(queue_t *q, int num_threads)

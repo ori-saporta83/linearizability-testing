@@ -26,7 +26,9 @@ void *thread_0(void *arg)
 {
     set_thread_num(0);
     
-    q_enqueue(&q, 1);
+    int * val = (int *)malloc(sizeof(int));
+    *val = 1;
+    q_enqueue(&q, val);
     
     atomic_store_explicit(&f_0, 1, memory_order_release);
 
@@ -42,11 +44,11 @@ void *thread_1(void *arg)
     val_4 = atomic_load_explicit(&f_4, memory_order_acquire);
     __VERIFIER_assume(val_4 == 1);
     
-    unsigned int res = 0;
+    int * res = NULL;
     bool succ = q_dequeue(&q, &res);
     
     __VERIFIER_assume(succ);
-    __VERIFIER_assume(res == 1);
+    __VERIFIER_assume(*res == 1);
     
     
     atomic_store_explicit(&f_1, 1, memory_order_release);
@@ -67,7 +69,9 @@ void *thread_2(void *arg)
     val_8 = atomic_load_explicit(&f_8, memory_order_acquire);
     __VERIFIER_assume(val_8 == 1);
     
-    q_enqueue(&q, 2);
+    int * val = (int *)malloc(sizeof(int));
+    *val = 2;
+    q_enqueue(&q, val);
     
     atomic_store_explicit(&f_2, 1, memory_order_release);
 
@@ -79,11 +83,11 @@ void *thread_3(void *arg)
 {
     set_thread_num(3);
     
-    unsigned int res = 0;
+    int * res = NULL;
     bool succ = q_dequeue(&q, &res);
     
     __VERIFIER_assume(succ);
-    __VERIFIER_assume(res == 2);
+    __VERIFIER_assume(*res == 2);
     
     
     atomic_store_explicit(&f_3, 1, memory_order_release);
@@ -96,7 +100,9 @@ void *thread_4(void *arg)
 {
     set_thread_num(4);
     
-    q_enqueue(&q, 3);
+    int * val = (int *)malloc(sizeof(int));
+    *val = 3;
+    q_enqueue(&q, val);
     
     atomic_store_explicit(&f_4, 1, memory_order_release);
 
@@ -112,11 +118,11 @@ void *thread_5(void *arg)
     val_6 = atomic_load_explicit(&f_6, memory_order_acquire);
     __VERIFIER_assume(val_6 == 1);
     
-    unsigned int res = 0;
+    int * res = NULL;
     bool succ = q_dequeue(&q, &res);
     
     __VERIFIER_assume(succ);
-    __VERIFIER_assume(res == 3);
+    __VERIFIER_assume(*res == 3);
     
     
     atomic_store_explicit(&f_5, 1, memory_order_release);
@@ -129,7 +135,9 @@ void *thread_6(void *arg)
 {
     set_thread_num(6);
     
-    q_enqueue(&q, 4);
+    int * val = (int *)malloc(sizeof(int));
+    *val = 4;
+    q_enqueue(&q, val);
     
     atomic_store_explicit(&f_6, 1, memory_order_release);
 
@@ -145,11 +153,11 @@ void *thread_7(void *arg)
     val_3 = atomic_load_explicit(&f_3, memory_order_acquire);
     __VERIFIER_assume(val_3 == 1);
     
-    unsigned int res = 0;
+    int * res = NULL;
     bool succ = q_dequeue(&q, &res);
     
     __VERIFIER_assume(succ);
-    __VERIFIER_assume(res == 4);
+    __VERIFIER_assume(*res == 4);
     
     
     atomic_store_explicit(&f_7, 1, memory_order_release);
@@ -166,11 +174,11 @@ void *thread_8(void *arg)
     val_0 = atomic_load_explicit(&f_0, memory_order_acquire);
     __VERIFIER_assume(val_0 == 1);
     
-    unsigned int res = 0;
+    int * res = NULL;
     bool succ = q_dequeue(&q, &res);
     
     __VERIFIER_assume(succ);
-    __VERIFIER_assume(res == 0);
+    __VERIFIER_assume(*res == 0);
     
     
     atomic_store_explicit(&f_8, 1, memory_order_release);
@@ -183,11 +191,11 @@ void *thread_9(void *arg)
 {
     set_thread_num(9);
     
-    unsigned int res = 0;
+    int * res = NULL;
     bool succ = q_dequeue(&q, &res);
     
     __VERIFIER_assume(succ);
-    __VERIFIER_assume(res == 0);
+    __VERIFIER_assume(*res == 0);
     
     
     atomic_store_explicit(&f_9, 1, memory_order_release);
@@ -237,5 +245,4 @@ int main()
         abort();
         
     
-    
-}
+    }

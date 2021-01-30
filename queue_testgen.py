@@ -34,15 +34,17 @@ void *thread_{{loop.index0}}(void *arg)
     {% endfor -%}
 
     {% if op.enq %}
-    q_enqueue(&q, {{op.val}});
+    int * val = (int *)malloc(sizeof(int));
+    *val = {{op.val}};
+    q_enqueue(&q, val);
     {% else %}
-    unsigned int res = 0;
+    int * res = NULL;
     bool succ = q_dequeue(&q, &res);
     {% if op.val == -1 -%}
     __VERIFIER_assume(!succ);
     {% else %}
     __VERIFIER_assume(succ);
-    __VERIFIER_assume(res == {{op.val}});
+    __VERIFIER_assume(*res == {{op.val}});
     {% endif %}
     {% endif %}
     atomic_store_explicit(&f_{{loop.index0}}, 1, memory_order_release);

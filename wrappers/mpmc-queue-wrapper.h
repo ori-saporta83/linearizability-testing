@@ -12,7 +12,7 @@ typedef struct mpmc_boundq_1_alt
 {
 
 	// elements should generally be cache-line-size padded :
-	val_t *	_Atomic	m_array[t_size];
+	val_t *	m_array[t_size];
 
 	// rdwr counts the reads & writes that have started
 	atomic_uint    	m_rdwr;
@@ -45,8 +45,7 @@ bool deq(mpmc_boundq_1_alt *q, val_t ** retVal)
 
 	__VERIFIER_assume((atomic_load_explicit(&q->m_written, memory_order_acquire) & 0xFFFF) == wr);
 
-	val_t * _Atomic * bin = &(q->m_array[rd % t_size]);
-	*retVal = atomic_load_explicit(bin, memory_order_relaxed);
+	*retVal = (q->m_array[rd % t_size]);
 	
 	atomic_fetch_add_explicit(&q->m_read, 1, memory_order_release);
 
@@ -75,9 +74,7 @@ void enq(mpmc_boundq_1_alt *q, val_t * val)
 
 	__VERIFIER_assume((atomic_load_explicit(&q->m_read, memory_order_acquire) & 0xFFFF) == rd);
 
-	val_t * _Atomic * bin = &(q->m_array[wr % t_size]);
-	assert(bin != NULL);
-	atomic_store_explicit(bin, val, memory_order_relaxed);
+	(q->m_array[wr % t_size]) = val;
 
 	atomic_fetch_add_explicit(&q->m_written, 1, memory_order_release);
 }

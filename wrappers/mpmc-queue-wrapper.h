@@ -26,13 +26,13 @@ typedef struct mpmc_boundq_1_alt
 
 bool deq(mpmc_boundq_1_alt *q, val_t ** retVal)
 {
-	unsigned int rd, wr, rdwr; 
+	unsigned int rdwr = atomic_load_explicit(&q->m_rdwr, memory_order_acquire);
+	unsigned int rd, wr; 
 
 	int cnt = 0;
 	while(true) {
 		__VERIFIER_assume(++cnt < MAX_ITER);
-		
-		rdwr = atomic_load_explicit(&q->m_rdwr, memory_order_acquire);
+
 		rd = (rdwr >> 16) & 0xFFFF;
 		wr = rdwr & 0xFFFF;
 
@@ -54,13 +54,13 @@ bool deq(mpmc_boundq_1_alt *q, val_t ** retVal)
 
 void enq(mpmc_boundq_1_alt *q, val_t * val)
 {
-	unsigned int rd,wr, rdwr;
+	unsigned int rdwr = atomic_load_explicit(&q->m_rdwr, memory_order_acquire);
+	unsigned int rd,wr;
 
 	int cnt = 0;
 	while(true) {
 		__VERIFIER_assume(++cnt < MAX_ITER);
 
-		rdwr = atomic_load_explicit(&q->m_rdwr, memory_order_acquire);
 		rd = (rdwr>>16) & 0xFFFF;
 		wr = rdwr & 0xFFFF;
 

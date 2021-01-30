@@ -24,72 +24,61 @@ typedef struct mpmc_boundq_1_alt
 
 #define MAX_ITER 3
 
-val_t * _Atomic *read_fetch(mpmc_boundq_1_alt *q)
+bool deq(mpmc_boundq_1_alt *q, val_t ** retVal)
 {
-	unsigned int rdwr = atomic_load_explicit(&q->m_rdwr, memory_order_acquire);
-	unsigned int rd,wr;
+	unsigned int rd, wr, rdwr; 
 
 	int cnt = 0;
-	for(;;) {
+	while(true) {
 		__VERIFIER_assume(++cnt < MAX_ITER);
-
+		
+		rdwr = atomic_load_explicit(&q->m_rdwr, memory_order_acquire);
 		rd = (rdwr >> 16) & 0xFFFF;
 		wr = rdwr & 0xFFFF;
 
 		if (wr == rd) // empty
-			return NULL;
+			return false;
 
 		if (atomic_compare_exchange_weak_explicit(&q->m_rdwr, &rdwr, rdwr + (1 << 16), memory_order_acq_rel, memory_order_acquire))
 			break;
 	}
 
-	cnt = 0;
-	while((atomic_load_explicit(&q->m_written, memory_order_acquire) & 0xFFFF) == wr) {
-		__VERIFIER_assume(++cnt < MAX_ITER);
-	};
-	// while ((atomic_load_explicit(&q->m_written, mo_acquire) & 0xFFFF) != wr)
-		; // thrd_yield();
+	__VERIFIER_assume((atomic_load_explicit(&q->m_written, memory_order_acquire) & 0xFFFF) == wr);
 
-	return &(q->m_array[rd % t_size]);
+	val_t * _Atomic * bin = &(q->m_array[rd % t_size]);
+	*retVal = atomic_load_explicit(bin, memory_order_relaxed);
+	
+	atomic_fetch_add_explicit(&q->m_read, 1, memory_order_release);
+
+	return true;
 }
 
-void read_consume(mpmc_boundq_1_alt *q)
+void enq(mpmc_boundq_1_alt *q, val_t * val)
 {
-	atomic_fetch_add_explicit(&q->m_read, 1, memory_order_acquire);
-}
-
-val_t * _Atomic *write_prepare(mpmc_boundq_1_alt *q)
-{
-	unsigned int rdwr = atomic_load_explicit(&q->m_rdwr, memory_order_acquire);
-	unsigned int rd,wr;
+	unsigned int rd,wr, rdwr;
 
 	int cnt = 0;
-	for(;;) {
+	while(true) {
 		__VERIFIER_assume(++cnt < MAX_ITER);
 
+		rdwr = atomic_load_explicit(&q->m_rdwr, memory_order_acquire);
 		rd = (rdwr>>16) & 0xFFFF;
 		wr = rdwr & 0xFFFF;
 
 		if (wr == ((rd + t_size) & 0xFFFF)) // full
-			return NULL;
+			break;
 
 		if (atomic_compare_exchange_weak_explicit(&q->m_rdwr, &rdwr, (rd << 16) | ((wr + 1) & 0xFFFF),
 							  memory_order_acq_rel, memory_order_acq_rel))
 			break;
 	}
 
-	cnt = 0;
-	if ((atomic_load_explicit(&q->m_read, memory_order_acquire) & 0xFFFF) == rd) {
-		__VERIFIER_assume(++cnt < MAX_ITER);
-	};
-	// while ((atomic_load_explicit(&q->m_read, mo_acquire) & 0xFFFF) != rd )
-		; // thrd_yield()
+	__VERIFIER_assume((atomic_load_explicit(&q->m_read, memory_order_acquire) & 0xFFFF) == rd);
 
-	return &(q->m_array[wr % t_size]);
-}
+	val_t * _Atomic * bin = &(q->m_array[wr % t_size]);
+	assert(bin != NULL);
+	atomic_store_explicit(bin, val, memory_order_relaxed);
 
-void write_publish(mpmc_boundq_1_alt *q)
-{
 	atomic_fetch_add_explicit(&q->m_written, 1, memory_order_release);
 }
 
@@ -97,21 +86,12 @@ typedef mpmc_boundq_1_alt queue_t;
 
 void q_enqueue(queue_t *q, val_t * val) 
 {
-	val_t * _Atomic * bin = write_prepare(q);
-	assert(bin != NULL);
-	atomic_store_explicit(bin, val, memory_order_relaxed);
-	write_publish(q);
+	enq(q, val);
 }
 
 bool q_dequeue(queue_t *q, val_t **retVal)
 {
-    val_t * _Atomic * bin = read_fetch(q);
-    if (bin != NULL) {
-        *retVal = atomic_load_explicit(bin, memory_order_relaxed);
-		read_consume(q);
-		return true;
-    }
-	return false;
+    return deq(q, retVal);
 }
 
 void q_init_queue(queue_t *q, int num_threads)

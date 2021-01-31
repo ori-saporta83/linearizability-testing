@@ -22,11 +22,11 @@ typedef struct mpmc_boundq_1_alt
 } mpmc_boundq_1_alt;
 // typedef struct mpmc_boundq_1_alt mpmc_boundq_1_alt;
 
-#define MAX_ITER 3
+#define MAX_ITER 2
 
 bool deq(mpmc_boundq_1_alt *q, val_t ** retVal)
 {
-	unsigned int rdwr = atomic_load_explicit(&q->m_rdwr, memory_order_acquire);
+	unsigned int rdwr = atomic_load_explicit(&q->m_rdwr, memory_order_relaxed);
 	unsigned int rd, wr; 
 
 	int cnt = 0;
@@ -39,7 +39,7 @@ bool deq(mpmc_boundq_1_alt *q, val_t ** retVal)
 		if (wr == rd) // empty
 			return false;
 
-		if (atomic_compare_exchange_weak_explicit(&q->m_rdwr, &rdwr, rdwr + (1 << 16), memory_order_acq_rel, memory_order_acquire))
+		if (atomic_compare_exchange_weak_explicit(&q->m_rdwr, &rdwr, rdwr + (1 << 16), memory_order_relaxed, memory_order_relaxed))
 			break;
 	}
 
@@ -54,7 +54,7 @@ bool deq(mpmc_boundq_1_alt *q, val_t ** retVal)
 
 void enq(mpmc_boundq_1_alt *q, val_t * val)
 {
-	unsigned int rdwr = atomic_load_explicit(&q->m_rdwr, memory_order_acquire);
+	unsigned int rdwr = atomic_load_explicit(&q->m_rdwr, memory_order_relaxed);
 	unsigned int rd,wr;
 
 	int cnt = 0;
@@ -68,7 +68,7 @@ void enq(mpmc_boundq_1_alt *q, val_t * val)
 			break;
 
 		if (atomic_compare_exchange_weak_explicit(&q->m_rdwr, &rdwr, (rd << 16) | ((wr + 1) & 0xFFFF),
-							  memory_order_acq_rel, memory_order_acq_rel))
+							  memory_order_relaxed, memory_order_relaxed))
 			break;
 	}
 

@@ -103,7 +103,7 @@ void init_queue(queue_t *q, int num_threads)
 	atomic_init(&q->nodes[1].next, MAKE_POINTER(0, 0));
 }
 
-#define MAX_ITER 2
+#define MAX_ITER 3
 
 void enqueue(queue_t *q, val_t * val)
 {
@@ -115,14 +115,14 @@ void enqueue(queue_t *q, val_t * val)
 
 	node = new_node();
 	q->nodes[node].value = val;
-	tmp = atomic_load_explicit(&q->nodes[node].next, memory_order_acquire);
+	tmp = atomic_load_explicit(&q->nodes[node].next, memory_order_relaxed);
 	set_ptr(&tmp, 0); // NULL
-	atomic_store_explicit(&q->nodes[node].next, tmp, memory_order_release);
+	atomic_store_explicit(&q->nodes[node].next, tmp, memory_order_relaxed);
 	int cnt = 0;
 	while (!success) {
 		__VERIFIER_assume(++cnt < MAX_ITER);
 		tail = atomic_load_explicit(&q->tail, memory_order_acquire);
-		next = atomic_load_explicit(&q->nodes[get_ptr(tail)].next, memory_order_acquire);
+		next = atomic_load_explicit(&q->nodes[get_ptr(tail)].next, memory_order_relaxed);
 		if (tail == atomic_load_explicit(&q->tail, memory_order_acquire)) {
 
 			/* Check for uninitialized 'next' */
@@ -131,7 +131,7 @@ void enqueue(queue_t *q, val_t * val)
 			if (get_ptr(next) == 0) { // == NULL
 				pointer value = MAKE_POINTER(node, get_count(next) + 1);
 				success = atomic_compare_exchange_strong_explicit(&q->nodes[get_ptr(tail)].next,
-						&next, value, memory_order_acq_rel, memory_order_acquire);
+						&next, value, memory_order_release, memory_order_acquire);
 			}
 			if (!success) {
 				unsigned int ptr = get_ptr(atomic_load_explicit(&q->nodes[get_ptr(tail)].next, memory_order_acquire));
@@ -139,7 +139,7 @@ void enqueue(queue_t *q, val_t * val)
 						get_count(tail) + 1);
 				atomic_compare_exchange_strong_explicit(&q->tail,
 						&tail, value,
-						memory_order_acq_rel, memory_order_acquire);
+						memory_order_release, memory_order_acquire);
 //				thrd_yield();
 			}
 		}
@@ -147,7 +147,7 @@ void enqueue(queue_t *q, val_t * val)
 	atomic_compare_exchange_strong_explicit(&q->tail,
 			&tail,
 			MAKE_POINTER(node, get_count(tail) + 1),
-			memory_order_acq_rel, memory_order_acquire);
+			memory_order_release, memory_order_acquire);
 }
 
 bool dequeue(queue_t *q, val_t **retVal)
@@ -175,14 +175,14 @@ bool dequeue(queue_t *q, val_t **retVal)
 				atomic_compare_exchange_strong_explicit(&q->tail,
 						&tail,
 						MAKE_POINTER(get_ptr(next), get_count(tail) + 1),
-						memory_order_acq_rel, memory_order_acquire);
+						memory_order_release, memory_order_acquire);
 //				thrd_yield();
 			} else {
 				*retVal = q->nodes[get_ptr(next)].value;
 				success = atomic_compare_exchange_strong_explicit(&q->head,
 						&head,
 						MAKE_POINTER(get_ptr(next), get_count(head) + 1),
-						memory_order_acq_rel, memory_order_acquire);
+						memory_order_release, memory_order_acquire);
 				/* if (!success) */
 				/* 	;//					thrd_yield(); */
 			}

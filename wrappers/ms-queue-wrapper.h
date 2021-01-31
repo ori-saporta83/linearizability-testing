@@ -1,4 +1,5 @@
 #include <stdatomic.h>
+#include <assert.h>
 #include "../../genmc/include/genmc.h"
 
 #define MAX_NODES			63
@@ -102,7 +103,7 @@ void init_queue(queue_t *q, int num_threads)
 	atomic_init(&q->nodes[1].next, MAKE_POINTER(0, 0));
 }
 
-#define MAX_ITER 3
+#define MAX_ITER 2
 
 void enqueue(queue_t *q, val_t * val)
 {

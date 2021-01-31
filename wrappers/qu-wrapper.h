@@ -25,26 +25,26 @@ typedef struct queue {
 
 void queue_init(struct queue *q)
 {
-	atomic_store_explicit(&q->init.next, NULL, memory_order_release);
-	atomic_store_explicit(&q->head, &q->init, memory_order_release);
-	atomic_store_explicit(&q->tail, &q->init, memory_order_release);
-	atomic_store_explicit(&q->is_initialized, true, memory_order_release);
+	atomic_store_explicit(&q->init.next, NULL, memory_order_relaxed);
+	atomic_store_explicit(&q->head, &q->init, memory_order_relaxed);
+	atomic_store_explicit(&q->tail, &q->init, memory_order_relaxed);
+	atomic_store_explicit(&q->is_initialized, true, memory_order_relaxed);
 }
 
 bool queue_is_initialized(struct queue *q)
 {
-	return atomic_load_explicit(&q->is_initialized, memory_order_acquire);
+	return atomic_load_explicit(&q->is_initialized, memory_order_relaxed);
 }
 
 queue_node *queue_find_tail(queue *q)
 {
-	queue_node *node = atomic_load_explicit(&q->tail, memory_order_acquire);
-	queue_node *next = atomic_load_explicit(&node->next, memory_order_acquire);
+	queue_node *node = atomic_load_explicit(&q->tail, memory_order_relaxed);
+	queue_node *next = atomic_load_explicit(&node->next, memory_order_relaxed);
 
 	if (next == NULL)
 		return node;
 
-	atomic_store_explicit(&q->tail, next, memory_order_release);
+	atomic_store_explicit(&q->tail, next, memory_order_relaxed);
 	return NULL;
 }
 
@@ -59,7 +59,7 @@ int queue_try_enq(queue *q, val_t * data)
 	}
 
 	node->data = data;
-	atomic_store_explicit(&node->next, NULL, memory_order_release);
+	atomic_store_explicit(&node->next, NULL, memory_order_relaxed);
 
 	queue_node *tail = NULL;
     int cnt = 0;
@@ -70,9 +70,9 @@ int queue_try_enq(queue *q, val_t * data)
 
 	queue_node *v = NULL;
 	if (atomic_compare_exchange_strong_explicit(&tail->next, &v, node,
-						    memory_order_acq_rel,
+						    memory_order_release,
 						    memory_order_acquire)) {
-		atomic_store_explicit(&q->tail, node, memory_order_release);
+		atomic_store_explicit(&q->tail, node, memory_order_relaxed);
 		return 0;
 	}
 
@@ -81,15 +81,15 @@ int queue_try_enq(queue *q, val_t * data)
 
 int queue_try_deq(queue *q, val_t  **ret_data)
 {
-	queue_node *head = atomic_load_explicit(&q->head, memory_order_acquire);
+	queue_node *head = atomic_load_explicit(&q->head, memory_order_relaxed);
 	queue_node *node = atomic_load_explicit(&head->next, memory_order_acquire);
 
 	if (node == NULL)
 		return -1;
 
 	if (atomic_compare_exchange_strong_explicit(&q->head, &head, node,
-						    memory_order_acq_rel,
-						    memory_order_acquire)) {
+						    memory_order_relaxed,
+						    memory_order_relaxed)) {
 		*ret_data = node->data;
 		return 0; /* CAVEAT: memory leak */
 	}

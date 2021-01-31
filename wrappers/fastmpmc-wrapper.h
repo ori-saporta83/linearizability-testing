@@ -37,7 +37,7 @@ void q_init_queue(queue_t *q, int num_threads)
     }
 }
 
-#define MAX_ITER 3
+#define MAX_ITER 2
 
 void q_enqueue(queue_t *q, val_t * val)
 {
@@ -47,7 +47,7 @@ void q_enqueue(queue_t *q, val_t * val)
         __VERIFIER_assume(++cnt < MAX_ITER);
 
         tail = atomic_load_explicit(&(q->m_tail), memory_order_relaxed);
-        t = atomic_load_explicit(&(q->m_items[tail % q->m_capacity].version), memory_order_acquire);
+        t = atomic_load_explicit(&(q->m_items[tail % q->m_capacity].version), memory_order_relaxed);
         if (t != tail) continue;
 
         if (!atomic_compare_exchange_weak_explicit(&(q->m_tail), &tail, tail + 1, memory_order_relaxed, memory_order_relaxed)) continue;
@@ -86,7 +86,7 @@ bool q_dequeue(queue_t *q, val_t **retVal)
     *retVal = q->m_items[head % q->m_capacity].value;
 
     // This signals to writer threads that they can now write something to this index
-    atomic_store_explicit(&(q->m_items[head % q->m_capacity].version), head + q->m_capacity, memory_order_release);
+    atomic_store_explicit(&(q->m_items[head % q->m_capacity].version), head + q->m_capacity, memory_order_relaxed);
 
     return true;
 }

@@ -132,7 +132,7 @@ queue_node *new_node()
 	int t = get_thread_num();
     unsigned int free_val = free_index[t];
 
-    atomic_store_explicit(&debug, free_val, memory_order_release);
+    atomic_store_explicit(&debug, free_val, memory_order_relaxed);
 	assert(free_val < MAX_FREELIST);
 	return &free_lists[t][free_index[t]++];
 }

@@ -210,15 +210,15 @@ int main()
         
     
     pthread_t t_10;
-    if (pthread_create(&t_10, NULL, noise_enq_deq, create_args(&q, 10, 1)))
+    if (pthread_create(&t_10, NULL, noise_enq_deq, create_args(&q, 2, 1)))
         abort();
         
     pthread_t t_11;
-    if (pthread_create(&t_11, NULL, noise_enq_deq, create_args(&q, 11, 1)))
+    if (pthread_create(&t_11, NULL, noise_enq_deq, create_args(&q, 3, 1)))
         abort();
         
     pthread_t t_12;
-    if (pthread_create(&t_12, NULL, noise_enq_deq, create_args(&q, 12, 1)))
+    if (pthread_create(&t_12, NULL, noise_enq_deq, create_args(&q, 4, 1)))
         abort();
         
     }

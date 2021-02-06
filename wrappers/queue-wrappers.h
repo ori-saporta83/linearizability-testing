@@ -1,9 +1,13 @@
 #ifdef CHASE
 #include "chase-lev-wrapper.h" 
+#elif FASTMPMC
+#include "fastmpmc-wrapper.h"
 #elif HW
 #include "hwqueue-wrapper.h" 
 #elif LCRQ
 #include "lcrq-wrapper.h"
+#elif LF
+#include "lfqueue-wrapper.h"
 #elif LFRING
 #include "lfring-wrapper.h"
 #elif MPMC
@@ -14,10 +18,6 @@
 #include "qu-wrapper.h"
 #elif UNIQ
 #include "uniq-wrapper.h"
-#elif LF
-#include "lfqueue-wrapper.h"
-#elif FASTMPMC
-#include "fastmpmc-wrapper.h"
 #endif
 #include "../../genmc/include/genmc.h"
 

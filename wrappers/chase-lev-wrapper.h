@@ -19,52 +19,22 @@ struct Deque {
 int64_t try_push(struct Deque *deq, int64_t N, val_t * data)
 {
 	uint64_t b = atomic_load_explicit(&deq->bottom, memory_order_acquire);
-	uint64_t t = atomic_load_explicit(&deq->top, memory_order_acquire);
+	uint64_t t = atomic_load_explicit(&deq->top, memory_order_relaxed);
 
 	int64_t len = (int64_t) (b - t);
 	if (len >= N) {
 		return -1; // full
 	}
 
-	deq->buffer[b % N] = data;
+	atomic_store_explicit(&deq->buffer[b % N], data, memory_order_release);
+
 	atomic_store_explicit(&deq->bottom, b + 1, memory_order_release);
 	return 0;
 }
 
-int64_t try_pop(struct Deque *deq, int64_t N, val_t **data)
-{
-	uint64_t b = atomic_load_explicit(&deq->bottom, memory_order_relaxed);
-	atomic_store_explicit(&deq->bottom, b - 1, memory_order_relaxed);
-
-	atomic_thread_fence(memory_order_seq_cst);
-
-	uint64_t t = atomic_load_explicit(&deq->top, memory_order_relaxed);
-	int64_t len = (int64_t) (b - t);
-
-	if (len <= 0) {
-		atomic_store_explicit(&deq->bottom, b, memory_order_relaxed);
-		return -1; // empty
-	}
-
-	*data = deq->buffer[(b - 1) % N];
-
-	if (len > 1) {
-		return 0;
-	}
-
-	// len = 1.
-	bool is_successful = atomic_compare_exchange_strong_explicit(&deq->top, &t, t + 1,
-							    memory_order_acquire,
-							    memory_order_acquire);
-	atomic_store_explicit(&deq->bottom, b, memory_order_relaxed);
-	return (is_successful ? 0 : -2); // success or lost
-}
-
 int64_t try_steal(struct Deque *deq, int64_t N, val_t **data)
 {
-	uint64_t t = atomic_load_explicit(&deq->top, memory_order_acquire);
-
-	atomic_thread_fence(memory_order_seq_cst);
+	uint64_t t = atomic_load_explicit(&deq->top, memory_order_relaxed);
 
 	uint64_t b = atomic_load_explicit(&deq->bottom, memory_order_acquire);
 	int64_t len = (int64_t) (b - t);
@@ -73,10 +43,10 @@ int64_t try_steal(struct Deque *deq, int64_t N, val_t **data)
 		return -1; // empty
 	}
 
-	*data = deq->buffer[t % N];
+	*data = atomic_load_explicit(&deq->buffer[t % N], memory_order_acquire);
 
 	bool is_successful = atomic_compare_exchange_strong_explicit(&deq->top, &t, t + 1,
-							    memory_order_acq_rel,
+							    memory_order_release,
 							    memory_order_acquire);
 	return (is_successful ? 0 : -2); // success or lost
 }

@@ -130,21 +130,21 @@ void enqueue(queue_t *q, val_t * val)
 
 			if (get_ptr(next) == 0) { // == NULL
 				pointer value = MAKE_POINTER(node, get_count(next) + 1);
-				success = atomic_compare_exchange_strong_explicit(&q->nodes[get_ptr(tail)].next,
+				success = atomic_compare_exchange_weak_explicit(&q->nodes[get_ptr(tail)].next,
 						&next, value, memory_order_release, memory_order_acquire);
 			}
 			if (!success) {
 				unsigned int ptr = get_ptr(atomic_load_explicit(&q->nodes[get_ptr(tail)].next, memory_order_acquire));
 				pointer value = MAKE_POINTER(ptr,
 						get_count(tail) + 1);
-				atomic_compare_exchange_strong_explicit(&q->tail,
+				atomic_compare_exchange_weak_explicit(&q->tail,
 						&tail, value,
 						memory_order_release, memory_order_acquire);
 //				thrd_yield();
 			}
 		}
 	}
-	atomic_compare_exchange_strong_explicit(&q->tail,
+	atomic_compare_exchange_weak_explicit(&q->tail,
 			&tail,
 			MAKE_POINTER(node, get_count(tail) + 1),
 			memory_order_release, memory_order_acquire);
@@ -172,14 +172,14 @@ bool dequeue(queue_t *q, val_t **retVal)
 				if (get_ptr(next) == 0) { // NULL
 					return false; // NULL
 				}
-				atomic_compare_exchange_strong_explicit(&q->tail,
+				atomic_compare_exchange_weak_explicit(&q->tail,
 						&tail,
 						MAKE_POINTER(get_ptr(next), get_count(tail) + 1),
 						memory_order_release, memory_order_acquire);
 //				thrd_yield();
 			} else {
 				*retVal = q->nodes[get_ptr(next)].value;
-				success = atomic_compare_exchange_strong_explicit(&q->head,
+				success = atomic_compare_exchange_weak_explicit(&q->head,
 						&head,
 						MAKE_POINTER(get_ptr(next), get_count(head) + 1),
 						memory_order_release, memory_order_acquire);

@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <stdatomic.h>
 #include "../../genmc/include/genmc.h"
 
 int get_thread_num();
@@ -20,7 +21,6 @@ typedef struct queue {
 	queue_node init;
 	queue_node * _Atomic head;
 	queue_node * _Atomic tail;
-	atomic_bool is_initialized;
 } queue;
 
 void queue_init(struct queue *q)
@@ -28,12 +28,6 @@ void queue_init(struct queue *q)
 	atomic_store_explicit(&q->init.next, NULL, memory_order_relaxed);
 	atomic_store_explicit(&q->head, &q->init, memory_order_relaxed);
 	atomic_store_explicit(&q->tail, &q->init, memory_order_relaxed);
-	atomic_store_explicit(&q->is_initialized, true, memory_order_relaxed);
-}
-
-bool queue_is_initialized(struct queue *q)
-{
-	return atomic_load_explicit(&q->is_initialized, memory_order_relaxed);
 }
 
 queue_node *queue_find_tail(queue *q)

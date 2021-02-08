@@ -1,0 +1,19 @@
+running generated tests for  LCRQ
+./tests/generated/generic_10_0_10_True_4/t0.c
+Sat Feb  6 22:38:59 IST 2021
+Number of complete executions explored: 1
+Total wall-clock time: 0.03s
+./tests/generated/generic_10_0_10_True_4/t10.c
+Sat Feb  6 22:38:59 IST 2021
+./tests/generated/generic_10_0_10_True_4/t11.c
+Sat Feb  6 23:38:59 IST 2021
+./tests/generated/generic_10_0_10_True_4/t12.c
+Sun Feb  7 00:38:59 IST 2021
+./tests/generated/generic_10_0_10_True_4/t13.c
+Sun Feb  7 01:38:59 IST 2021
+./tests/generated/generic_10_0_10_True_4/t1.c
+Sun Feb  7 02:38:59 IST 2021
+./tests/generated/generic_10_0_10_True_4/t2.c
+Sun Feb  7 03:38:59 IST 2021
+./tests/generated/generic_10_0_10_True_4/t3.c
+Sun Feb  7 04:38:59 IST 2021

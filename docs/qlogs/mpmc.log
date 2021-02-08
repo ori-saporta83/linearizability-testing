@@ -1,0 +1,337 @@
+running generated tests for  MPMC
+./tests/generated/generic_10_0_10_True_4/t0.c
+Sun Jan 31 09:01:52 IST 2021
+Number of complete executions explored: 1
+Total wall-clock time: 0.03s
+./tests/generated/generic_10_0_10_True_4/t10.c
+Sun Jan 31 09:02:02 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 135
+Total wall-clock time: 0.04s
+./tests/generated/generic_10_0_10_True_4/t11.c
+Sun Jan 31 09:02:02 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 1
+Total wall-clock time: 0.02s
+./tests/generated/generic_10_0_10_True_4/t12.c
+Sun Jan 31 09:02:03 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 1
+Total wall-clock time: 0.02s
+./tests/generated/generic_10_0_10_True_4/t13.c
+Sun Jan 31 09:02:03 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 1
+Total wall-clock time: 0.02s
+./tests/generated/generic_10_0_10_True_4/t1.c
+Sun Jan 31 09:02:03 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 135
+Total wall-clock time: 0.03s
+./tests/generated/generic_10_0_10_True_4/t2.c
+Sun Jan 31 09:02:03 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 20553
+Total wall-clock time: 1.40s
+./tests/generated/generic_10_0_10_True_4/t3.c
+Sun Jan 31 09:02:04 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 701528
+Total wall-clock time: 119.67s
+./tests/generated/generic_10_0_10_True_4/t4.c
+Sun Jan 31 09:04:04 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 22870
+Total wall-clock time: 1.38s
+./tests/generated/generic_10_0_10_True_4/t5.c
+Sun Jan 31 09:04:05 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 10475
+Total wall-clock time: 0.59s
+./tests/generated/generic_10_0_10_True_4/t6.c
+Sun Jan 31 09:04:06 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 890
+Total wall-clock time: 0.08s
+./tests/generated/generic_10_0_10_True_4/t7.c
+Sun Jan 31 09:04:06 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 497029
+Total wall-clock time: 51.34s
+./tests/generated/generic_10_0_10_True_4/t8.c
+Sun Jan 31 09:04:58 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 26426
+Total wall-clock time: 1.64s
+./tests/generated/generic_10_0_10_True_4/t9.c
+Sun Jan 31 09:04:59 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 890
+Total wall-clock time: 0.06s
+./tests/generated/generic_10_2_10_True_4/t0.c
+Sun Jan 31 09:04:59 IST 2021
+Number of complete executions explored: 1
+Total wall-clock time: 0.02s
+./tests/generated/generic_10_2_10_True_4/t10.c
+Sun Jan 31 09:04:59 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 1780
+Total wall-clock time: 0.23s
+./tests/generated/generic_10_2_10_True_4/t11.c
+Sun Jan 31 09:05:00 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 890
+Total wall-clock time: 0.06s
+./tests/generated/generic_10_2_10_True_4/t12.c
+Sun Jan 31 09:05:00 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 1198
+Total wall-clock time: 0.08s
+./tests/generated/generic_10_2_10_True_4/t13.c
+Sun Jan 31 09:05:00 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 2307
+Total wall-clock time: 0.13s
+./tests/generated/generic_10_2_10_True_4/t14.c
+Sun Jan 31 09:05:00 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 789310
+Total wall-clock time: 54.43s
+./tests/generated/generic_10_2_10_True_4/t15.c
+Sun Jan 31 09:05:55 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 22870
+Total wall-clock time: 1.19s
+./tests/generated/generic_10_2_10_True_4/t16.c
+Sun Jan 31 09:05:56 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 135
+Total wall-clock time: 0.04s
+./tests/generated/generic_10_2_10_True_4/t17.c
+Sun Jan 31 09:05:56 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 17399588
+Total wall-clock time: 2202.75s
+./tests/generated/generic_10_2_10_True_4/t18.c
+Sun Jan 31 09:42:39 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 1
+Total wall-clock time: 0.03s
+./tests/generated/generic_10_2_10_True_4/t19.c
+Sun Jan 31 09:42:39 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 1
+Total wall-clock time: 0.02s
+./tests/generated/generic_10_2_10_True_4/t1.c
+Sun Jan 31 09:42:39 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 135
+Total wall-clock time: 0.03s
+./tests/generated/generic_10_2_10_True_4/t2.c
+Sun Jan 31 09:42:39 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 890
+Total wall-clock time: 0.07s
+./tests/generated/generic_10_2_10_True_4/t3.c
+Sun Jan 31 09:42:39 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 28714
+Total wall-clock time: 1.33s
+./tests/generated/generic_10_2_10_True_4/t4.c
+Sun Jan 31 09:42:41 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 20553
+Total wall-clock time: 1.41s
+./tests/generated/generic_10_2_10_True_4/t5.c
+Sun Jan 31 09:42:42 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 422207
+Total wall-clock time: 42.67s
+./tests/generated/generic_10_2_10_True_4/t6.c
+Sun Jan 31 09:43:25 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 819666
+Total wall-clock time: 55.16s
+./tests/generated/generic_10_2_10_True_4/t7.c
+Sun Jan 31 09:44:20 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 2033
+Total wall-clock time: 0.12s
+./tests/generated/generic_10_2_10_True_4/t8.c
+Sun Jan 31 09:44:20 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 26426
+Total wall-clock time: 1.33s
+./tests/generated/generic_10_2_10_True_4/t9.c
+Sun Jan 31 09:44:22 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 2033
+Total wall-clock time: 0.12s
+./tests/generated/generic_10_0_10_True_5/t0.c
+Sun Jan 31 09:44:22 IST 2021
+Number of complete executions explored: 1
+Total wall-clock time: 0.02s
+./tests/generated/generic_10_0_10_True_5/t10.c
+Sun Jan 31 09:44:22 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 513
+Total wall-clock time: 0.06s
+./tests/generated/generic_10_0_10_True_5/t11.c
+Sun Jan 31 09:44:22 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 513
+Total wall-clock time: 0.07s
+./tests/generated/generic_10_0_10_True_5/t12.c
+Sun Jan 31 09:44:22 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 1
+Total wall-clock time: 0.03s
+./tests/generated/generic_10_0_10_True_5/t13.c
+Sun Jan 31 09:44:22 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 1
+Total wall-clock time: 0.02s
+./tests/generated/generic_10_0_10_True_5/t1.c
+Sun Jan 31 09:44:22 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 155534
+Total wall-clock time: 12.93s
+./tests/generated/generic_10_0_10_True_5/t2.c
+Sun Jan 31 09:44:35 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 439371
+Total wall-clock time: 28.65s
+./tests/generated/generic_10_0_10_True_5/t3.c
+Sun Jan 31 09:45:04 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 701528
+Total wall-clock time: 121.42s
+./tests/generated/generic_10_0_10_True_5/t4.c
+Sun Jan 31 09:47:06 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 496955
+Total wall-clock time: 36.18s
+./tests/generated/generic_10_0_10_True_5/t5.c
+Sun Jan 31 09:47:42 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 10475
+Total wall-clock time: 0.58s
+./tests/generated/generic_10_0_10_True_5/t6.c
+Sun Jan 31 09:47:42 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 10475
+Total wall-clock time: 0.68s
+./tests/generated/generic_10_0_10_True_5/t7.c
+Sun Jan 31 09:47:43 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 497029
+Total wall-clock time: 50.93s
+./tests/generated/generic_10_0_10_True_5/t8.c
+Sun Jan 31 09:48:34 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 691776
+Total wall-clock time: 52.84s
+./tests/generated/generic_10_0_10_True_5/t9.c
+Sun Jan 31 09:49:27 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 457770
+Total wall-clock time: 36.02s
+./tests/generated/generic_10_2_10_True_5/t0.c
+Sun Jan 31 09:50:03 IST 2021
+Number of complete executions explored: 1
+Total wall-clock time: 0.02s
+./tests/generated/generic_10_2_10_True_5/t10.c
+Sun Jan 31 09:50:03 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 26145
+Total wall-clock time: 1.55s
+./tests/generated/generic_10_2_10_True_5/t11.c
+Sun Jan 31 09:50:05 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 10475
+Total wall-clock time: 0.56s
+./tests/generated/generic_10_2_10_True_5/t12.c
+Sun Jan 31 09:50:05 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 23601
+Total wall-clock time: 1.25s
+./tests/generated/generic_10_2_10_True_5/t13.c
+Sun Jan 31 09:50:07 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 44451
+Total wall-clock time: 2.31s
+./tests/generated/generic_10_2_10_True_5/t14.c
+Sun Jan 31 09:50:09 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 789310
+Total wall-clock time: 54.17s
+./tests/generated/generic_10_2_10_True_5/t15.c
+Sun Jan 31 09:51:03 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 496955
+Total wall-clock time: 37.06s
+./tests/generated/generic_10_2_10_True_5/t16.c
+Sun Jan 31 09:51:40 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 513
+Total wall-clock time: 0.06s
+./tests/generated/generic_10_2_10_True_5/t17.c
+Sun Jan 31 09:51:41 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 17399588
+Total wall-clock time: 2234.62s
+./tests/generated/generic_10_2_10_True_5/t18.c
+Sun Jan 31 10:28:56 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 513
+Total wall-clock time: 0.07s
+./tests/generated/generic_10_2_10_True_5/t19.c
+Sun Jan 31 10:28:56 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 1
+Total wall-clock time: 0.02s
+./tests/generated/generic_10_2_10_True_5/t1.c
+Sun Jan 31 10:28:56 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 155534
+Total wall-clock time: 12.81s
+./tests/generated/generic_10_2_10_True_5/t2.c
+Sun Jan 31 10:29:09 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 457770
+Total wall-clock time: 39.42s
+./tests/generated/generic_10_2_10_True_5/t3.c
+Sun Jan 31 10:29:48 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 789310
+Total wall-clock time: 42.50s
+./tests/generated/generic_10_2_10_True_5/t4.c
+Sun Jan 31 10:30:31 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 439371
+Total wall-clock time: 30.23s
+./tests/generated/generic_10_2_10_True_5/t5.c
+Sun Jan 31 10:31:01 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 422207
+Total wall-clock time: 42.81s
+./tests/generated/generic_10_2_10_True_5/t6.c
+Sun Jan 31 10:31:44 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 819666
+Total wall-clock time: 55.99s
+./tests/generated/generic_10_2_10_True_5/t7.c
+Sun Jan 31 10:32:40 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 737003
+Total wall-clock time: 63.36s
+./tests/generated/generic_10_2_10_True_5/t8.c
+Sun Jan 31 10:33:43 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 691776
+Total wall-clock time: 48.15s
+./tests/generated/generic_10_2_10_True_5/t9.c
+Sun Jan 31 10:34:32 IST 2021
+Number of complete executions explored: 0
+Number of blocked executions seen: 29586
+Total wall-clock time: 1.56s

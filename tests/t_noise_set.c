@@ -23,9 +23,13 @@ int main()
     if (pthread_create(&t1, NULL, noise_remove, create_args(&set, 1, 1, 9)))
         abort();
 
-    // if (pthread_create(&t2, NULL, noise_add, create_args(&set, 2, 1, 9)))
-    //     abort();
-
+    #ifdef ADD
+    if (pthread_create(&t2, NULL, noise_add, create_args(&set, 2, 1, 9)))
+        abort();
+    #endif
+    #ifdef REM
     if (pthread_create(&t3, NULL, noise_remove, create_args(&set, 3, 1, 9)))
         abort();
+
+    #endif
 }

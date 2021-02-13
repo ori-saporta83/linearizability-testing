@@ -44,11 +44,11 @@ node_t* create_node(skey_t key, sval_t value, int initializing) {
     if (new_node==NULL) {
         assert(0);
     }
-	atomic_store_explicit(&new_node->key, key, memory_order_seq_cst);
-	atomic_store_explicit(&new_node->value, value, memory_order_seq_cst);
-	atomic_store_explicit(&new_node->op, NULL, memory_order_seq_cst);
-	atomic_store_explicit(&new_node->right, NULL, memory_order_seq_cst);
-	atomic_store_explicit(&new_node->left, NULL, memory_order_seq_cst);
+	atomic_store_explicit(&new_node->key, key, memory_order_relaxed);
+	atomic_store_explicit(&new_node->value, value, memory_order_relaxed);
+	atomic_store_explicit(&new_node->op, NULL, memory_order_relaxed);
+	atomic_store_explicit(&new_node->right, NULL, memory_order_relaxed);
+	atomic_store_explicit(&new_node->left, NULL, memory_order_relaxed);
 
     asm volatile("" ::: "memory");
     return (node_t*) new_node;
@@ -99,11 +99,10 @@ sval_t bst_find(skey_t k, node_t** pred, operation_t** pred_op, node_t** curr, o
 	operation_t* last_right_op;
 
 retry:
-	// PARSE_TRY();
 
 	result = NOT_FOUND_R;
 	*curr = aux_root;
-	*curr_op = atomic_load_explicit(&(*curr)->op, memory_order_seq_cst);
+	*curr_op = atomic_load_explicit(&(*curr)->op, memory_order_acquire);
 
 	if(GETFLAG(*curr_op) != STATE_OP_NONE){
 #ifdef __tile__
@@ -118,7 +117,7 @@ retry:
 	}
 
 
-	next = atomic_load_explicit(&(*curr)->right, memory_order_seq_cst);
+	next = atomic_load_explicit(&(*curr)->right, memory_order_acquire);
 	last_right = *curr;
 	last_right_op = *curr_op;
 
@@ -126,33 +125,33 @@ retry:
 		*pred = *curr;
 		*pred_op = *curr_op;
 		*curr = next;
-		*curr_op = atomic_load_explicit(&(*curr)->op, memory_order_seq_cst);
+		*curr_op = atomic_load_explicit(&(*curr)->op, memory_order_acquire);
 
 
 		if(GETFLAG(*curr_op) != STATE_OP_NONE){
 			bst_help(*pred, *pred_op, *curr, *curr_op, root);
 			goto retry;
 		}
-		curr_key = atomic_load_explicit(&(*curr)->key, memory_order_seq_cst);
+		curr_key = atomic_load_explicit(&(*curr)->key, memory_order_relaxed);
 		if(k < curr_key){
 			result = NOT_FOUND_L;
-			next = atomic_load_explicit(&(*curr)->left, memory_order_seq_cst);
+			next = atomic_load_explicit(&(*curr)->left, memory_order_acquire);
 		} else if(k > curr_key) {
 			result = NOT_FOUND_R;
-			next = atomic_load_explicit(&(*curr)->right, memory_order_seq_cst);
+			next = atomic_load_explicit(&(*curr)->right, memory_order_acquire);
 			last_right = *curr;
 			last_right_op = *curr_op;
 		} else{
-			result = atomic_load_explicit(&(*curr)->value, memory_order_seq_cst);
+			result = atomic_load_explicit(&(*curr)->value, memory_order_relaxed);
 			break;
 		}
 	}
 	
-	if ((!(result & val_mask)) && (last_right_op != atomic_load_explicit(&last_right->op, memory_order_seq_cst))) {
+	if ((!(result & val_mask)) && (last_right_op != atomic_load_explicit(&last_right->op, memory_order_relaxed))) {
 		goto retry;
 	}
 
-	if (atomic_load_explicit(&(*curr)->op, memory_order_seq_cst) != *curr_op){
+	if (atomic_load_explicit(&(*curr)->op, memory_order_relaxed) != *curr_op){
 		goto retry;
 	}
 
@@ -191,9 +190,9 @@ bool_t bst_add(skey_t k,sval_t v,  node_t* root){
 		bool_t is_left = (result == NOT_FOUND_L);
 		node_t* old;
 		if (is_left) {
-			old = atomic_load_explicit(&curr->left, memory_order_seq_cst);
+			old = atomic_load_explicit(&curr->left, memory_order_relaxed);
 		} else {
-			old = atomic_load_explicit(&curr->right, memory_order_seq_cst);
+			old = atomic_load_explicit(&curr->right, memory_order_relaxed);
 		}
 
 		cas_op = alloc_op();
@@ -205,7 +204,7 @@ bool_t bst_add(skey_t k,sval_t v,  node_t* root){
 		MEM_BARRIER;
 #endif
 		operation_t * expected = curr_op;
-		if (atomic_compare_exchange_weak_explicit(&curr->op, &expected, (operation_t *)FLAG(cas_op, STATE_OP_CHILDCAS), memory_order_seq_cst, memory_order_seq_cst)) {
+		if (atomic_compare_exchange_weak_explicit(&curr->op, &expected, (operation_t *)FLAG(cas_op, STATE_OP_CHILDCAS), memory_order_release, memory_order_relaxed)) {
 
 			bst_help_child_cas(cas_op, curr, root);
 #if GC == 1
@@ -224,15 +223,15 @@ void bst_help_child_cas(operation_t* op, node_t* dest, node_t* root){
 
 	node_t * expected = op->child_cas_op.expected;
 	if (op->child_cas_op.is_left) {
-		atomic_compare_exchange_weak_explicit(&(dest->left), &expected, op->child_cas_op.update, memory_order_seq_cst, memory_order_seq_cst);
+		atomic_compare_exchange_weak_explicit(&(dest->left), &expected, op->child_cas_op.update, memory_order_release, memory_order_relaxed);
 	} else {
-		atomic_compare_exchange_weak_explicit(&(dest->right), &expected, op->child_cas_op.update, memory_order_seq_cst, memory_order_seq_cst);
+		atomic_compare_exchange_weak_explicit(&(dest->right), &expected, op->child_cas_op.update, memory_order_release, memory_order_relaxed);
 	}
 #ifdef __tile__
     MEM_BARRIER;
 #endif
 	operation_t * expectedOp = (operation_t *) FLAG(op, STATE_OP_CHILDCAS);
-	atomic_compare_exchange_weak_explicit(&(dest->op), &expectedOp, (operation_t *)FLAG(op, STATE_OP_NONE), memory_order_seq_cst, memory_order_seq_cst);
+	atomic_compare_exchange_weak_explicit(&(dest->op), &expectedOp, (operation_t *)FLAG(op, STATE_OP_NONE), memory_order_relaxed, memory_order_relaxed);
 }
 
 sval_t bst_remove(skey_t k, node_t* root){
@@ -257,9 +256,9 @@ sval_t bst_remove(skey_t k, node_t* root){
 			return 0;
 		}
 
-		if (ISNULL(atomic_load_explicit(&curr->right, memory_order_seq_cst)) || ISNULL(atomic_load_explicit(&curr->left, memory_order_seq_cst))) { // node has less than two children
+		if (ISNULL(atomic_load_explicit(&curr->right, memory_order_relaxed)) || ISNULL(atomic_load_explicit(&curr->left, memory_order_relaxed))) { // node has less than two children
 			operation_t * expected = curr_op;
-			if (atomic_compare_exchange_weak_explicit(&(curr->op), &expected, (operation_t *) FLAG(curr_op, STATE_OP_MARK), memory_order_seq_cst, memory_order_seq_cst)) {
+			if (atomic_compare_exchange_weak_explicit(&(curr->op), &expected, (operation_t *) FLAG(curr_op, STATE_OP_MARK), memory_order_relaxed, memory_order_relaxed)) {
 				bst_help_marked(pred, pred_op, curr, root);
 #if GC == 1
                 //if (reloc_op!=NULL) ssmem_free(alloc,reloc_op);
@@ -270,26 +269,26 @@ sval_t bst_remove(skey_t k, node_t* root){
 			}
 		} else { // node has two children
 			val = bst_find(k, &pred, &pred_op, &replace, &replace_op, curr, root);
-			if ((val == ABORT) || (atomic_load_explicit(&curr->op, memory_order_seq_cst) != curr_op)) {
+			if ((val == ABORT) || (atomic_load_explicit(&curr->op, memory_order_relaxed) != curr_op)) {
 				continue;
 			} 
             
             //if (reloc_op==NULL) {
 			    reloc_op = alloc_op(); 
             //}
-			atomic_store_explicit(&reloc_op->relocate_op.state, STATE_OP_ONGOING, memory_order_seq_cst);
+			atomic_store_explicit(&reloc_op->relocate_op.state, STATE_OP_ONGOING, memory_order_relaxed);
 			reloc_op->relocate_op.dest = curr;
 			reloc_op->relocate_op.dest_op = curr_op;
 			reloc_op->relocate_op.remove_key = k;
 			reloc_op->relocate_op.remove_value = res;
-			reloc_op->relocate_op.replace_key = atomic_load_explicit(&replace->key, memory_order_seq_cst);
-			reloc_op->relocate_op.replace_value = atomic_load_explicit(&replace->value, memory_order_seq_cst);
+			reloc_op->relocate_op.replace_key = atomic_load_explicit(&replace->key, memory_order_relaxed);
+			reloc_op->relocate_op.replace_value = atomic_load_explicit(&replace->value, memory_order_relaxed);
 
 #if defined(__tile__)
 			MEM_BARRIER;
 #endif
 			operation_t * expected = replace_op;
-			if (atomic_compare_exchange_weak_explicit(&(replace->op), &expected, (operation_t *) FLAG(reloc_op, STATE_OP_RELOCATE), memory_order_seq_cst, memory_order_seq_cst)) {
+			if (atomic_compare_exchange_weak_explicit(&(replace->op), &expected, (operation_t *) FLAG(reloc_op, STATE_OP_RELOCATE), memory_order_relaxed, memory_order_relaxed)) {
 #if GC == 1
                 if (UNFLAG(replace_op)!=0) ssmem_free(alloc,(void*)UNFLAG(replace_op));
 #endif
@@ -312,14 +311,14 @@ sval_t bst_remove(skey_t k, node_t* root){
 
 bool_t bst_help_relocate(operation_t* op, node_t* pred, operation_t* pred_op, node_t* curr, node_t* root){
 
-	int seen_state = atomic_load_explicit(&op->relocate_op.state, memory_order_seq_cst);
+	int seen_state = atomic_load_explicit(&op->relocate_op.state, memory_order_relaxed);
 	if (seen_state == STATE_OP_ONGOING) {
 		// VCAS in original implementation
 		operation_t* seen_op = op->relocate_op.dest_op;
-		atomic_compare_exchange_weak_explicit(&(op->relocate_op.dest->op), &seen_op, (operation_t *) FLAG(op, STATE_OP_RELOCATE), memory_order_seq_cst, memory_order_seq_cst);
+		atomic_compare_exchange_weak_explicit(&(op->relocate_op.dest->op), &seen_op, (operation_t *) FLAG(op, STATE_OP_RELOCATE), memory_order_relaxed, memory_order_relaxed);
 		if ((seen_op == op->relocate_op.dest_op) || (seen_op == (operation_t *)FLAG(op, STATE_OP_RELOCATE))){
 			int expected = STATE_OP_ONGOING;
-			atomic_compare_exchange_weak_explicit(&(op->relocate_op.state), &expected, STATE_OP_SUCCESSFUL, memory_order_seq_cst, memory_order_seq_cst);
+			atomic_compare_exchange_weak_explicit(&(op->relocate_op.state), &expected, STATE_OP_SUCCESSFUL, memory_order_relaxed, memory_order_relaxed);
 			seen_state = STATE_OP_SUCCESSFUL;
             if (seen_op == op->relocate_op.dest_op) {
 #if GC == 1
@@ -329,17 +328,17 @@ bool_t bst_help_relocate(operation_t* op, node_t* pred, operation_t* pred_op, no
 		} else {
 			// VCAS in original implementation
 			seen_state = STATE_OP_ONGOING;
-			atomic_compare_exchange_weak_explicit(&(op->relocate_op.state), &seen_state, STATE_OP_FAILED, memory_order_seq_cst, memory_order_seq_cst);
+			atomic_compare_exchange_weak_explicit(&(op->relocate_op.state), &seen_state, STATE_OP_FAILED, memory_order_relaxed, memory_order_relaxed);
 		}
 	}
 
 	if (seen_state == STATE_OP_SUCCESSFUL) {
 		skey_t expectedKey = op->relocate_op.remove_key;
-		atomic_compare_exchange_weak_explicit(&(op->relocate_op.dest->key), &expectedKey, op->relocate_op.replace_key, memory_order_seq_cst, memory_order_seq_cst);
+		atomic_compare_exchange_weak_explicit(&(op->relocate_op.dest->key), &expectedKey, op->relocate_op.replace_key, memory_order_relaxed, memory_order_relaxed);
 		sval_t expectedVal = op->relocate_op.remove_value;
-		atomic_compare_exchange_weak_explicit(&(op->relocate_op.dest->value), &expectedVal, op->relocate_op.replace_value, memory_order_seq_cst, memory_order_seq_cst);
+		atomic_compare_exchange_weak_explicit(&(op->relocate_op.dest->value), &expectedVal, op->relocate_op.replace_value, memory_order_relaxed, memory_order_relaxed);
 		operation_t * expectedOp = (operation_t*) FLAG(op, STATE_OP_RELOCATE);
-		atomic_compare_exchange_weak_explicit(&(op->relocate_op.dest->op), &expectedOp, (operation_t *) FLAG(op, STATE_OP_NONE), memory_order_seq_cst, memory_order_seq_cst);
+		atomic_compare_exchange_weak_explicit(&(op->relocate_op.dest->op), &expectedOp, (operation_t *) FLAG(op, STATE_OP_NONE), memory_order_relaxed, memory_order_relaxed);
 	}
 
 	bool_t result = (seen_state == STATE_OP_SUCCESSFUL);
@@ -348,7 +347,7 @@ bool_t bst_help_relocate(operation_t* op, node_t* pred, operation_t* pred_op, no
 	}
 
 	operation_t * expectedOp = (operation_t *)FLAG(op, STATE_OP_RELOCATE);
-	atomic_compare_exchange_weak_explicit(&(curr->op), &expectedOp, (operation_t *) FLAG(op, result ? STATE_OP_MARK : STATE_OP_NONE), memory_order_seq_cst, memory_order_seq_cst);
+	atomic_compare_exchange_weak_explicit(&(curr->op), &expectedOp, (operation_t *) FLAG(op, result ? STATE_OP_MARK : STATE_OP_NONE), memory_order_relaxed, memory_order_relaxed);
 	if (result) {
 		if (op->relocate_op.dest == pred) {
 			pred_op = (operation_t *)FLAG(op, STATE_OP_NONE);
@@ -361,17 +360,17 @@ bool_t bst_help_relocate(operation_t* op, node_t* pred, operation_t* pred_op, no
 void bst_help_marked(node_t* pred, operation_t* pred_op, node_t* curr, node_t* root){
 
 	node_t* new_ref;
-	if (ISNULL(atomic_load_explicit(&curr->left, memory_order_seq_cst))) {
-		if (ISNULL(atomic_load_explicit(&curr->right, memory_order_seq_cst))) {
+	if (ISNULL(atomic_load_explicit(&curr->left, memory_order_relaxed))) {
+		if (ISNULL(atomic_load_explicit(&curr->right, memory_order_relaxed))) {
 			new_ref = (node_t*)SETNULL(curr);
 		} else {
-			new_ref = atomic_load_explicit(&curr->right, memory_order_seq_cst);
+			new_ref = atomic_load_explicit(&curr->right, memory_order_relaxed);
 		}
 	} else {
-		new_ref = atomic_load_explicit(&curr->left, memory_order_seq_cst);
+		new_ref = atomic_load_explicit(&curr->left, memory_order_relaxed);
 	}
 	operation_t* cas_op = alloc_op();
-	cas_op->child_cas_op.is_left = (curr == atomic_load_explicit(&pred->left, memory_order_seq_cst));
+	cas_op->child_cas_op.is_left = (curr == atomic_load_explicit(&pred->left, memory_order_relaxed));
 	cas_op->child_cas_op.expected = curr;
 	cas_op->child_cas_op.update = new_ref;
 
@@ -379,7 +378,7 @@ void bst_help_marked(node_t* pred, operation_t* pred_op, node_t* curr, node_t* r
     MEM_BARRIER;
 #endif
 	operation_t * expectedOp = pred_op;
-	if (atomic_compare_exchange_weak_explicit(&(pred->op), &expectedOp, (operation_t *) FLAG(cas_op, STATE_OP_CHILDCAS), memory_order_seq_cst, memory_order_seq_cst)) {
+	if (atomic_compare_exchange_weak_explicit(&(pred->op), &expectedOp, (operation_t *) FLAG(cas_op, STATE_OP_CHILDCAS), memory_order_relaxed, memory_order_relaxed)) {
 		bst_help_child_cas(cas_op, pred, root);
 #if GC == 1
         if (UNFLAG(pred_op)!=0) ssmem_free(alloc,(void*)UNFLAG(pred_op));
@@ -401,18 +400,4 @@ void bst_help(node_t* pred, operation_t* pred_op, node_t* curr, operation_t* cur
 	} else if (GETFLAG(curr_op) == STATE_OP_MARK) {
 		bst_help_marked(pred, pred_op, curr, root);
 	}
-}
-
-unsigned long bst_size_rec(volatile node_t* node) {
-  if (ISNULL((node_t*) node)) {
-    return 0;
-  } else if (GETFLAG(atomic_load_explicit(&node->op, memory_order_seq_cst)) != STATE_OP_MARK) {
-    return 1 + bst_size_rec(atomic_load_explicit(&node->right, memory_order_seq_cst)) + bst_size_rec(atomic_load_explicit(&node->left, memory_order_seq_cst));
-  } else {
-    return bst_size_rec(atomic_load_explicit(&node->right, memory_order_seq_cst)) + bst_size_rec(atomic_load_explicit(&node->left, memory_order_seq_cst));
-  }
-}
-
-unsigned long bst_size(node_t* node) {
-    return bst_size_rec(node) - 1; //do not count the root
 }

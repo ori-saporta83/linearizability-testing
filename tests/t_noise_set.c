@@ -13,9 +13,9 @@ set_t set;
 
 int main()
 {
-    init_set(&set, 4);
+    init_set(&set, 5);
 
-    pthread_t t0, t1, t2, t3;
+    pthread_t t0, t1, t2, t3, t4;
 
     if (pthread_create(&t0, NULL, noise_add, create_args(&set, 0, 1, 9)))
         abort();
@@ -30,6 +30,9 @@ int main()
     #ifdef REM
     if (pthread_create(&t3, NULL, noise_remove, create_args(&set, 3, 1, 9)))
         abort();
-
+    #endif
+    #ifdef IN
+    if (pthread_create(&t4, NULL, noise_in, create_args(&set, 4, 1, 9)))
+        abort();
     #endif
 }

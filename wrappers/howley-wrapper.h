@@ -12,10 +12,7 @@
 # define _SC_NPROCESSORS_ONLN 8
 #endif
 
-// #  define CAS_PTR(a,b,c) atomic_compare_exchange_weak(a,b,c)
-#  define CAS_PTR(a,b,c) __sync_val_compare_and_swap(a,b,c)
-
-#include "../../ASCYLIB/src/bst-howley/bst_howley.c"
+#include "howley/bst_howley.c"
 
 int __thread tid;
 void set_thread_num(int i)

@@ -13,16 +13,19 @@ set_t set;
 
 int main()
 {
-    init_set(&set, 3);
+    init_set(&set, 4);
 
-    pthread_t t0, t1, t2;
+    pthread_t t0, t1, t2, t3;
 
-    if (pthread_create(&t0, NULL, noise_gen, create_args(&set, 0, 1, 9)))
+    if (pthread_create(&t0, NULL, noise_add, create_args(&set, 0, 1, 9)))
         abort();
 
-    if (pthread_create(&t1, NULL, noise_gen, create_args(&set, 1, 1, 9)))
+    if (pthread_create(&t1, NULL, noise_remove, create_args(&set, 1, 1, 9)))
         abort();
 
-    // if (pthread_create(&t2, NULL, noise_gen, create_args(&set, 2, 1, 9)))
+    // if (pthread_create(&t2, NULL, noise_add, create_args(&set, 2, 1, 9)))
     //     abort();
+
+    if (pthread_create(&t3, NULL, noise_remove, create_args(&set, 3, 1, 9)))
+        abort();
 }

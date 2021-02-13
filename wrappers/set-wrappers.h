@@ -19,6 +19,36 @@ noise_args * create_args(set_t *s, int tid, int count, int ops) {
     return args;
 }
 
+void *noise_add(void *arg) {
+    noise_args* args = (noise_args*) arg;
+    set_thread_num(args->tid);
+    
+    int base_val = (1 + args->tid - args->ops) * 11;
+
+    for (int i = 0; i < args->count; ++i) {
+        w_add(args->s, base_val + i);
+    }
+
+    free(args);
+    
+    return NULL;
+}
+
+void *noise_remove(void *arg) {
+    noise_args* args = (noise_args*) arg;
+    set_thread_num(args->tid);
+    
+    int base_val = (1 + args->tid - args->ops) * 11;
+
+    for (int i = 0; i < args->count; ++i) {
+        w_remove(args->s, base_val + i);
+    }
+
+    free(args);
+    
+    return NULL;
+}
+
 void *noise_gen(void *arg)
 {
     noise_args* args = (noise_args*) arg;

@@ -164,7 +164,7 @@ def generate_test(trace, n, k, l):
 test_set = "generic-set"
 fname = "./docs/set-results2.txt"
 outpath = "./tests/generated"
-max_threads = 4
+max_threads = 3
 noise = True
 
 

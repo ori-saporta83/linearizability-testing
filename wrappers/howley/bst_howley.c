@@ -378,7 +378,7 @@ void bst_help_marked(node_t* pred, operation_t* pred_op, node_t* curr, node_t* r
     MEM_BARRIER;
 #endif
 	operation_t * expectedOp = pred_op;
-	if (atomic_compare_exchange_weak_explicit(&(pred->op), &expectedOp, (operation_t *) FLAG(cas_op, STATE_OP_CHILDCAS), memory_order_relaxed, memory_order_relaxed)) {
+	if (atomic_compare_exchange_weak_explicit(&(pred->op), &expectedOp, (operation_t *) FLAG(cas_op, STATE_OP_CHILDCAS), memory_order_release, memory_order_relaxed)) {
 		bst_help_child_cas(cas_op, pred, root);
 #if GC == 1
         if (UNFLAG(pred_op)!=0) ssmem_free(alloc,(void*)UNFLAG(pred_op));

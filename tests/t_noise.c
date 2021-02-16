@@ -29,6 +29,6 @@ int main()
     if (pthread_create(&t3, NULL, noise_enq, create_args(&q, 3, 1)))
         abort();
 
-    if (pthread_create(&t4, NULL, noise_deq, create_args(&q, 4, 1)))
-        abort();
+    // if (pthread_create(&t4, NULL, noise_deq, create_args(&q, 4, 1)))
+    //     abort();
 }

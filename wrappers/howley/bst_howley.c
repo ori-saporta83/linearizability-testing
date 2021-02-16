@@ -23,6 +23,7 @@
  *
  */
 
+#include <assert.h>
 #include "bst_howley.h"
 #include "../../../genmc/include/genmc.h"
 

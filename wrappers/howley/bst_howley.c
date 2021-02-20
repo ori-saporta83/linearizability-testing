@@ -91,6 +91,9 @@ sval_t bst_contains(skey_t k, node_t* root){
     return 0;
 }
 
+#define MAX_ITER 2
+#define MAX_FIND 2
+
 sval_t bst_find(skey_t k, node_t** pred, operation_t** pred_op, node_t** curr, operation_t** curr_op, node_t* aux_root, node_t* root){
 
 	sval_t result;
@@ -99,8 +102,9 @@ sval_t bst_find(skey_t k, node_t** pred, operation_t** pred_op, node_t** curr, o
 	node_t* last_right;
 	operation_t* last_right_op;
 
+int cnt = 0;
 retry:
-
+	__VERIFIER_assume(++cnt<MAX_FIND);
 	result = NOT_FOUND_R;
 	*curr = aux_root;
 	*curr_op = atomic_load_explicit(&(*curr)->op, memory_order_acquire);
@@ -159,8 +163,6 @@ retry:
 	return result;
 } 
   
-#define MAX_ITER 2
-
 bool_t bst_add(skey_t k,sval_t v,  node_t* root){
 
 	node_t* pred;

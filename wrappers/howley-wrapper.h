@@ -12,7 +12,11 @@
 # define _SC_NPROCESSORS_ONLN 8
 #endif
 
+#ifdef SEQ
+#include "howley/bst_howley_seq.c"
+#else
 #include "howley/bst_howley.c"
+#endif
 
 int __thread tid;
 void set_thread_num(int i)
@@ -39,10 +43,10 @@ bool w_add(set_t *set, unsigned int val)
 
 bool w_remove(set_t *set, unsigned int val)
 {
-    return bst_remove((intptr_t) val, set);
+    return bst_remove((intptr_t) val, set) != 0;
 }
 
 bool w_in(set_t *set, unsigned int val)
 {
-    return bst_contains((intptr_t) val, set);
+    return bst_contains((intptr_t) val, set) != 0;
 }

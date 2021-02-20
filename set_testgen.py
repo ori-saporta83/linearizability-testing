@@ -91,7 +91,7 @@ env = Environment(loader=jinja2.FunctionLoader(load_func=load_template))
 env.filters["chr"] = chr
 
 
-def parse_index(event_name, n, k, l):
+def parse_index(event_name, k, l):
     group_index = ord(event_name[event_name.index("(")+1]) - 65
     offset = 0
     if event_name.startswith("remove"):
@@ -110,13 +110,17 @@ def parse_trace(trace, n, k, l) -> Tuple[List[Op], int, List[int]]:
     g.add_nodes_from(i for i in range(len(ops)))
     participating = set()
     for event in trace:
-        names = str(event)[1:-1].split("_")
-        before_index = parse_index(names[0], n, k, l)
-        after_index = parse_index(names[1], n, k, l)
+        names: List[str] = str(event)[1:-1].split("_")
+        before_index = parse_index(names[0], k, l)
+        after_index = parse_index(names[1], k, l)
         ops[after_index].wait_for.append(before_index)
         g.add_edge(before_index, after_index)
         participating.add(before_index)
         participating.add(after_index)
+        if (names[0].find("remove") != -1):
+            participating.add(before_index - 1)
+        if (names[1].find("remove") != -1):
+            participating.add(after_index - 1)
     width = len(max(list(nx.antichains(g)), key=len))
     return ops, width, list(participating)
 
@@ -164,7 +168,7 @@ def generate_test(trace, n, k, l):
 test_set = "generic-set"
 fname = "./docs/set-results2.txt"
 outpath = "./tests/generated"
-max_threads = 3
+max_threads = 2
 noise = True
 
 

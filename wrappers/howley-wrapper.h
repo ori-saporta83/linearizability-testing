@@ -38,12 +38,19 @@ void init_set(set_t *set, int num_threads)
 
 bool w_add(set_t *set, unsigned int val) 
 {
-	return bst_add((intptr_t) val, (intptr_t) val, set);
+    int * v = (int*)malloc(sizeof(int));
+    *v = val;
+	return bst_add((intptr_t) val, (intptr_t) v, set);
 }
 
 bool w_remove(set_t *set, unsigned int val)
 {
-    return bst_remove((intptr_t) val, set) != 0;
+    intptr_t v = bst_remove((intptr_t) val, set);
+    if (v != 0) {
+        free((int *)v);
+        return true;
+    }
+    return false;
 }
 
 bool w_in(set_t *set, unsigned int val)

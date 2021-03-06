@@ -188,5 +188,12 @@ int main()
         abort();
         
     
+    pthread_join(t_0, NULL);
+    pthread_join(t_2, NULL);
+    pthread_join(t_3, NULL);
+    pthread_join(t_5, NULL);
+    pthread_join(t_6, NULL);
+    pthread_join(t_8, NULL);
     
+    assert(0);
 }

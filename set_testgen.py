@@ -67,6 +67,14 @@ int main()
         abort();
         
     {% endfor %}
+    {%- for i in participating -%}
+    pthread_join(t_{{i}}, NULL);
+    {% endfor %}
+    {% for i in range(noise) -%}
+    {% set j = i+ops|length -%}
+    pthread_join(t_{{j}}, NULL);
+    {%- endfor -%}
+    assert(0);
 }
 '''
 

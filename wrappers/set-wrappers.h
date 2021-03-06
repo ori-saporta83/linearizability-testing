@@ -1,7 +1,7 @@
 // #include "coarse-set-wrapper.h"
 // #include "fine-set-wrapper.h"
 #include "howley-wrapper.h"
-#include "../../genmc/include/genmc.h"
+#include <genmc.h>
 
 typedef struct noise_args {
     set_t *s;

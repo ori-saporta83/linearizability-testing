@@ -179,5 +179,9 @@ int main()
         abort();
         
     
+    pthread_join(t_8, NULL);
+    pthread_join(t_6, NULL);
+    pthread_join(t_7, NULL);
     
+    assert(0);
 }

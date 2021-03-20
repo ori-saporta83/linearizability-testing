@@ -171,5 +171,8 @@ int main()
     if (pthread_create(&t_9, NULL, noise_gen, create_args(&set, 9, 1, 9)))
         abort();
         
+    pthread_join(t_6, NULL);
+    pthread_join(t_7, NULL);
     
+    pthread_join(t_9, NULL);assert(0);
 }

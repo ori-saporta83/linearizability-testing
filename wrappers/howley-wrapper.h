@@ -14,6 +14,8 @@
 
 #ifdef SEQ
 #include "howley/bst_howley_seq.c"
+#elif OPT
+#include "howley/bst_howley_opt.c"
 #else
 #include "howley/bst_howley.c"
 #endif

@@ -45,11 +45,11 @@ node_t* create_node(skey_t key, sval_t value, int initializing) {
     if (new_node==NULL) {
         assert(0);
     }
-	atomic_store_explicit(&new_node->key, key, memory_order_seq_cst);
-	atomic_store_explicit(&new_node->value, value, memory_order_seq_cst);
-	atomic_store_explicit(&new_node->op, NULL, memory_order_seq_cst);
-	atomic_store_explicit(&new_node->right, NULL, memory_order_seq_cst);
-	atomic_store_explicit(&new_node->left, NULL, memory_order_seq_cst);
+	atomic_store_explicit(&new_node->key, key, memory_order_relaxed);
+	atomic_store_explicit(&new_node->value, value, memory_order_relaxed);
+	atomic_store_explicit(&new_node->op, NULL, memory_order_relaxed);
+	atomic_store_explicit(&new_node->right, NULL, memory_order_relaxed);
+	atomic_store_explicit(&new_node->left, NULL, memory_order_relaxed);
 
     asm volatile("" ::: "memory");
     return (node_t*) new_node;

@@ -234,7 +234,7 @@ void bst_help_child_cas(operation_t* op, node_t* dest, node_t* root){
     MEM_BARRIER;
 #endif
 	operation_t * expectedOp = (operation_t *) FLAG(op, STATE_OP_CHILDCAS);
-	atomic_compare_exchange_weak_explicit(&(dest->op), &expectedOp, (operation_t *)FLAG(op, STATE_OP_NONE), memory_order_relaxed, memory_order_relaxed);
+	atomic_compare_exchange_weak_explicit(&(dest->op), &expectedOp, (operation_t *)FLAG(op, STATE_OP_NONE), memory_order_release, memory_order_acquire);
 }
 
 sval_t bst_remove(skey_t k, node_t* root){
@@ -291,7 +291,7 @@ sval_t bst_remove(skey_t k, node_t* root){
 			MEM_BARRIER;
 #endif
 			operation_t * expected = replace_op;
-			if (atomic_compare_exchange_weak_explicit(&(replace->op), &expected, (operation_t *) FLAG(reloc_op, STATE_OP_RELOCATE), memory_order_relaxed, memory_order_relaxed)) {
+			if (atomic_compare_exchange_weak_explicit(&(replace->op), &expected, (operation_t *) FLAG(reloc_op, STATE_OP_RELOCATE), memory_order_release, memory_order_acquire)) {
 #if GC == 1
                 if (UNFLAG(replace_op)!=0) ssmem_free(alloc,(void*)UNFLAG(replace_op));
 #endif
@@ -343,7 +343,7 @@ bool_t bst_help_relocate(operation_t* op, node_t* pred, operation_t* pred_op, no
 		sval_t expectedVal = op->relocate_op.remove_value;
 		atomic_compare_exchange_weak_explicit(&(op->relocate_op.dest->value), &expectedVal, op->relocate_op.replace_value, memory_order_relaxed, memory_order_relaxed);
 		operation_t * expectedOp = (operation_t*) FLAG(op, STATE_OP_RELOCATE);
-		atomic_compare_exchange_weak_explicit(&(op->relocate_op.dest->op), &expectedOp, (operation_t *) FLAG(op, STATE_OP_NONE), memory_order_relaxed, memory_order_relaxed);
+		atomic_compare_exchange_weak_explicit(&(op->relocate_op.dest->op), &expectedOp, (operation_t *) FLAG(op, STATE_OP_NONE), memory_order_release, memory_order_acquire);
 	}
 
 	bool_t result = (seen_state == STATE_OP_SUCCESSFUL);
@@ -352,7 +352,7 @@ bool_t bst_help_relocate(operation_t* op, node_t* pred, operation_t* pred_op, no
 	}
 
 	operation_t * expectedOp = (operation_t *)FLAG(op, STATE_OP_RELOCATE);
-	atomic_compare_exchange_weak_explicit(&(curr->op), &expectedOp, (operation_t *) FLAG(op, result ? STATE_OP_MARK : STATE_OP_NONE), memory_order_relaxed, memory_order_relaxed);
+	atomic_compare_exchange_weak_explicit(&(curr->op), &expectedOp, (operation_t *) FLAG(op, result ? STATE_OP_MARK : STATE_OP_NONE), memory_order_release, memory_order_acquire);
 	if (result) {
 		if (op->relocate_op.dest == pred) {
 			pred_op = (operation_t *)FLAG(op, STATE_OP_NONE);

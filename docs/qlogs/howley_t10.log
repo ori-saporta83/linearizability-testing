@@ -1,0 +1,718 @@
+ori@LAPTOP-OG7IR3UB:~/workspace/linearizability-testing$ ../genmc-tool/src/genmc --disable-race-detection -- -DOPT ./tests/generated/generic-set_3_1_0_True_2/t10.c
+Error detected: Safety violation!
+Event (0, 30) in graph:
+<-1, 0> main:
+        (0, 0): B
+        (0, 1): M
+        (0, 2): M
+        (0, 3): M
+        (0, 4): M L.43: bst_howley_opt.c
+        (0, 5): Wrlx (, 0) L.48: bst_howley_opt.c
+        (0, 6): Wrlx (, 0) L.49: bst_howley_opt.c
+        (0, 7): Wna (, 0x0) L.50: bst_howley_opt.c
+        (0, 8): Rna (, 0) [(0, 7)] L.50: bst_howley_opt.c
+        (0, 9): Wrlx (, 0) L.50: bst_howley_opt.c
+        (0, 10): Wna (, 0x0) L.51: bst_howley_opt.c
+        (0, 11): Rna (, 0) [(0, 10)] L.51: bst_howley_opt.c
+        (0, 12): Wrlx (, 0) L.51: bst_howley_opt.c
+        (0, 13): Wna (, 0x0) L.52: bst_howley_opt.c
+        (0, 14): Rna (, 0) [(0, 13)] L.52: bst_howley_opt.c
+        (0, 15): Wrlx (, 0) L.52: bst_howley_opt.c
+        (0, 16): D L.55: bst_howley_opt.c
+        (0, 17): D
+        (0, 18): D
+        (0, 19): TC [forks 1] L.163
+        (0, 20): TC [forks 2] L.167
+        (0, 21): TC [forks 3] L.171
+        (0, 22): TC [forks 4] L.175
+        (0, 23): TC [forks 5] L.179
+        (0, 24): TC [forks 6] L.183
+        (0, 25): TJ L.187
+        (0, 26): TJ L.188
+        (0, 27): TJ L.189
+        (0, 28): TJ L.190
+        (0, 29): TJ L.191
+        (0, 30): TJ L.192
+<0, 1> thread_3:
+        (1, 0): B
+        (1, 1): M L.43: howley-wrapper.h
+        (1, 2): Wna (, 20) L.44: howley-wrapper.h
+        (1, 3): M
+        (1, 4): M
+        (1, 5): M
+        (1, 6): M
+        (1, 7): M
+        (1, 8): M
+        (1, 9): M
+        (1, 10): M
+        (1, 11): M
+        (1, 12): M
+        (1, 13): M
+        (1, 14): M
+        (1, 15): M
+        (1, 16): M
+        (1, 17): M
+        (1, 18): Wna (curr, 0x55cccf82f2c0) L.109: bst_howley_opt.c
+        (1, 19): Rna (curr, 0x55cccf82f2c0) [(1, 18)] L.110: bst_howley_opt.c
+        (1, 20): Racq (set.op, 0) [INIT] L.110: bst_howley_opt.c
+        (1, 21): Wna (, 0) L.110: bst_howley_opt.c
+        (1, 22): Rna (, 0x0) [(1, 21)] L.110: bst_howley_opt.c
+        (1, 23): Wna (curr_op, 0x0) L.110: bst_howley_opt.c
+        (1, 24): Rna (curr_op, 0x0) [(1, 23)] L.112: bst_howley_opt.c
+        (1, 25): Rna (curr, 0x55cccf82f2c0) [(1, 18)] L.125: bst_howley_opt.c
+        (1, 26): Racq (set.right, 0) [INIT] L.125: bst_howley_opt.c
+        (1, 27): Wna (, 0) L.125: bst_howley_opt.c
+        (1, 28): Rna (, 0x0) [(1, 27)] L.125: bst_howley_opt.c
+        (1, 29): Rna (curr, 0x55cccf82f2c0) [(1, 18)] L.126: bst_howley_opt.c
+        (1, 30): Rna (curr_op, 0x0) [(1, 23)] L.127: bst_howley_opt.c
+        (1, 31): Racq (set.op, 0) [INIT] L.155: bst_howley_opt.c
+        (1, 32): Wna (, 0) L.155: bst_howley_opt.c
+        (1, 33): Rna (, 0x0) [(1, 32)] L.155: bst_howley_opt.c
+        (1, 34): Rna (curr, 0x55cccf82f2c0) [(1, 18)] L.159: bst_howley_opt.c
+        (1, 35): Racq (set.op, 0) [INIT] L.159: bst_howley_opt.c
+        (1, 36): Wna (, 0) L.159: bst_howley_opt.c
+        (1, 37): Rna (, 0x0) [(1, 36)] L.159: bst_howley_opt.c
+        (1, 38): Rna (curr_op, 0x0) [(1, 23)] L.159: bst_howley_opt.c
+        (1, 39): D L.164: bst_howley_opt.c
+        (1, 40): D
+        (1, 41): D
+        (1, 42): D
+        (1, 43): D
+        (1, 44): D
+        (1, 45): D
+        (1, 46): M
+        (1, 47): M
+        (1, 48): M
+        (1, 49): M L.43: bst_howley_opt.c
+        (1, 50): Wrlx (, 20) L.48: bst_howley_opt.c
+        (1, 51): Wrlx (, 3481697280) L.49: bst_howley_opt.c
+        (1, 52): Wna (, 0x0) L.50: bst_howley_opt.c
+        (1, 53): Rna (, 0) [(1, 52)] L.50: bst_howley_opt.c
+        (1, 54): Wrlx (, 0) L.50: bst_howley_opt.c
+        (1, 55): Wna (, 0x0) L.51: bst_howley_opt.c
+        (1, 56): Rna (, 0) [(1, 55)] L.51: bst_howley_opt.c
+        (1, 57): Wrlx (, 0) L.51: bst_howley_opt.c
+        (1, 58): Wna (, 0x0) L.52: bst_howley_opt.c
+        (1, 59): Rna (, 0) [(1, 58)] L.52: bst_howley_opt.c
+        (1, 60): Wrlx (, 0) L.52: bst_howley_opt.c
+        (1, 61): D L.55: bst_howley_opt.c
+        (1, 62): D
+        (1, 63): D
+        (1, 64): Rna (curr, 0x55cccf82f2c0) [(1, 18)] L.198: bst_howley_opt.c
+        (1, 65): Rsc (set.right, 0) [INIT] L.198: bst_howley_opt.c
+        (1, 66): Wna (, 0) L.198: bst_howley_opt.c
+        (1, 67): Rna (, 0x0) [(1, 66)] L.198: bst_howley_opt.c
+        (1, 68): M L.63: bst_howley_opt.c
+        (1, 69): Wna (, 0) L.202: bst_howley_opt.c
+        (1, 70): Wna (, 0x0) L.203: bst_howley_opt.c
+        (1, 71): Wna (, 0xcf867d30) L.204: bst_howley_opt.c
+        (1, 72): Rna (curr_op, 0x0) [(1, 23)] L.209: bst_howley_opt.c
+        (1, 73): Wna (expected17, 0x0) L.209: bst_howley_opt.c
+        (1, 74): Rna (curr, 0x55cccf82f2c0) [(1, 18)] L.210: bst_howley_opt.c
+        (1, 75): Wna (, 0xcf867d72) L.210: bst_howley_opt.c
+        (1, 76): Rna (expected17, 0) [(1, 73)] L.210: bst_howley_opt.c
+        (1, 77): Rna (, 3481697650) [(1, 75)] L.210: bst_howley_opt.c
+        (1, 78): Csc (set.op, 0) [INIT] L.210: bst_howley_opt.c
+        (1, 79): Csc (set.op, 3481697650) L.210: bst_howley_opt.c
+        (1, 80): Rna (curr, 0x55cccf82f2c0) [(1, 18)] L.212: bst_howley_opt.c
+        (1, 81): M
+        (1, 82): M
+        (1, 83): M
+        (1, 84): M
+        (1, 85): M
+        (1, 86): Rna (, 0x0) [(1, 70)] L.227: bst_howley_opt.c
+        (1, 87): Wna (expected, 0x0) L.227: bst_howley_opt.c
+        (1, 88): Rna (, 0) [(1, 69)] L.228: bst_howley_opt.c
+        (1, 89): Rna (, 0xcf867d30) [(1, 71)] L.231: bst_howley_opt.c
+        (1, 90): Wna (, 0xcf867d30) L.231: bst_howley_opt.c
+        (1, 91): Rna (expected, 0) [(1, 87)] L.231: bst_howley_opt.c
+        (1, 92): Rna (, 3481697584) [(1, 90)] L.231: bst_howley_opt.c
+        (1, 93): Csc (set.right, 0) [INIT] L.231: bst_howley_opt.c
+        (1, 94): Csc (set.right, 3481697584) L.231: bst_howley_opt.c
+        (1, 95): Wna (expectedOp, 0xcf867d72) L.236: bst_howley_opt.c
+        (1, 96): Wna (, 0xcf867d70) L.237: bst_howley_opt.c
+        (1, 97): Rna (expectedOp, 3481697650) [(1, 95)] L.237: bst_howley_opt.c
+        (1, 98): Rna (, 3481697648) [(1, 96)] L.237: bst_howley_opt.c
+        (1, 99): Csc (set.op, 3481697650) [(1, 79)] L.237: bst_howley_opt.c
+        (1, 100): Csc (set.op, 3481697648) L.237: bst_howley_opt.c
+        (1, 101): D L.238: bst_howley_opt.c
+        (1, 102): D
+        (1, 103): D
+        (1, 104): D
+        (1, 105): D
+        (1, 106): D L.223: bst_howley_opt.c
+        (1, 107): D
+        (1, 108): D
+        (1, 109): D
+        (1, 110): D
+        (1, 111): D
+        (1, 112): D
+        (1, 113): D
+        (1, 114): Wrel (f_3, 1) L.74
+        (1, 115): E
+<0, 2> thread_4:
+        (2, 0): B
+        (2, 1): M
+        (2, 2): M
+        (2, 3): M
+        (2, 4): M
+        (2, 5): M
+        (2, 6): M
+        (2, 7): M
+        (2, 8): M
+        (2, 9): M
+        (2, 10): M
+        (2, 11): M
+        (2, 12): M
+        (2, 13): M
+        (2, 14): M
+        (2, 15): M
+        (2, 16): M
+        (2, 17): M
+        (2, 18): M
+        (2, 19): M
+        (2, 20): M
+        (2, 21): Wna (curr, 0x55cccf82f2c0) L.109: bst_howley_opt.c
+        (2, 22): Rna (curr, 0x55cccf82f2c0) [(2, 21)] L.110: bst_howley_opt.c
+        (2, 23): Racq (set.op, 3481697648) [(1, 100)] L.110: bst_howley_opt.c
+        (2, 24): Wna (, 3481697648) L.110: bst_howley_opt.c
+        (2, 25): Rna (, 0xcf867d70) [(2, 24)] L.110: bst_howley_opt.c
+        (2, 26): Wna (curr_op, 0xcf867d70) L.110: bst_howley_opt.c
+        (2, 27): Rna (curr_op, 0xcf867d70) [(2, 26)] L.112: bst_howley_opt.c
+        (2, 28): Rna (curr, 0x55cccf82f2c0) [(2, 21)] L.125: bst_howley_opt.c
+        (2, 29): Racq (set.right, 3481697584) [(1, 94)] L.125: bst_howley_opt.c
+        (2, 30): Wna (, 3481697584) L.125: bst_howley_opt.c
+        (2, 31): Rna (, 0xcf867d30) [(2, 30)] L.125: bst_howley_opt.c
+        (2, 32): Rna (curr, 0x55cccf82f2c0) [(2, 21)] L.126: bst_howley_opt.c
+        (2, 33): Rna (curr_op, 0xcf867d70) [(2, 26)] L.127: bst_howley_opt.c
+        (2, 34): Rna (curr, 0x55cccf82f2c0) [(2, 21)] L.130: bst_howley_opt.c
+        (2, 35): Wna (pred, 0x55cccf82f2c0) L.130: bst_howley_opt.c
+        (2, 36): Rna (curr_op, 0xcf867d70) [(2, 26)] L.131: bst_howley_opt.c
+        (2, 37): Wna (pred_op, 0xcf867d70) L.131: bst_howley_opt.c
+        (2, 38): Wna (curr, 0xcf867d30) L.132: bst_howley_opt.c
+        (2, 39): Rna (curr, 0xcf867d30) [(2, 38)] L.133: bst_howley_opt.c
+        (2, 40): Racq (, 3482611904) [(4, 119)] L.133: bst_howley_opt.c
+        (2, 41): Wna (, 3482611904) L.133: bst_howley_opt.c
+        (2, 42): Rna (, 0xcf9470c0) [(2, 41)] L.133: bst_howley_opt.c
+        (2, 43): Wna (curr_op, 0xcf9470c0) L.133: bst_howley_opt.c
+        (2, 44): Rna (curr_op, 0xcf9470c0) [(2, 43)] L.136: bst_howley_opt.c
+        (2, 45): Rna (curr, 0xcf867d30) [(2, 38)] L.140: bst_howley_opt.c
+        (2, 46): Racq (, 20) [(1, 50)] L.140: bst_howley_opt.c
+        (2, 47): Rna (curr, 0xcf867d30) [(2, 38)] L.150: bst_howley_opt.c
+        (2, 48): Racq (, 3481697280) [(1, 51)] L.150: bst_howley_opt.c
+        (2, 49): Rna (curr, 0xcf867d30) [(2, 38)] L.159: bst_howley_opt.c
+        (2, 50): Racq (, 3482611904) [(4, 119)] L.159: bst_howley_opt.c
+        (2, 51): Wna (, 3482611904) L.159: bst_howley_opt.c
+        (2, 52): Rna (, 0xcf9470c0) [(2, 51)] L.159: bst_howley_opt.c
+        (2, 53): Rna (curr_op, 0xcf9470c0) [(2, 43)] L.159: bst_howley_opt.c
+        (2, 54): D L.164: bst_howley_opt.c
+        (2, 55): D
+        (2, 56): D
+        (2, 57): D
+        (2, 58): D
+        (2, 59): D
+        (2, 60): D
+        (2, 61): Rna (curr, 0xcf867d30) [(2, 38)] L.262: bst_howley_opt.c
+        (2, 62): Rsc (, 3482611824) [(4, 113)] L.262: bst_howley_opt.c
+        (2, 63): Wna (, 3482611824) L.262: bst_howley_opt.c
+        (2, 64): Rna (, 0xcf947070) [(2, 63)] L.262: bst_howley_opt.c
+        (2, 65): Rna (curr, 0xcf867d30) [(2, 38)] L.262: bst_howley_opt.c
+        (2, 66): Rsc (, 0) [(1, 57)] L.262: bst_howley_opt.c
+        (2, 67): Wna (, 0) L.262: bst_howley_opt.c
+        (2, 68): Rna (, 0x0) [(2, 67)] L.262: bst_howley_opt.c
+        (2, 69): Rna (curr_op, 0xcf9470c0) [(2, 43)] L.263: bst_howley_opt.c
+        (2, 70): Wna (expected, 0xcf9470c0) L.263: bst_howley_opt.c
+        (2, 71): Rna (curr, 0xcf867d30) [(2, 38)] L.264: bst_howley_opt.c
+        (2, 72): Rna (curr_op, 0xcf9470c0) [(2, 43)] L.264: bst_howley_opt.c
+        (2, 73): Wna (, 0xcf9470c1) L.264: bst_howley_opt.c
+        (2, 74): Rna (expected, 3482611904) [(2, 70)] L.264: bst_howley_opt.c
+        (2, 75): Rna (, 3482611905) [(2, 73)] L.264: bst_howley_opt.c
+        (2, 76): Csc (, 3482611904) [(4, 119)] L.264: bst_howley_opt.c
+        (2, 77): Csc (, 3482611905) L.264: bst_howley_opt.c
+        (2, 78): Rna (pred, 0x55cccf82f2c0) [(2, 35)] L.265: bst_howley_opt.c
+        (2, 79): Rna (pred_op, 0xcf867d70) [(2, 37)] L.265: bst_howley_opt.c
+        (2, 80): Rna (curr, 0xcf867d30) [(2, 38)] L.265: bst_howley_opt.c
+        (2, 81): M
+        (2, 82): M
+        (2, 83): M
+        (2, 84): M
+        (2, 85): M
+        (2, 86): M
+        (2, 87): M
+        (2, 88): Rsc (, 0) [(1, 57)] L.366: bst_howley_opt.c
+        (2, 89): Wna (, 0) L.366: bst_howley_opt.c
+        (2, 90): Rna (, 0x0) [(2, 89)] L.366: bst_howley_opt.c
+        (2, 91): Rsc (, 3482611824) [(4, 113)] L.367: bst_howley_opt.c
+        (2, 92): Wna (, 3482611824) L.367: bst_howley_opt.c
+        (2, 93): Rna (, 0xcf947070) [(2, 92)] L.367: bst_howley_opt.c
+        (2, 94): Rsc (, 3482611824) [(4, 113)] L.370: bst_howley_opt.c
+        (2, 95): Wna (, 3482611824) L.370: bst_howley_opt.c
+        (2, 96): Rna (, 0xcf947070) [(2, 95)] L.370: bst_howley_opt.c
+        (2, 97): M L.63: bst_howley_opt.c
+        (2, 98): Rsc (set.left, 0) [INIT] L.376: bst_howley_opt.c
+        (2, 99): Wna (, 0) L.376: bst_howley_opt.c
+        (2, 100): Rna (, 0x0) [(2, 99)] L.376: bst_howley_opt.c
+        (2, 101): Wna (, 0) L.376: bst_howley_opt.c
+        (2, 102): Wna (, 0xcf867d30) L.377: bst_howley_opt.c
+        (2, 103): Wna (, 0xcf947070) L.378: bst_howley_opt.c
+        (2, 104): Wna (expectedOp, 0xcf867d70) L.383: bst_howley_opt.c
+        (2, 105): Wna (, 0xcf9928e2) L.384: bst_howley_opt.c
+        (2, 106): Rna (expectedOp, 3481697648) [(2, 104)] L.384: bst_howley_opt.c
+        (2, 107): Rna (, 3482921186) [(2, 105)] L.384: bst_howley_opt.c
+        (2, 108): Csc (set.op, 3481697648) [(1, 100)] L.384: bst_howley_opt.c
+        (2, 109): Csc (set.op, 3482921186) L.384: bst_howley_opt.c
+        (2, 110): M
+        (2, 111): M
+        (2, 112): M
+        (2, 113): M
+        (2, 114): M
+        (2, 115): Rna (, 0xcf867d30) [(2, 102)] L.227: bst_howley_opt.c
+        (2, 116): Wna (expected, 0xcf867d30) L.227: bst_howley_opt.c
+        (2, 117): Rna (, 0) [(2, 101)] L.228: bst_howley_opt.c
+        (2, 118): Rna (, 0xcf947070) [(2, 103)] L.231: bst_howley_opt.c
+        (2, 119): Wna (, 0xcf947070) L.231: bst_howley_opt.c
+        (2, 120): Rna (expected, 3481697584) [(2, 116)] L.231: bst_howley_opt.c
+        (2, 121): Rna (, 3482611824) [(2, 119)] L.231: bst_howley_opt.c
+        (2, 122): Csc (set.right, 3481697584) [(1, 94)] L.231: bst_howley_opt.c
+        (2, 123): Csc (set.right, 3482611824) L.231: bst_howley_opt.c
+        (2, 124): Wna (expectedOp, 0xcf9928e2) L.236: bst_howley_opt.c
+        (2, 125): Wna (, 0xcf9928e0) L.237: bst_howley_opt.c
+        (2, 126): Rna (expectedOp, 3482921186) [(2, 124)] L.237: bst_howley_opt.c
+        (2, 127): Rna (, 3482921184) [(2, 125)] L.237: bst_howley_opt.c
+        (2, 128): Csc (set.op, 3482921186) [(2, 109)] L.237: bst_howley_opt.c
+        (2, 129): Csc (set.op, 3482921184) L.237: bst_howley_opt.c
+        (2, 130): D L.238: bst_howley_opt.c
+        (2, 131): D
+        (2, 132): D
+        (2, 133): D
+        (2, 134): D
+        (2, 135): D L.394: bst_howley_opt.c
+        (2, 136): D
+        (2, 137): D
+        (2, 138): D
+        (2, 139): D
+        (2, 140): D
+        (2, 141): D
+        (2, 142): D L.313: bst_howley_opt.c
+        (2, 143): D
+        (2, 144): D
+        (2, 145): D
+        (2, 146): D
+        (2, 147): D
+        (2, 148): D
+        (2, 149): D
+        (2, 150): D
+        (2, 151): D
+        (2, 152): D
+        (2, 153): D
+        (2, 154): D
+        (2, 155): D L.52: howley-wrapper.h
+        (2, 156): Wrel (f_4, 1) L.88
+        (2, 157): E
+<0, 3> thread_5:
+        (3, 0): B
+        (3, 1): Racq (f_7, 1) [(5, 143)] L.99
+        (3, 2): M
+        (3, 3): M
+        (3, 4): M
+        (3, 5): M
+        (3, 6): M
+        (3, 7): M
+        (3, 8): M
+        (3, 9): M
+        (3, 10): M
+        (3, 11): M
+        (3, 12): M
+        (3, 13): Wna (curr, 0x55cccf82f2c0) L.109: bst_howley_opt.c
+        (3, 14): Rna (curr, 0x55cccf82f2c0) [(3, 13)] L.110: bst_howley_opt.c
+        (3, 15): Racq (set.op, 3481697648) [(1, 100)] L.110: bst_howley_opt.c
+        (3, 16): Wna (, 3481697648) L.110: bst_howley_opt.c
+        (3, 17): Rna (, 0xcf867d70) [(3, 16)] L.110: bst_howley_opt.c
+        (3, 18): Wna (curr_op, 0xcf867d70) L.110: bst_howley_opt.c
+        (3, 19): Rna (curr_op, 0xcf867d70) [(3, 18)] L.112: bst_howley_opt.c
+        (3, 20): Rna (curr, 0x55cccf82f2c0) [(3, 13)] L.125: bst_howley_opt.c
+        (3, 21): Racq (set.right, 3481697584) [(1, 94)] L.125: bst_howley_opt.c
+        (3, 22): Wna (, 3481697584) L.125: bst_howley_opt.c
+        (3, 23): Rna (, 0xcf867d30) [(3, 22)] L.125: bst_howley_opt.c
+        (3, 24): Rna (curr, 0x55cccf82f2c0) [(3, 13)] L.126: bst_howley_opt.c
+        (3, 25): Rna (curr_op, 0xcf867d70) [(3, 18)] L.127: bst_howley_opt.c
+        (3, 26): Rna (curr, 0x55cccf82f2c0) [(3, 13)] L.130: bst_howley_opt.c
+        (3, 27): Wna (pred, 0x55cccf82f2c0) L.130: bst_howley_opt.c
+        (3, 28): Rna (curr_op, 0xcf867d70) [(3, 18)] L.131: bst_howley_opt.c
+        (3, 29): Wna (pred_op, 0xcf867d70) L.131: bst_howley_opt.c
+        (3, 30): Wna (curr, 0xcf867d30) L.132: bst_howley_opt.c
+        (3, 31): Rna (curr, 0xcf867d30) [(3, 30)] L.133: bst_howley_opt.c
+        (3, 32): Racq (, 3482611904) [(4, 119)] L.133: bst_howley_opt.c
+        (3, 33): Wna (, 3482611904) L.133: bst_howley_opt.c
+        (3, 34): Rna (, 0xcf9470c0) [(3, 33)] L.133: bst_howley_opt.c
+        (3, 35): Wna (curr_op, 0xcf9470c0) L.133: bst_howley_opt.c
+        (3, 36): Rna (curr_op, 0xcf9470c0) [(3, 35)] L.136: bst_howley_opt.c
+        (3, 37): Rna (curr, 0xcf867d30) [(3, 30)] L.140: bst_howley_opt.c
+        (3, 38): Racq (, 20) [(1, 50)] L.140: bst_howley_opt.c
+        (3, 39): Rna (curr, 0xcf867d30) [(3, 30)] L.150: bst_howley_opt.c
+        (3, 40): Racq (, 3481697280) [(1, 51)] L.150: bst_howley_opt.c
+        (3, 41): Rna (curr, 0xcf867d30) [(3, 30)] L.159: bst_howley_opt.c
+        (3, 42): Racq (, 3482611904) [(4, 119)] L.159: bst_howley_opt.c
+        (3, 43): Wna (, 3482611904) L.159: bst_howley_opt.c
+        (3, 44): Rna (, 0xcf9470c0) [(3, 43)] L.159: bst_howley_opt.c
+        (3, 45): Rna (curr_op, 0xcf9470c0) [(3, 35)] L.159: bst_howley_opt.c
+        (3, 46): D L.164: bst_howley_opt.c
+        (3, 47): D
+        (3, 48): D
+        (3, 49): D
+        (3, 50): D
+        (3, 51): D
+        (3, 52): D
+        (3, 53): D L.92: bst_howley_opt.c
+        (3, 54): D
+        (3, 55): D
+        (3, 56): D
+        (3, 57): Wrel (f_5, 1) L.106
+        (3, 58): E
+<0, 4> thread_6:
+        (4, 0): B
+        (4, 1): M L.43: howley-wrapper.h
+        (4, 2): Wna (, 30) L.44: howley-wrapper.h
+        (4, 3): M
+        (4, 4): M
+        (4, 5): M
+        (4, 6): M
+        (4, 7): M
+        (4, 8): M
+        (4, 9): M
+        (4, 10): M
+        (4, 11): M
+        (4, 12): M
+        (4, 13): M
+        (4, 14): M
+        (4, 15): M
+        (4, 16): M
+        (4, 17): M
+        (4, 18): Wna (curr, 0x55cccf82f2c0) L.109: bst_howley_opt.c
+        (4, 19): Rna (curr, 0x55cccf82f2c0) [(4, 18)] L.110: bst_howley_opt.c
+        (4, 20): Racq (set.op, 0) [INIT] L.110: bst_howley_opt.c
+        (4, 21): Wna (, 0) L.110: bst_howley_opt.c
+        (4, 22): Rna (, 0x0) [(4, 21)] L.110: bst_howley_opt.c
+        (4, 23): Wna (curr_op, 0x0) L.110: bst_howley_opt.c
+        (4, 24): Rna (curr_op, 0x0) [(4, 23)] L.112: bst_howley_opt.c
+        (4, 25): Rna (curr, 0x55cccf82f2c0) [(4, 18)] L.125: bst_howley_opt.c
+        (4, 26): Racq (set.right, 3481697584) [(1, 94)] L.125: bst_howley_opt.c
+        (4, 27): Wna (, 3481697584) L.125: bst_howley_opt.c
+        (4, 28): Rna (, 0xcf867d30) [(4, 27)] L.125: bst_howley_opt.c
+        (4, 29): Rna (curr, 0x55cccf82f2c0) [(4, 18)] L.126: bst_howley_opt.c
+        (4, 30): Rna (curr_op, 0x0) [(4, 23)] L.127: bst_howley_opt.c
+        (4, 31): Rna (curr, 0x55cccf82f2c0) [(4, 18)] L.130: bst_howley_opt.c
+        (4, 32): Wna (pred, 0x55cccf82f2c0) L.130: bst_howley_opt.c
+        (4, 33): Rna (curr_op, 0x0) [(4, 23)] L.131: bst_howley_opt.c
+        (4, 34): Wna (pred_op, 0x0) L.131: bst_howley_opt.c
+        (4, 35): Wna (curr, 0xcf867d30) L.132: bst_howley_opt.c
+        (4, 36): Rna (curr, 0xcf867d30) [(4, 35)] L.133: bst_howley_opt.c
+        (4, 37): Racq (, 0) [(1, 60)] L.133: bst_howley_opt.c
+        (4, 38): Wna (, 0) L.133: bst_howley_opt.c
+        (4, 39): Rna (, 0x0) [(4, 38)] L.133: bst_howley_opt.c
+        (4, 40): Wna (curr_op, 0x0) L.133: bst_howley_opt.c
+        (4, 41): Rna (curr_op, 0x0) [(4, 40)] L.136: bst_howley_opt.c
+        (4, 42): Rna (curr, 0xcf867d30) [(4, 35)] L.140: bst_howley_opt.c
+        (4, 43): Racq (, 20) [(1, 50)] L.140: bst_howley_opt.c
+        (4, 44): Rna (curr, 0xcf867d30) [(4, 35)] L.146: bst_howley_opt.c
+        (4, 45): Racq (, 0) [(1, 54)] L.146: bst_howley_opt.c
+        (4, 46): Wna (, 0) L.146: bst_howley_opt.c
+        (4, 47): Rna (, 0x0) [(4, 46)] L.146: bst_howley_opt.c
+        (4, 48): Rna (curr, 0xcf867d30) [(4, 35)] L.147: bst_howley_opt.c
+        (4, 49): Rna (curr_op, 0x0) [(4, 40)] L.148: bst_howley_opt.c
+        (4, 50): Racq (, 0) [(1, 60)] L.155: bst_howley_opt.c
+        (4, 51): Wna (, 0) L.155: bst_howley_opt.c
+        (4, 52): Rna (, 0x0) [(4, 51)] L.155: bst_howley_opt.c
+        (4, 53): Rna (curr, 0xcf867d30) [(4, 35)] L.159: bst_howley_opt.c
+        (4, 54): Racq (, 0) [(1, 60)] L.159: bst_howley_opt.c
+        (4, 55): Wna (, 0) L.159: bst_howley_opt.c
+        (4, 56): Rna (, 0x0) [(4, 55)] L.159: bst_howley_opt.c
+        (4, 57): Rna (curr_op, 0x0) [(4, 40)] L.159: bst_howley_opt.c
+        (4, 58): D L.164: bst_howley_opt.c
+        (4, 59): D
+        (4, 60): D
+        (4, 61): D
+        (4, 62): D
+        (4, 63): D
+        (4, 64): D
+        (4, 65): M
+        (4, 66): M
+        (4, 67): M
+        (4, 68): M L.43: bst_howley_opt.c
+        (4, 69): Wrlx (, 30) L.48: bst_howley_opt.c
+        (4, 70): Wrlx (, 3482492512) L.49: bst_howley_opt.c
+        (4, 71): Wna (, 0x0) L.50: bst_howley_opt.c
+        (4, 72): Rna (, 0) [(4, 71)] L.50: bst_howley_opt.c
+        (4, 73): Wrlx (, 0) L.50: bst_howley_opt.c
+        (4, 74): Wna (, 0x0) L.51: bst_howley_opt.c
+        (4, 75): Rna (, 0) [(4, 74)] L.51: bst_howley_opt.c
+        (4, 76): Wrlx (, 0) L.51: bst_howley_opt.c
+        (4, 77): Wna (, 0x0) L.52: bst_howley_opt.c
+        (4, 78): Rna (, 0) [(4, 77)] L.52: bst_howley_opt.c
+        (4, 79): Wrlx (, 0) L.52: bst_howley_opt.c
+        (4, 80): D L.55: bst_howley_opt.c
+        (4, 81): D
+        (4, 82): D
+        (4, 83): Rna (curr, 0xcf867d30) [(4, 35)] L.198: bst_howley_opt.c
+        (4, 84): Rsc (, 0) [(1, 54)] L.198: bst_howley_opt.c
+        (4, 85): Wna (, 0) L.198: bst_howley_opt.c
+        (4, 86): Rna (, 0x0) [(4, 85)] L.198: bst_howley_opt.c
+        (4, 87): M L.63: bst_howley_opt.c
+        (4, 88): Wna (, 0) L.202: bst_howley_opt.c
+        (4, 89): Wna (, 0x0) L.203: bst_howley_opt.c
+        (4, 90): Wna (, 0xcf947070) L.204: bst_howley_opt.c
+        (4, 91): Rna (curr_op, 0x0) [(4, 40)] L.209: bst_howley_opt.c
+        (4, 92): Wna (expected17, 0x0) L.209: bst_howley_opt.c
+        (4, 93): Rna (curr, 0xcf867d30) [(4, 35)] L.210: bst_howley_opt.c
+        (4, 94): Wna (, 0xcf9470c2) L.210: bst_howley_opt.c
+        (4, 95): Rna (expected17, 0) [(4, 92)] L.210: bst_howley_opt.c
+        (4, 96): Rna (, 3482611906) [(4, 94)] L.210: bst_howley_opt.c
+        (4, 97): Csc (, 0) [(1, 60)] L.210: bst_howley_opt.c
+        (4, 98): Csc (, 3482611906) L.210: bst_howley_opt.c
+        (4, 99): Rna (curr, 0xcf867d30) [(4, 35)] L.212: bst_howley_opt.c
+        (4, 100): M
+        (4, 101): M
+        (4, 102): M
+        (4, 103): M
+        (4, 104): M
+        (4, 105): Rna (, 0x0) [(4, 89)] L.227: bst_howley_opt.c
+        (4, 106): Wna (expected, 0x0) L.227: bst_howley_opt.c
+        (4, 107): Rna (, 0) [(4, 88)] L.228: bst_howley_opt.c
+        (4, 108): Rna (, 0xcf947070) [(4, 90)] L.231: bst_howley_opt.c
+        (4, 109): Wna (, 0xcf947070) L.231: bst_howley_opt.c
+        (4, 110): Rna (expected, 0) [(4, 106)] L.231: bst_howley_opt.c
+        (4, 111): Rna (, 3482611824) [(4, 109)] L.231: bst_howley_opt.c
+        (4, 112): Csc (, 0) [(1, 54)] L.231: bst_howley_opt.c
+        (4, 113): Csc (, 3482611824) L.231: bst_howley_opt.c
+        (4, 114): Wna (expectedOp, 0xcf9470c2) L.236: bst_howley_opt.c
+        (4, 115): Wna (, 0xcf9470c0) L.237: bst_howley_opt.c
+        (4, 116): Rna (expectedOp, 3482611906) [(4, 114)] L.237: bst_howley_opt.c
+        (4, 117): Rna (, 3482611904) [(4, 115)] L.237: bst_howley_opt.c
+        (4, 118): Csc (, 3482611906) [(4, 98)] L.237: bst_howley_opt.c
+        (4, 119): Csc (, 3482611904) L.237: bst_howley_opt.c
+        (4, 120): D L.238: bst_howley_opt.c
+        (4, 121): D
+        (4, 122): D
+        (4, 123): D
+        (4, 124): D
+        (4, 125): D L.223: bst_howley_opt.c
+        (4, 126): D
+        (4, 127): D
+        (4, 128): D
+        (4, 129): D
+        (4, 130): D
+        (4, 131): D
+        (4, 132): D
+        (4, 133): Wrel (f_6, 1) L.120
+        (4, 134): E
+<0, 5> thread_7:
+        (5, 0): B
+        (5, 1): M
+        (5, 2): M
+        (5, 3): M
+        (5, 4): M
+        (5, 5): M
+        (5, 6): M
+        (5, 7): M
+        (5, 8): M
+        (5, 9): M
+        (5, 10): M
+        (5, 11): M
+        (5, 12): M
+        (5, 13): M
+        (5, 14): M
+        (5, 15): M
+        (5, 16): M
+        (5, 17): M
+        (5, 18): M
+        (5, 19): M
+        (5, 20): M
+        (5, 21): Wna (curr, 0x55cccf82f2c0) L.109: bst_howley_opt.c
+        (5, 22): Rna (curr, 0x55cccf82f2c0) [(5, 21)] L.110: bst_howley_opt.c
+        (5, 23): Racq (set.op, 3481697648) [(1, 100)] L.110: bst_howley_opt.c
+        (5, 24): Wna (, 3481697648) L.110: bst_howley_opt.c
+        (5, 25): Rna (, 0xcf867d70) [(5, 24)] L.110: bst_howley_opt.c
+        (5, 26): Wna (curr_op, 0xcf867d70) L.110: bst_howley_opt.c
+        (5, 27): Rna (curr_op, 0xcf867d70) [(5, 26)] L.112: bst_howley_opt.c
+        (5, 28): Rna (curr, 0x55cccf82f2c0) [(5, 21)] L.125: bst_howley_opt.c
+        (5, 29): Racq (set.right, 3481697584) [(1, 94)] L.125: bst_howley_opt.c
+        (5, 30): Wna (, 3481697584) L.125: bst_howley_opt.c
+        (5, 31): Rna (, 0xcf867d30) [(5, 30)] L.125: bst_howley_opt.c
+        (5, 32): Rna (curr, 0x55cccf82f2c0) [(5, 21)] L.126: bst_howley_opt.c
+        (5, 33): Rna (curr_op, 0xcf867d70) [(5, 26)] L.127: bst_howley_opt.c
+        (5, 34): Rna (curr, 0x55cccf82f2c0) [(5, 21)] L.130: bst_howley_opt.c
+        (5, 35): Wna (pred, 0x55cccf82f2c0) L.130: bst_howley_opt.c
+        (5, 36): Rna (curr_op, 0xcf867d70) [(5, 26)] L.131: bst_howley_opt.c
+        (5, 37): Wna (pred_op, 0xcf867d70) L.131: bst_howley_opt.c
+        (5, 38): Wna (curr, 0xcf867d30) L.132: bst_howley_opt.c
+        (5, 39): Rna (curr, 0xcf867d30) [(5, 38)] L.133: bst_howley_opt.c
+        (5, 40): Racq (, 0) [(1, 60)] L.133: bst_howley_opt.c
+        (5, 41): Wna (, 0) L.133: bst_howley_opt.c
+        (5, 42): Rna (, 0x0) [(5, 41)] L.133: bst_howley_opt.c
+        (5, 43): Wna (curr_op, 0x0) L.133: bst_howley_opt.c
+        (5, 44): Rna (curr_op, 0x0) [(5, 43)] L.136: bst_howley_opt.c
+        (5, 45): Rna (curr, 0xcf867d30) [(5, 38)] L.140: bst_howley_opt.c
+        (5, 46): Racq (, 20) [(1, 50)] L.140: bst_howley_opt.c
+        (5, 47): Rna (curr, 0xcf867d30) [(5, 38)] L.146: bst_howley_opt.c
+        (5, 48): Racq (, 3482611824) [(4, 113)] L.146: bst_howley_opt.c
+        (5, 49): Wna (, 3482611824) L.146: bst_howley_opt.c
+        (5, 50): Rna (, 0xcf947070) [(5, 49)] L.146: bst_howley_opt.c
+        (5, 51): Rna (curr, 0xcf867d30) [(5, 38)] L.147: bst_howley_opt.c
+        (5, 52): Rna (curr_op, 0x0) [(5, 43)] L.148: bst_howley_opt.c
+        (5, 53): Rna (curr, 0xcf867d30) [(5, 38)] L.130: bst_howley_opt.c
+        (5, 54): Wna (pred, 0xcf867d30) L.130: bst_howley_opt.c
+        (5, 55): Rna (curr_op, 0x0) [(5, 43)] L.131: bst_howley_opt.c
+        (5, 56): Wna (pred_op, 0x0) L.131: bst_howley_opt.c
+        (5, 57): Wna (curr, 0xcf947070) L.132: bst_howley_opt.c
+        (5, 58): Rna (curr, 0xcf947070) [(5, 57)] L.133: bst_howley_opt.c
+        (5, 59): Racq (, 0) [(4, 79)] L.133: bst_howley_opt.c
+        (5, 60): Wna (, 0) L.133: bst_howley_opt.c
+        (5, 61): Rna (, 0x0) [(5, 60)] L.133: bst_howley_opt.c
+        (5, 62): Wna (curr_op, 0x0) L.133: bst_howley_opt.c
+        (5, 63): Rna (curr_op, 0x0) [(5, 62)] L.136: bst_howley_opt.c
+        (5, 64): Rna (curr, 0xcf947070) [(5, 57)] L.140: bst_howley_opt.c
+        (5, 65): Racq (, 30) [(4, 69)] L.140: bst_howley_opt.c
+        (5, 66): Rna (curr, 0xcf947070) [(5, 57)] L.150: bst_howley_opt.c
+        (5, 67): Racq (, 3482492512) [(4, 70)] L.150: bst_howley_opt.c
+        (5, 68): Rna (curr, 0xcf947070) [(5, 57)] L.159: bst_howley_opt.c
+        (5, 69): Racq (, 0) [(4, 79)] L.159: bst_howley_opt.c
+        (5, 70): Wna (, 0) L.159: bst_howley_opt.c
+        (5, 71): Rna (, 0x0) [(5, 70)] L.159: bst_howley_opt.c
+        (5, 72): Rna (curr_op, 0x0) [(5, 62)] L.159: bst_howley_opt.c
+        (5, 73): D L.164: bst_howley_opt.c
+        (5, 74): D
+        (5, 75): D
+        (5, 76): D
+        (5, 77): D
+        (5, 78): D
+        (5, 79): D
+        (5, 80): Rna (curr, 0xcf947070) [(5, 57)] L.262: bst_howley_opt.c
+        (5, 81): Rsc (, 0) [(4, 73)] L.262: bst_howley_opt.c
+        (5, 82): Wna (, 0) L.262: bst_howley_opt.c
+        (5, 83): Rna (, 0x0) [(5, 82)] L.262: bst_howley_opt.c
+        (5, 84): Rna (curr_op, 0x0) [(5, 62)] L.263: bst_howley_opt.c
+        (5, 85): Wna (expected, 0x0) L.263: bst_howley_opt.c
+        (5, 86): Rna (curr, 0xcf947070) [(5, 57)] L.264: bst_howley_opt.c
+        (5, 87): Rna (curr_op, 0x0) [(5, 62)] L.264: bst_howley_opt.c
+        (5, 88): Wna (, 0x1) L.264: bst_howley_opt.c
+        (5, 89): Rna (expected, 0) [(5, 85)] L.264: bst_howley_opt.c
+        (5, 90): Rna (, 1) [(5, 88)] L.264: bst_howley_opt.c
+        (5, 91): Csc (, 0) [(4, 79)] L.264: bst_howley_opt.c
+        (5, 92): Csc (, 1) L.264: bst_howley_opt.c
+        (5, 93): Rna (pred, 0xcf867d30) [(5, 54)] L.265: bst_howley_opt.c
+        (5, 94): Rna (pred_op, 0x0) [(5, 56)] L.265: bst_howley_opt.c
+        (5, 95): Rna (curr, 0xcf947070) [(5, 57)] L.265: bst_howley_opt.c
+        (5, 96): M
+        (5, 97): M
+        (5, 98): M
+        (5, 99): M
+        (5, 100): M
+        (5, 101): M
+        (5, 102): M
+        (5, 103): Rsc (, 0) [(4, 76)] L.366: bst_howley_opt.c
+        (5, 104): Wna (, 0) L.366: bst_howley_opt.c
+        (5, 105): Rna (, 0x0) [(5, 104)] L.366: bst_howley_opt.c
+        (5, 106): Rsc (, 0) [(4, 73)] L.367: bst_howley_opt.c
+        (5, 107): Wna (, 0) L.367: bst_howley_opt.c
+        (5, 108): Rna (, 0x0) [(5, 107)] L.367: bst_howley_opt.c
+        (5, 109): M L.63: bst_howley_opt.c
+        (5, 110): Rsc (, 0) [(1, 57)] L.376: bst_howley_opt.c
+        (5, 111): Wna (, 0) L.376: bst_howley_opt.c
+        (5, 112): Rna (, 0x0) [(5, 111)] L.376: bst_howley_opt.c
+        (5, 113): Wna (, 0) L.376: bst_howley_opt.c
+        (5, 114): Wna (, 0xcf947070) L.377: bst_howley_opt.c
+        (5, 115): Wna (, 0xcf947071) L.378: bst_howley_opt.c
+        (5, 116): Wna (expectedOp, 0x0) L.383: bst_howley_opt.c
+        (5, 117): Wna (, 0xcf994e72) L.384: bst_howley_opt.c
+        (5, 118): Rna (expectedOp, 0) [(5, 116)] L.384: bst_howley_opt.c
+        (5, 119): Rna (, 3482930802) [(5, 117)] L.384: bst_howley_opt.c
+        (5, 120): Csc (, 3482611906) [(4, 98)] L.384: bst_howley_opt.c
+        (5, 121): Wna (expectedOp, 3482611906) L.384: bst_howley_opt.c
+        (5, 122): D L.394: bst_howley_opt.c
+        (5, 123): D
+        (5, 124): D
+        (5, 125): D
+        (5, 126): D
+        (5, 127): D
+        (5, 128): D
+        (5, 129): D L.313: bst_howley_opt.c
+        (5, 130): D
+        (5, 131): D
+        (5, 132): D
+        (5, 133): D
+        (5, 134): D
+        (5, 135): D
+        (5, 136): D
+        (5, 137): D
+        (5, 138): D
+        (5, 139): D
+        (5, 140): D
+        (5, 141): D
+        (5, 142): D L.52: howley-wrapper.h
+        (5, 143): Wrel (f_7, 1) L.134
+        (5, 144): E
+<0, 6> thread_8:
+        (6, 0): B
+        (6, 1): Racq (f_4, 1) [(2, 156)] L.145
+        (6, 2): M
+        (6, 3): M
+        (6, 4): M
+        (6, 5): M
+        (6, 6): M
+        (6, 7): M
+        (6, 8): M
+        (6, 9): M
+        (6, 10): M
+        (6, 11): M
+        (6, 12): M
+        (6, 13): Wna (curr, 0x55cccf82f2c0) L.109: bst_howley_opt.c
+        (6, 14): Rna (curr, 0x55cccf82f2c0) [(6, 13)] L.110: bst_howley_opt.c
+        (6, 15): Racq (set.op, 3482921184) [(2, 129)] L.110: bst_howley_opt.c
+        (6, 16): Wna (, 3482921184) L.110: bst_howley_opt.c
+        (6, 17): Rna (, 0xcf9928e0) [(6, 16)] L.110: bst_howley_opt.c
+        (6, 18): Wna (curr_op, 0xcf9928e0) L.110: bst_howley_opt.c
+        (6, 19): Rna (curr_op, 0xcf9928e0) [(6, 18)] L.112: bst_howley_opt.c
+        (6, 20): Rna (curr, 0x55cccf82f2c0) [(6, 13)] L.125: bst_howley_opt.c
+        (6, 21): Racq (set.right, 3482611824) [(2, 123)] L.125: bst_howley_opt.c
+        (6, 22): Wna (, 3482611824) L.125: bst_howley_opt.c
+        (6, 23): Rna (, 0xcf947070) [(6, 22)] L.125: bst_howley_opt.c
+        (6, 24): Rna (curr, 0x55cccf82f2c0) [(6, 13)] L.126: bst_howley_opt.c
+        (6, 25): Rna (curr_op, 0xcf9928e0) [(6, 18)] L.127: bst_howley_opt.c
+        (6, 26): Rna (curr, 0x55cccf82f2c0) [(6, 13)] L.130: bst_howley_opt.c
+        (6, 27): Wna (pred, 0x55cccf82f2c0) L.130: bst_howley_opt.c
+        (6, 28): Rna (curr_op, 0xcf9928e0) [(6, 18)] L.131: bst_howley_opt.c
+        (6, 29): Wna (pred_op, 0xcf9928e0) L.131: bst_howley_opt.c
+        (6, 30): Wna (curr, 0xcf947070) L.132: bst_howley_opt.c
+        (6, 31): Rna (curr, 0xcf947070) [(6, 30)] L.133: bst_howley_opt.c
+        (6, 32): Racq (, 0) [(4, 79)] L.133: bst_howley_opt.c
+        (6, 33): Wna (, 0) L.133: bst_howley_opt.c
+        (6, 34): Rna (, 0x0) [(6, 33)] L.133: bst_howley_opt.c
+        (6, 35): Wna (curr_op, 0x0) L.133: bst_howley_opt.c
+        (6, 36): Rna (curr_op, 0x0) [(6, 35)] L.136: bst_howley_opt.c
+        (6, 37): Rna (curr, 0xcf947070) [(6, 30)] L.140: bst_howley_opt.c
+        (6, 38): Racq (, 30) [(4, 69)] L.140: bst_howley_opt.c
+        (6, 39): Rna (curr, 0xcf947070) [(6, 30)] L.150: bst_howley_opt.c
+        (6, 40): Racq (, 3482492512) [(4, 70)] L.150: bst_howley_opt.c
+        (6, 41): Rna (curr, 0xcf947070) [(6, 30)] L.159: bst_howley_opt.c
+        (6, 42): Racq (, 0) [(4, 79)] L.159: bst_howley_opt.c
+        (6, 43): Wna (, 0) L.159: bst_howley_opt.c
+        (6, 44): Rna (, 0x0) [(6, 43)] L.159: bst_howley_opt.c
+        (6, 45): Rna (curr_op, 0x0) [(6, 35)] L.159: bst_howley_opt.c
+        (6, 46): D L.164: bst_howley_opt.c
+        (6, 47): D
+        (6, 48): D
+        (6, 49): D
+        (6, 50): D
+        (6, 51): D
+        (6, 52): D
+        (6, 53): D L.92: bst_howley_opt.c
+        (6, 54): D
+        (6, 55): D
+        (6, 56): D
+        (6, 57): Wrel (f_8, 1) L.152
+        (6, 58): E
+
+Assertion violation: 0
+Number of complete executions explored: 0
+Number of blocked executions seen: 12847
+Total wall-clock time: 3.21s

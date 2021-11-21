@@ -1,6 +1,6 @@
 #define	EXIT_FAILURE	1
 
-#include "lcrq.c"
+#include "lcrq/lcrq.c"
 
 typedef RingQueue queue_t;
 

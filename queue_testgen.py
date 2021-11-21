@@ -73,10 +73,79 @@ int main()
 }
 '''
 
+queue_template_expected_str = '''#include <stdlib.h>
+#include <stdio.h>
+#include <pthread.h>
+#include <stdbool.h>
+#include <assert.h>
+#include <stdatomic.h>
+
+{% for item in includes -%}
+#include "{{item}}"
+{% endfor %}
+// {{desc}}
+{{queue_type}} q;
+
+{% for i in range(ops|length) -%}
+atomic_int f_{{i}};
+{% endfor -%}
+
+{%- for op in ops %}
+// {%if op.enq %}enq{% else %}deq{% endif %}({{(op.val+64)|chr}})
+void *thread_{{loop.index0}}(void *arg)
+{
+    set_thread_num({{loop.index0}});
+    {% for v in op.wait_for %}
+    int val_{{v}} = 0;
+    val_{{v}} = atomic_load_explicit(&f_{{v}}, memory_order_acquire);
+    __VERIFIER_assume(val_{{v}} == 1);
+    {% endfor -%}
+
+    {% if op.enq %}
+    int * val = (int *)malloc(sizeof(int));
+    *val = {{op.val}};
+    q_enqueue(&q, val);
+    {% else %}
+    int * res = NULL;
+    bool succ = q_dequeue(&q, &res, {{op.val}});
+    {% if op.val == -1 -%}
+    __VERIFIER_assume(!succ);
+    {% else %}
+    __VERIFIER_assume(succ);
+    __VERIFIER_assume(*res == {{op.val}});
+    {% endif %}
+    {% endif %}
+    atomic_store_explicit(&f_{{loop.index0}}, 1, memory_order_release);
+
+    return NULL;
+}
+{% endfor %}
+
+int main()
+{
+    q_init_queue(&q, {{ops|length}});
+
+    {% for i in participating -%}
+    pthread_t t_{{i}};
+    if (pthread_create(&t_{{i}}, NULL, thread_{{i}}, NULL))
+        abort();
+        
+    {% endfor %}
+    {% for i in range(noise) -%}
+    {% set j = i+ops|length -%}
+    pthread_t t_{{j}};
+    if (pthread_create(&t_{{j}}, NULL, noise_enq_deq, create_args(&q, {{j}}, 1)))
+        abort();
+        
+    {% endfor -%}
+}
+'''
 
 def load_template(name):
     if (name == "queue"):
         return queue_template_str
+    if (name == "lcrq"):
+        return queue_template_expected_str
     
     return ""
 
@@ -128,10 +197,10 @@ def generate_ops(n, k):
 
 def generate_test(trace, n, k):
     ops, width, participating = parse_trace(trace, n, k)
-    includes = ["../../../wrappers/queue-wrappers.h"]
+    includes = ["../../../wrappers/lcrq-wrapper-assume.h"]
     desc = str(trace)
     queue_type = "queue_t"
-    template = env.get_template("queue")
+    template = env.get_template("lcrq")
     noise_threads = max(0, max_threads-(len(ops)-width)) if noise else 0
     participating = participating if noise else [i for i in range(len(ops))]
     return template.render(ops=ops, includes=includes, desc=desc, queue_type=queue_type, participating=participating, noise=noise_threads)
@@ -139,7 +208,7 @@ def generate_test(trace, n, k):
 fname = "./docs/resultset2.txt"
 outpath = "./tests/generated"
 noise = True
-max_threads = 5
+max_threads = 4
 
 def parse_params_line(line):
     parts = line.split(" ")
@@ -163,7 +232,7 @@ def parse_testset(fname, outpath):
             continue
         if line.startswith("n:"):
             n, k, q, N = parse_params_line(line)
-            path = os.path.join(path, q+"_"+str(n)+"_"+str(k)+"_"+str(N))+"_"+str(noise)+"_"+str(max_threads)
+            path = os.path.join(path, q+"_"+str(n)+"_"+str(k)+"_"+str(N))+"_"+str(noise)+"_"+str(max_threads)+"_lcrq"
             if not os.path.exists(path):
                 os.mkdir(path)
             continue

@@ -137,7 +137,7 @@ retry:
 			bst_help(*pred, *pred_op, *curr, *curr_op, root);
 			goto retry;
 		}
-		curr_key = atomic_load_explicit(&(*curr)->key, memory_order_relaxed);
+		curr_key = atomic_load_explicit(&(*curr)->key, memory_order_acquire);
 		if(k < curr_key){
 			result = NOT_FOUND_L;
 			next = atomic_load_explicit(&(*curr)->left, memory_order_acquire);
@@ -339,7 +339,7 @@ bool_t bst_help_relocate(operation_t* op, node_t* pred, operation_t* pred_op, no
 	if (seen_state == STATE_OP_SUCCESSFUL) {
 		// assert(0);
 		skey_t expectedKey = op->relocate_op.remove_key;
-		atomic_compare_exchange_weak_explicit(&(op->relocate_op.dest->key), &expectedKey, op->relocate_op.replace_key, memory_order_relaxed, memory_order_relaxed);
+		atomic_compare_exchange_weak_explicit(&(op->relocate_op.dest->key), &expectedKey, op->relocate_op.replace_key, memory_order_release, memory_order_acquire);
 		sval_t expectedVal = op->relocate_op.remove_value;
 		atomic_compare_exchange_weak_explicit(&(op->relocate_op.dest->value), &expectedVal, op->relocate_op.replace_value, memory_order_relaxed, memory_order_relaxed);
 		operation_t * expectedOp = (operation_t*) FLAG(op, STATE_OP_RELOCATE);

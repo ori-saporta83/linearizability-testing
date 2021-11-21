@@ -24,11 +24,6 @@ def le(x, y):
     return And([Implies(x[(i, j)], y[(i, j)]) for i, j in product(range(n), range(n))])
 
 
-def lt(x, y):
-    """x<y = x<=y /\ \/_{ij} ~x_ij /\ y_ij"""
-    return And(le(x, y), Or([And(Not(x[(i, j)]), y[(i, j)]) for i, j in product(range(n), range(n))]))
-
-
 def irr(y):
     """irr(y) = ~y00 /\ ~y11 /\ .."""
     return And([Not(y[(i, i)]) for i in range(n)])
@@ -165,13 +160,13 @@ def main():
 
     # number of operations
     global n
-    n = 9
+    n = 12
 
     # number of deq(bottom) operations, must maintain:
     # k < n
     # (n - k) % 2 = 0
     global k
-    k = 1
+    k = 0
 
     # number of "threads"
     global N
@@ -232,10 +227,10 @@ def main():
                 range(n), range(n)) if solver.get_value(x[(i, j)]).is_true()]
 
             print(i, ":", model_pos)
-            test_data = generate_test(model_pos, n, k)
-            f = open(os.path.join(path, "t"+str(i)+".c"), "w")
-            f.write(test_data)
-            f.close()
+            # test_data = generate_test(model_pos, n, k)
+            # f = open(os.path.join(path, "t"+str(i)+".c"), "w")
+            # f.write(test_data)
+            # f.close()
             i += 1
 
             # solver.add_assertion(Or([Not(m) for m in model_pos] + model_neg))

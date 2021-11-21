@@ -26,7 +26,8 @@ void q_init_queue(queue_t *q, int num_threads)
     q->mask = MAX_SIZE;
     q->mask--;
 
-    q->out = q->in = 0;
+    atomic_store_explicit(&(q->in), 0, memory_order_relaxed);
+    atomic_store_explicit(&(q->out), 0, memory_order_relaxed);
 }
 
 #define MAX_ITER 2

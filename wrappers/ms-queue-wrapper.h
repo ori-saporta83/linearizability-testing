@@ -122,8 +122,8 @@ void enqueue(queue_t *q, val_t * val)
 	while (!success) {
 		__VERIFIER_assume(++cnt < MAX_ITER);
 		tail = atomic_load_explicit(&q->tail, memory_order_acquire);
-		next = atomic_load_explicit(&q->nodes[get_ptr(tail)].next, memory_order_relaxed);
-		if (tail == atomic_load_explicit(&q->tail, memory_order_acquire)) {
+		next = atomic_load_explicit(&q->nodes[get_ptr(tail)].next, memory_order_acquire);
+		if (tail == atomic_load_explicit(&q->tail, memory_order_relaxed)) {
 
 			/* Check for uninitialized 'next' */
 			assert(get_ptr(next) != POISON_IDX);
@@ -161,9 +161,9 @@ bool dequeue(queue_t *q, val_t **retVal)
 	while (!success) {
         __VERIFIER_assume(++cnt < MAX_ITER);
 		head = atomic_load_explicit(&q->head, memory_order_acquire);
-		tail = atomic_load_explicit(&q->tail, memory_order_acquire);
+		tail = atomic_load_explicit(&q->tail, memory_order_relaxed);
 		next = atomic_load_explicit(&q->nodes[get_ptr(head)].next, memory_order_acquire);
-		if (atomic_load_explicit(&q->head, memory_order_acquire) == head) {
+		if (atomic_load_explicit(&q->head, memory_order_relaxed) == head) {
 			if (get_ptr(head) == get_ptr(tail)) {
 
 				/* Check for uninitialized 'next' */
